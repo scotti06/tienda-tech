@@ -8,9 +8,16 @@ const geistSans = Geist({
 });
 
 export const metadata: Metadata = {
-  title: "PulseTech — Accesorios premium para celular",
+  title: "Techstylebv — Accesorios para celulares",
   description:
-    "Fundas iPhone y Samsung, auriculares inalámbricos, cargadores rápidos, adaptadores USB-C y cables premium. Envío express y garantía extendida.",
+    "Cargadores originales Apple, fundas, vidrios templados y AirPods para iPhone. Consultá modelos y disponibilidad en Techstylebv.",
+  icons: {
+    icon: [
+      { url: "/brand/favicon-32.png", sizes: "32x32", type: "image/png" },
+      { url: "/brand/icon-192.png", sizes: "192x192", type: "image/png" },
+    ],
+    apple: "/brand/apple-touch-icon.png",
+  },
 };
 
 export default function RootLayout({
@@ -20,7 +27,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" className={`${geistSans.variable} scroll-smooth`}>
-      <body className="min-h-screen bg-zinc-950 font-sans text-zinc-100 antialiased">
+      <body className="min-h-screen bg-[var(--void)] font-sans text-[var(--foreground)] antialiased">
         {children}
       </body>
     </html>

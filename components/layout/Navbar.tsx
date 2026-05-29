@@ -1,16 +1,32 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { navLinks, siteConfig } from "@/lib/data";
+import { mainNavLinks } from "@/lib/catalog";
+import { categoryCatalog } from "@/lib/catalog";
+import { SearchBar } from "@/components/ui/SearchBar";
 import { Button } from "@/components/ui/Button";
+import { Logo } from "@/components/ui/Logo";
+import { IconCart, IconClose, IconMenu } from "@/components/ui/Icons";
+
+function isLinkActive(pathname: string, href: string): boolean {
+  const base = href.split("#")[0];
+  if (base === "/") return pathname === "/";
+  if (base === "/tienda") {
+    return pathname === "/tienda" || categoryCatalog.some((c) => c.path === pathname);
+  }
+  return pathname === base || pathname.startsWith(`${base}/`);
+}
 
 export function Navbar() {
+  const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [categoriesOpen, setCategoriesOpen] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
+    const onScroll = () => setScrolled(window.scrollY > 12);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -23,123 +39,161 @@ export function Navbar() {
     };
   }, [menuOpen]);
 
+  useEffect(() => {
+    setMenuOpen(false);
+    setCategoriesOpen(false);
+  }, [pathname]);
+
+  const navItems = mainNavLinks.filter((l) => l.label !== "Carrito");
+
   return (
     <header
       className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
-        scrolled
-          ? "border-b border-white/10 bg-zinc-950/80 backdrop-blur-xl shadow-lg shadow-black/20"
+        scrolled || pathname !== "/"
+          ? "glass border-b border-[var(--brand-purple)]/10 shadow-[0_8px_32px_rgba(0,0,0,0.5),0_0_40px_var(--glow-purple)]"
           : "bg-transparent"
       }`}
     >
-      <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link
-          href="#inicio"
-          className="flex items-center gap-2 text-lg font-semibold tracking-tight text-white"
-          onClick={() => setMenuOpen(false)}
-        >
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-violet-500 to-fuchsia-500 text-sm font-bold">
-            P
-          </span>
-          {siteConfig.name}
-        </Link>
-
-        <ul className="hidden items-center gap-8 md:flex">
-          {navLinks.map((link) => (
-            <li key={link.href}>
-              <Link
-                href={link.href}
-                className="text-sm text-zinc-400 transition-colors hover:text-white"
-              >
-                {link.label}
-              </Link>
-            </li>
-          ))}
-        </ul>
-
-        <div className="hidden items-center gap-3 md:flex">
+      <nav className="mx-auto flex min-h-[4.75rem] max-w-7xl items-center gap-3 px-4 py-2 sm:min-h-[5.25rem] sm:py-2.5 lg:px-8">
+        <div className="flex items-center gap-2 lg:min-w-[200px]">
           <button
             type="button"
-            aria-label="Buscar productos"
-            className="flex h-10 w-10 items-center justify-center rounded-full text-zinc-400 transition-colors hover:bg-white/10 hover:text-white"
+            aria-label={menuOpen ? "Cerrar menú" : "Abrir menú"}
+            aria-expanded={menuOpen}
+            className="flex h-10 w-10 items-center justify-center rounded-full text-white transition-colors hover:bg-white/5 lg:hidden"
+            onClick={() => setMenuOpen((o) => !o)}
           >
-            <svg
-              className="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={1.5}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
-              />
-            </svg>
+            {menuOpen ? <IconClose /> : <IconMenu />}
           </button>
-          <button
-            type="button"
-            aria-label="Carrito de compras"
-            className="relative flex h-10 w-10 items-center justify-center rounded-full text-zinc-400 transition-colors hover:bg-white/10 hover:text-white"
-          >
-            <svg
-              className="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={1.5}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
-              />
-            </svg>
-            <span className="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-violet-500 text-[10px] font-bold text-white">
-              0
-            </span>
-          </button>
-          <Button href="#productos" variant="primary" size="sm">
-            Comprar ahora
-          </Button>
+          <div className="hidden flex-1 lg:block lg:max-w-xs">
+            <SearchBar />
+          </div>
         </div>
 
-        <button
-          type="button"
-          aria-label={menuOpen ? "Cerrar menú" : "Abrir menú"}
-          aria-expanded={menuOpen}
-          className="flex h-10 w-10 items-center justify-center rounded-lg text-white md:hidden"
-          onClick={() => setMenuOpen((o) => !o)}
-        >
-          {menuOpen ? (
-            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          ) : (
-            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          )}
-        </button>
-      </nav>
+        <div className="absolute left-1/2 -translate-x-1/2">
+          <Logo href="/" />
+        </div>
 
-      {menuOpen && (
-        <div className="fixed inset-0 top-16 z-40 bg-zinc-950/95 backdrop-blur-xl md:hidden animate-fade-in">
-          <ul className="flex flex-col gap-1 p-4">
-            {navLinks.map((link) => (
+        <ul className="ml-auto hidden items-center gap-1 lg:flex">
+          {navItems.map((link) => {
+            const active = isLinkActive(pathname, link.href);
+            if (link.label === "Categorías") {
+              return (
+                <li
+                  key={link.href}
+                  className="relative"
+                  onMouseEnter={() => setCategoriesOpen(true)}
+                  onMouseLeave={() => setCategoriesOpen(false)}
+                >
+                  <Link
+                    href={link.href}
+                    className={`rounded-full px-4 py-2 text-sm transition-all duration-300 ${
+                      active
+                        ? "bg-white/10 text-white"
+                        : "text-[var(--muted)] hover:bg-white/5 hover:text-white"
+                    }`}
+                  >
+                    Categorías
+                  </Link>
+                  {categoriesOpen && (
+                    <div className="absolute right-0 top-full z-50 mt-2 w-52 rounded-2xl border border-white/10 glass p-2 shadow-2xl animate-fade-in">
+                      {categoryCatalog.map((cat) => (
+                        <Link
+                          key={cat.id}
+                          href={cat.path}
+                          className={`block rounded-xl px-4 py-2.5 text-sm transition-colors ${
+                            pathname === cat.path
+                              ? "bg-white/10 text-white"
+                              : "text-zinc-300 hover:bg-white/5 hover:text-white"
+                          }`}
+                        >
+                          {cat.name}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </li>
+              );
+            }
+            return (
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className="block rounded-xl px-4 py-3 text-lg text-zinc-300 transition-colors hover:bg-white/5 hover:text-white"
-                  onClick={() => setMenuOpen(false)}
+                  className={`rounded-full px-4 py-2 text-sm transition-all duration-300 ${
+                    active
+                      ? "bg-white/10 text-white"
+                      : "text-[var(--muted)] hover:bg-white/5 hover:text-white"
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+
+        <div className="ml-auto flex items-center gap-1 sm:gap-2 lg:ml-0">
+          <Link
+            href="/carrito"
+            aria-label="Carrito de compras"
+            className={`relative flex h-10 w-10 items-center justify-center rounded-full transition-colors ${
+              pathname === "/carrito"
+                ? "bg-white/10 text-white"
+                : "text-[var(--muted)] hover:bg-white/5 hover:text-white"
+            }`}
+          >
+            <IconCart />
+            <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-gradient-brand px-1 text-[10px] font-bold text-white">
+              0
+            </span>
+          </Link>
+          <Button href="/tienda" variant="primary" size="sm" className="hidden sm:inline-flex">
+            Tienda
+          </Button>
+        </div>
+      </nav>
+
+      <div className="px-4 pb-3 lg:hidden">
+        <SearchBar />
+      </div>
+
+      {menuOpen && (
+        <div className="glass fixed inset-0 top-[8.75rem] z-40 overflow-y-auto sm:top-[9.25rem] lg:hidden animate-fade-in">
+          <ul className="flex flex-col gap-1 p-4">
+            {mainNavLinks.map((link) => (
+              <li key={link.href}>
+                <Link
+                  href={link.href}
+                  className={`block rounded-xl px-4 py-3.5 text-base transition-colors ${
+                    isLinkActive(pathname, link.href)
+                      ? "bg-white/10 text-white"
+                      : "text-zinc-300 hover:bg-white/5 hover:text-white"
+                  }`}
                 >
                   {link.label}
                 </Link>
               </li>
             ))}
-            <li className="mt-4 px-4">
-              <Button href="#productos" variant="primary" size="lg" className="w-full">
-                Comprar ahora
-              </Button>
+            <li className="mt-2 border-t border-white/[0.08] pt-3">
+              <p className="px-4 pb-2 text-xs font-semibold tracking-wider text-[var(--muted)] uppercase">
+                Categorías
+              </p>
+              <ul className="flex flex-col gap-1">
+                {categoryCatalog.map((cat) => (
+                  <li key={cat.id}>
+                    <Link
+                      href={cat.path}
+                      className={`block rounded-xl px-4 py-3 text-base transition-colors ${
+                        pathname === cat.path
+                          ? "bg-white/10 text-white"
+                          : "text-zinc-300 hover:bg-white/5 hover:text-white"
+                      }`}
+                    >
+                      {cat.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             </li>
           </ul>
         </div>

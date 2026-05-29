@@ -2,30 +2,32 @@ import { Button } from "@/components/ui/Button";
 
 export function Newsletter() {
   return (
-    <section className="relative py-20 md:py-24">
+    <section className="py-24 md:py-32">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-violet-950/50 via-zinc-900 to-fuchsia-950/30 px-6 py-12 md:px-12 md:py-16">
-          <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-violet-500/20 blur-3xl" />
-          <div className="pointer-events-none absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-fuchsia-500/20 blur-3xl" />
+        <div className="relative overflow-hidden rounded-3xl border border-white/[0.08] p-8 md:p-16">
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-[var(--brand-purple)]/10 via-transparent to-[var(--brand-cyan)]/5" />
+          <div className="pointer-events-none absolute -right-32 -top-32 h-64 w-64 rounded-full bg-[var(--brand-purple)]/10 blur-3xl" />
 
-          <div className="relative mx-auto max-w-2xl text-center">
-            <h2 className="text-2xl font-semibold tracking-tight text-white md:text-3xl">
-              10% off en tu primera compra
+          <div className="relative mx-auto max-w-xl text-center">
+            <p className="text-[11px] font-semibold tracking-[0.2em] text-[var(--brand-cyan)] uppercase">
+              Newsletter
+            </p>
+            <h2 className="mt-4 text-2xl font-semibold tracking-tight text-white md:text-3xl">
+              Novedades y disponibilidad
             </h2>
-            <p className="mt-3 text-zinc-400">
-              Suscribite y recibí ofertas exclusivas, lanzamientos y tips para
-              cuidar tus accesorios.
+            <p className="mt-4 text-[var(--muted)]">
+              Dejanos tu email para avisarte cuando ingresen modelos o productos nuevos.
             </p>
 
             <form className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
-              <label htmlFor="email-newsletter" className="sr-only">
+              <label htmlFor="email" className="sr-only">
                 Email
               </label>
               <input
-                id="email-newsletter"
+                id="email"
                 type="email"
                 placeholder="tu@email.com"
-                className="w-full rounded-full border border-white/20 bg-white/5 px-5 py-3 text-sm text-white placeholder:text-zinc-500 backdrop-blur-sm transition-colors focus:border-violet-500/50 focus:outline-none focus:ring-2 focus:ring-violet-500/30 sm:max-w-xs"
+                className="w-full rounded-full border border-white/10 bg-white/[0.04] px-5 py-3.5 text-sm text-white placeholder:text-[var(--muted)] transition-all focus:border-[var(--brand-purple)]/40 focus:outline-none focus:ring-2 focus:ring-[var(--brand-purple)]/20 sm:max-w-xs"
               />
               <Button type="submit" variant="primary" size="md">
                 Suscribirme

@@ -3,28 +3,28 @@ import { testimonials } from "@/lib/data";
 
 export function Testimonials() {
   return (
-    <section id="opiniones" className="relative py-20 md:py-28 overflow-hidden">
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+    <section id="opiniones" className="py-24 md:py-32">
+      <div className="absolute inset-x-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeader
           eyebrow="Opiniones"
-          title="Lo que dicen nuestros clientes"
-          description="Miles de compradores confían en PulseTech para equipar sus dispositivos."
+          title="Confianza construida en cada entrega"
+          description="Próximamente vas a encontrar opiniones de clientes que compraron en el local."
         />
 
         <div className="grid gap-6 md:grid-cols-3">
-          {testimonials.map((testimonial, index) => (
+          {testimonials.map((t, index) => (
             <blockquote
-              key={testimonial.id}
-              className="flex flex-col rounded-2xl border border-white/10 bg-gradient-to-b from-zinc-900/80 to-zinc-950/80 p-6 backdrop-blur-sm transition-all duration-500 hover:border-white/20 animate-slide-up"
-              style={{ animationDelay: `${index * 120}ms` }}
+              key={t.id}
+              className="flex flex-col rounded-2xl glass-card p-8 transition-all duration-500 hover:border-white/15 animate-slide-up"
+              style={{ animationDelay: `${index * 100}ms` }}
             >
-              <div className="flex gap-1" aria-hidden>
-                {Array.from({ length: testimonial.rating }).map((_, i) => (
+              <div className="flex gap-0.5" aria-hidden>
+                {Array.from({ length: t.rating }).map((_, i) => (
                   <svg
                     key={i}
-                    className="h-4 w-4 text-amber-400"
+                    className="h-4 w-4 text-[var(--brand-cyan)]"
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >
@@ -33,19 +33,19 @@ export function Testimonials() {
                 ))}
               </div>
 
-              <p className="mt-4 flex-1 text-sm leading-relaxed text-zinc-300">
-                &ldquo;{testimonial.content}&rdquo;
+              <p className="mt-6 flex-1 text-[15px] leading-relaxed text-zinc-300">
+                &ldquo;{t.content}&rdquo;
               </p>
 
-              <footer className="mt-6 flex items-center gap-3 border-t border-white/10 pt-4">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 text-sm font-semibold text-white">
-                  {testimonial.name.charAt(0)}
+              <footer className="mt-8 flex items-center gap-3 border-t border-white/[0.06] pt-6">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-brand text-sm font-bold text-white">
+                  {t.name.charAt(0)}
                 </div>
                 <div>
-                  <cite className="not-italic text-sm font-medium text-white">
-                    {testimonial.name}
+                  <cite className="not-italic text-sm font-semibold text-white">
+                    {t.name}
                   </cite>
-                  <p className="text-xs text-zinc-500">{testimonial.role}</p>
+                  <p className="text-xs text-[var(--muted)]">{t.role}</p>
                 </div>
               </footer>
             </blockquote>

@@ -14,17 +14,17 @@ export function SectionHeader({
   const alignClass = align === "center" ? "text-center mx-auto" : "text-left";
 
   return (
-    <div className={`max-w-2xl mb-12 md:mb-16 ${alignClass}`}>
+    <div className={`max-w-2xl mb-14 md:mb-20 ${alignClass}`}>
       {eyebrow && (
-        <p className="mb-3 text-sm font-medium tracking-widest text-violet-400 uppercase">
+        <p className="mb-4 text-[11px] font-semibold tracking-[0.2em] text-[var(--brand-cyan)] uppercase">
           {eyebrow}
         </p>
       )}
-      <h2 className="text-3xl font-semibold tracking-tight text-white md:text-4xl lg:text-5xl">
+      <h2 className="text-3xl font-semibold tracking-[-0.03em] text-white md:text-4xl lg:text-[2.75rem] lg:leading-[1.1]">
         {title}
       </h2>
       {description && (
-        <p className="mt-4 text-base leading-relaxed text-zinc-400 md:text-lg">
+        <p className="mt-5 text-base leading-relaxed text-[var(--muted)] md:text-lg">
           {description}
         </p>
       )}

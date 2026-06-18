@@ -95,6 +95,66 @@ body {
   mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 20%, transparent 70%);
 }
 
+.category-carousel-slide {
+  transition:
+    opacity 600ms cubic-bezier(0.4, 0, 0.2, 1),
+    transform 600ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hero-mobile-carousel {
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+.hero-mobile-carousel-slide {
+  scroll-snap-align: center;
+  scroll-snap-stop: always;
+}
+
+.card-hover {
+  transition:
+    transform 350ms ease-out,
+    box-shadow 350ms ease-out,
+    border-color 350ms ease-out;
+}
+
+.card-hover-image {
+  transition: transform 350ms ease-out;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .card-hover:hover {
+    transform: translateY(-7px);
+    border-color: rgba(157, 78, 221, 0.22);
+    box-shadow:
+      0 0 0 1px rgba(157, 78, 221, 0.12),
+      0 0 20px rgba(157, 78, 221, 0.08),
+      0 0 40px rgba(0, 180, 216, 0.05),
+      0 28px 56px -14px rgba(0, 0, 0, 0.55);
+  }
+
+  .group:hover .card-hover-image {
+    transform: scale(1.04);
+  }
+}
+
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  filter: blur(4px);
+  transition:
+    opacity 600ms ease-out,
+    transform 600ms ease-out,
+    filter 600ms ease-out;
+}
+
+.scroll-reveal-visible {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+
 @keyframes fade-in {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -164,8 +224,78 @@ body {
 .animation-delay-300 { animation-delay: 300ms; }
 .animation-delay-400 { animation-delay: 400ms; }
 
+.scroll-snap-x {
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+.scroll-snap-start {
+  scroll-snap-align: start;
+}
+
+.hide-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.card-tap {
+  transition: transform 180ms ease-out;
+}
+
+.card-tap:active {
+  transform: scale(0.98);
+}
+
+.home-section {
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+}
+
+@media (min-width: 768px) {
+  .home-section {
+    padding-top: 6rem;
+    padding-bottom: 6rem;
+  }
+}
+
+@media (max-width: 767px) {
+  #productos-destacados,
+  #productos-novedades,
+  #productos-mas-vendidos {
+    scroll-margin-top: 8.5rem;
+  }
+}
+
+.home-filter-grid {
+  transition: opacity 280ms ease-out;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
+  html {
+    scroll-behavior: auto;
+  }
+
+  .hero-mobile-carousel {
+    scroll-behavior: auto;
+  }
+  .category-carousel-slide {
+    transition: none;
+  }
+  .card-hover:hover,
+  .group:hover .card-hover-image {
+    transform: none;
+  }
+  .scroll-reveal,
+  .scroll-reveal-visible {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    transition: none;
+  }
   .animate-slide-up,
   .animate-fade-in,
   .animate-slide-in-right,

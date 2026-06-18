@@ -5,8 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { mainNavLinks } from "@/lib/catalog";
 import { categoryCatalog } from "@/lib/catalog";
-import { SearchBar } from "@/components/ui/SearchBar";
-import { Button } from "@/components/ui/Button";
+import { Button, getButtonClassName } from "@/components/ui/Button";
 import { Logo } from "@/components/ui/Logo";
 import { IconCart, IconClose, IconMenu } from "@/components/ui/Icons";
 
@@ -56,18 +55,16 @@ export function Navbar() {
     >
       <nav className="mx-auto flex min-h-[4.75rem] max-w-7xl items-center gap-3 px-4 py-2 sm:min-h-[5.25rem] sm:py-2.5 lg:px-8">
         <div className="flex items-center gap-2 lg:min-w-[200px]">
-          <button
+          <Button
             type="button"
+            variant="icon"
             aria-label={menuOpen ? "Cerrar menú" : "Abrir menú"}
             aria-expanded={menuOpen}
-            className="flex h-10 w-10 items-center justify-center rounded-full text-white transition-colors hover:bg-white/5 lg:hidden"
+            className="lg:hidden"
             onClick={() => setMenuOpen((o) => !o)}
           >
             {menuOpen ? <IconClose /> : <IconMenu />}
-          </button>
-          <div className="hidden flex-1 lg:block lg:max-w-xs">
-            <SearchBar />
-          </div>
+          </Button>
         </div>
 
         <div className="absolute left-1/2 -translate-x-1/2">
@@ -133,32 +130,36 @@ export function Navbar() {
         </ul>
 
         <div className="ml-auto flex items-center gap-1 sm:gap-2 lg:ml-0">
-          <Link
+          <Button
             href="/carrito"
+            variant="icon"
             aria-label="Carrito de compras"
-            className={`relative flex h-10 w-10 items-center justify-center rounded-full transition-colors ${
+            className={`relative ${
               pathname === "/carrito"
-                ? "bg-white/10 text-white"
-                : "text-[var(--muted)] hover:bg-white/5 hover:text-white"
+                ? "border-white/20 bg-white/10 text-white"
+                : "text-[var(--muted)]"
             }`}
           >
             <IconCart />
-            <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-gradient-brand px-1 text-[10px] font-bold text-white">
+            <span
+              className={getButtonClassName({
+                variant: "surface-primary",
+                size: "surface",
+                className:
+                  "pointer-events-none absolute -top-0.5 -right-0.5 h-4 min-w-4 px-1 text-[10px] font-bold",
+              })}
+            >
               0
             </span>
-          </Link>
+          </Button>
           <Button href="/tienda" variant="primary" size="sm" className="hidden sm:inline-flex">
             Tienda
           </Button>
         </div>
       </nav>
 
-      <div className="px-4 pb-3 lg:hidden">
-        <SearchBar />
-      </div>
-
       {menuOpen && (
-        <div className="glass fixed inset-0 top-[8.75rem] z-40 overflow-y-auto sm:top-[9.25rem] lg:hidden animate-fade-in">
+        <div className="glass fixed inset-0 top-[4.75rem] z-40 overflow-y-auto sm:top-[5.25rem] lg:hidden animate-fade-in">
           <ul className="flex flex-col gap-1 p-4">
             {mainNavLinks.map((link) => (
               <li key={link.href}>

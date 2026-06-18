@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { categoryCatalog } from "@/lib/catalog";
+import { Button } from "@/components/ui/Button";
 
 type ShopFiltersProps = {
   activeCategoryId?: string | "all";
@@ -24,17 +24,14 @@ export function ShopFilters({ activeCategoryId = "all" }: ShopFiltersProps) {
           pill.id === activeCategoryId ||
           (activeCategoryId === "all" && pill.id === "all");
         return (
-          <Link
+          <Button
             key={pill.id}
             href={pill.href}
-            className={`rounded-full border px-4 py-2 text-sm font-medium transition-all duration-300 ${
-              isActive
-                ? "border-transparent bg-gradient-brand text-white shadow-lg shadow-[var(--glow-purple)]"
-                : "border-white/10 bg-white/[0.04] text-[var(--muted)] hover:border-[var(--brand-purple)]/30 hover:text-white"
-            }`}
+            variant={isActive ? "primary" : "secondary"}
+            size="filter"
           >
             {pill.label}
-          </Link>
+          </Button>
         );
       })}
     </div>

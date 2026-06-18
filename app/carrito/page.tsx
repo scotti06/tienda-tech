@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { StoreShell } from "@/components/layout/StoreShell";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { Button } from "@/components/ui/Button";
@@ -48,12 +47,9 @@ export default function CarritoPage() {
 
           <p className="mt-8 text-center text-sm text-[var(--muted)]">
             ¿Ya elegiste un producto?{" "}
-            <Link
-              href="/contacto"
-              className="text-[var(--brand-cyan)] transition-colors hover:text-white"
-            >
+            <Button href="/contacto" variant="inline-link" className="text-sm">
               Consultanos por WhatsApp
-            </Link>
+            </Button>
           </p>
         </div>
       </main>

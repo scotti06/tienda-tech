@@ -4,6 +4,9 @@ export type Category = {
   description: string;
   href: string;
   accent: string;
+  image: string;
+  /** Max frame (px) for carousel presentation; object-contain preserves aspect ratio. */
+  imageFrame: { width: number; height: number };
 };
 
 export type Product = {
@@ -17,6 +20,9 @@ export type Product = {
   cashPrice?: number;
   badge?: string;
   accent: string;
+  image: string;
+  /** Max frame (px) for card presentation; object-contain preserves aspect ratio. */
+  imageFrame: { width: number; height: number };
   rating: number;
   freeShipping?: boolean;
   installments?: string;
@@ -138,6 +144,8 @@ export const products: Product[] = [
     categoryId: "fundas",
     price: 0,
     accent: "bg-[radial-gradient(ellipse_at_50%_0%,#1a2e28_0%,#0a0c10_70%)]",
+    image: "/products/funda-iphone.webp",
+    imageFrame: { width: 204, height: 224 },
     rating: 0,
   },
   {
@@ -148,6 +156,8 @@ export const products: Product[] = [
     categoryId: "fundas",
     price: 0,
     accent: "bg-[radial-gradient(ellipse_at_50%_0%,#1a2430_0%,#0a0c10_70%)]",
+    image: "/products/funda-magsafe-iphone.webp",
+    imageFrame: { width: 210, height: 230 },
     rating: 0,
   },
   {
@@ -158,6 +168,8 @@ export const products: Product[] = [
     categoryId: "vidrios",
     price: 0,
     accent: "bg-[radial-gradient(ellipse_at_50%_0%,#152228_0%,#0a0c10_70%)]",
+    image: "/products/vidrio-templado-iphone.webp",
+    imageFrame: { width: 248, height: 172 },
     rating: 0,
   },
   {
@@ -168,6 +180,8 @@ export const products: Product[] = [
     categoryId: "vidrios",
     price: 0,
     accent: "bg-[radial-gradient(ellipse_at_50%_0%,#1a2828_0%,#0a0c10_70%)]",
+    image: "/products/vidrio-templado-pack.webp",
+    imageFrame: { width: 242, height: 192 },
     rating: 0,
   },
   {
@@ -178,6 +192,8 @@ export const products: Product[] = [
     categoryId: "carga",
     price: 0,
     accent: "bg-[radial-gradient(ellipse_at_50%_0%,#2a1f18_0%,#0a0c10_70%)]",
+    image: "/products/cargador-apple-20w.webp",
+    imageFrame: { width: 230, height: 230 },
     rating: 0,
   },
   {
@@ -188,6 +204,8 @@ export const products: Product[] = [
     categoryId: "carga",
     price: 0,
     accent: "bg-[radial-gradient(ellipse_at_50%_0%,#1c1c22_0%,#0a0c10_70%)]",
+    image: "/products/cargador-apple-iphone.webp",
+    imageFrame: { width: 246, height: 212 },
     rating: 0,
   },
   {
@@ -198,6 +216,8 @@ export const products: Product[] = [
     categoryId: "airpods",
     price: 0,
     accent: "bg-[radial-gradient(ellipse_at_50%_0%,#15252a_0%,#0a0c10_70%)]",
+    image: "/products/airpods.webp",
+    imageFrame: { width: 216, height: 216 },
     rating: 0,
   },
   {
@@ -208,6 +228,8 @@ export const products: Product[] = [
     categoryId: "airpods",
     price: 0,
     accent: "bg-[radial-gradient(ellipse_at_50%_0%,#1a2030_0%,#0a0c10_70%)]",
+    image: "/products/airpods-pro.webp",
+    imageFrame: { width: 220, height: 220 },
     rating: 0,
   },
 ];

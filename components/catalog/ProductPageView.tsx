@@ -1,6 +1,7 @@
-import Link from "next/link";
+import Image from "next/image";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { Button } from "@/components/ui/Button";
+import { ScrollReveal, SCROLL_REVEAL_STAGGER_MS } from "@/components/ui/ScrollReveal";
 import { formatPrice, type Product } from "@/lib/data";
 import { getCategoryById } from "@/lib/catalog";
 import { siteConfig } from "@/lib/data";
@@ -30,16 +31,35 @@ export function ProductPageView({ product }: ProductPageViewProps) {
         />
 
         <div className="grid gap-10 lg:grid-cols-2 lg:gap-16">
-          <div
-            className={`relative aspect-square overflow-hidden rounded-3xl border border-white/[0.08] ${product.accent}`}
-          >
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_50%,rgba(157,78,221,0.12),transparent_65%)]" />
-            <div className="absolute inset-0 flex items-center justify-center p-12">
-              <div className="h-48 w-48 rounded-[2.5rem] border border-white/10 bg-gradient-to-b from-white/[0.12] to-white/[0.02] backdrop-blur-sm md:h-56 md:w-56" />
+          <ScrollReveal>
+            <div
+              className={`relative aspect-square overflow-hidden rounded-3xl border border-white/[0.08] ${product.accent}`}
+            >
+              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_50%,rgba(157,78,221,0.12),transparent_65%)]" />
+              <div className="absolute inset-0 flex items-center justify-center p-12">
+                <div
+                  className="relative"
+                  style={{
+                    width: `min(100%, ${product.imageFrame.width}px)`,
+                    aspectRatio: `${product.imageFrame.width} / ${product.imageFrame.height}`,
+                    maxHeight: "100%",
+                  }}
+                >
+                  <Image
+                    src={product.image}
+                    alt={product.name}
+                    fill
+                    priority
+                    className="object-contain object-center drop-shadow-[0_14px_22px_rgba(0,0,0,0.22)]"
+                    sizes={`(max-width: 1024px) 100vw, ${Math.max(product.imageFrame.width, product.imageFrame.height)}px`}
+                  />
+                </div>
+              </div>
             </div>
-          </div>
+          </ScrollReveal>
 
-          <div className="flex flex-col justify-center">
+          <ScrollReveal delay={SCROLL_REVEAL_STAGGER_MS}>
+            <div className="flex flex-col justify-center">
             <p className="text-[11px] font-semibold tracking-[0.2em] text-[var(--brand-cyan)] uppercase">
               {product.category}
             </p>
@@ -69,14 +89,16 @@ export function ProductPageView({ product }: ProductPageViewProps) {
             </div>
 
             {category && (
-              <Link
+              <Button
                 href={category.path}
-                className="mt-8 inline-flex text-sm font-medium text-[var(--brand-cyan)] transition-colors hover:text-white"
+                variant="inline-link"
+                className="mt-8 text-sm font-medium hover:text-white"
               >
                 ← Volver a {category.name}
-              </Link>
+              </Button>
             )}
-          </div>
+            </div>
+          </ScrollReveal>
         </div>
       </div>
     </main>

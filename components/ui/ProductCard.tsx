@@ -1,37 +1,125 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import type { Product } from "@/lib/data";
 import { formatPrice } from "@/lib/data";
+import { getProductHref } from "@/lib/catalog";
+import { getButtonClassName } from "@/components/ui/Button";
 
 type ProductCardProps = {
   product: Product;
+  layout?: "default" | "home";
 };
 
-export function ProductCard({ product }: ProductCardProps) {
+export function ProductCard({ product, layout = "default" }: ProductCardProps) {
+  const productHref = getProductHref(product);
+  const isHome = layout === "home";
+
+  if (isHome) {
+    return (
+      <Link
+        href={productHref}
+        className="card-tap card-hover group flex flex-col overflow-hidden rounded-2xl border border-white/[0.06] bg-[var(--surface)] lg:rounded-2xl"
+      >
+        <div
+          className={`relative aspect-square overflow-hidden ${product.accent}`}
+        >
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_100%,rgba(157,78,221,0.1),transparent_60%)]" />
+
+          <div className="absolute inset-0 flex items-center justify-center p-2.5 sm:p-3">
+            <div
+              className="relative card-hover-image h-full w-full"
+              style={{
+                maxWidth: `${product.imageFrame.width}px`,
+                aspectRatio: `${product.imageFrame.width} / ${product.imageFrame.height}`,
+              }}
+            >
+              <Image
+                src={product.image}
+                alt={product.name}
+                fill
+                className="object-contain object-center drop-shadow-[0_12px_20px_rgba(0,0,0,0.2)]"
+                sizes="(max-width: 1024px) 45vw, 240px"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="flex flex-1 flex-col gap-1.5 p-2.5 sm:p-3">
+          <h3 className="text-[12px] font-semibold leading-snug tracking-[-0.01em] text-white line-clamp-2 sm:text-[13px]">
+            {product.name}
+          </h3>
+
+          <p className="text-sm font-semibold tracking-tight text-white">
+            {formatPrice(product.price)}
+          </p>
+
+          <span
+            className={getButtonClassName({
+              variant: "surface-primary",
+              size: "surface",
+              className:
+                "mt-0.5 w-full py-2 text-[10px] font-semibold tracking-wide uppercase sm:text-[11px]",
+            })}
+          >
+            Ver producto
+          </span>
+        </div>
+      </Link>
+    );
+  }
+
   return (
     <Link
-      href={`/producto/${product.slug}`}
-      className="group relative flex flex-col overflow-hidden rounded-2xl border border-white/[0.06] bg-[var(--surface)] transition-all duration-500 hover:border-white/15 hover:shadow-[0_24px_48px_-12px_rgba(0,0,0,0.5)] hover:-translate-y-0.5"
+      href={productHref}
+      className="group card-hover relative flex flex-col overflow-hidden rounded-2xl border border-white/[0.06] bg-[var(--surface)]"
     >
       <div className={`relative aspect-[4/5] overflow-hidden ${product.accent}`}>
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_100%,rgba(157,78,221,0.1),transparent_60%)]" />
 
         {product.badge && (
-          <span className="absolute top-4 left-4 z-10 rounded-md bg-gradient-brand px-2.5 py-1 text-[10px] font-bold tracking-wider text-white uppercase">
+          <span
+            className={getButtonClassName({
+              variant: "surface-primary",
+              size: "surface",
+              rounded: "rounded-md",
+              className:
+                "pointer-events-none absolute top-4 left-4 z-10 px-2.5 py-1 text-[10px] font-bold tracking-wider uppercase",
+            })}
+          >
             {product.badge}
           </span>
         )}
 
         <div className="absolute inset-0 flex items-center justify-center p-8">
-          <div className="relative h-36 w-36 transition-transform duration-700 ease-out group-hover:scale-105">
-            <div className="absolute inset-0 rounded-[2rem] border border-white/10 bg-gradient-to-b from-white/[0.12] to-white/[0.02] shadow-2xl backdrop-blur-sm" />
-            <div className="absolute inset-4 rounded-2xl border border-white/5 bg-[var(--void)]/40" />
-            <div className="absolute -inset-4 rounded-full bg-[var(--brand-purple)]/10 blur-2xl opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+          <div
+            className="relative card-hover-image"
+            style={{
+              width: `min(100%, ${product.imageFrame.width}px)`,
+              aspectRatio: `${product.imageFrame.width} / ${product.imageFrame.height}`,
+              maxHeight: "100%",
+            }}
+          >
+            <Image
+              src={product.image}
+              alt={product.name}
+              fill
+              className="object-contain object-center drop-shadow-[0_14px_22px_rgba(0,0,0,0.22)]"
+              sizes={`(max-width: 768px) 50vw, ${Math.max(product.imageFrame.width, product.imageFrame.height)}px`}
+            />
           </div>
         </div>
 
-        <span className="absolute inset-x-4 bottom-4 z-10 flex translate-y-2 items-center justify-center rounded-full bg-gradient-brand py-3.5 text-sm font-semibold tracking-wide text-white uppercase opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+        <span
+          aria-hidden
+          className={getButtonClassName({
+            variant: "surface-primary",
+            size: "surface",
+            className:
+              "pointer-events-none absolute inset-x-4 bottom-4 z-10 translate-y-2 py-3.5 text-sm font-semibold tracking-wide uppercase opacity-0 transition-all duration-350 ease-out [@media(hover:hover)_and_(pointer:fine)]:group-hover:translate-y-0 [@media(hover:hover)_and_(pointer:fine)]:group-hover:opacity-100",
+          })}
+        >
           Ver producto
         </span>
       </div>

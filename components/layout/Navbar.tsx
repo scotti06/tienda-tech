@@ -5,9 +5,16 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { mainNavLinks } from "@/lib/catalog";
 import { categoryCatalog } from "@/lib/catalog";
-import { Button, getButtonClassName } from "@/components/ui/Button";
+import { Button } from "@/components/ui/Button";
+import {
+  HeaderCartBadge,
+  HeaderIconButton,
+  HeaderIconCart,
+} from "@/components/ui/HeaderIconButton";
 import { Logo } from "@/components/ui/Logo";
-import { IconCart, IconClose, IconMenu } from "@/components/ui/Icons";
+import { MobileNavDrawer } from "@/components/layout/MobileNavDrawer";
+import { AnimatedMenuIcon } from "@/components/ui/AnimatedMenuIcon";
+import { useCart } from "@/components/layout/CartContext";
 
 function isLinkActive(pathname: string, href: string): boolean {
   const base = href.split("#")[0];
@@ -23,6 +30,7 @@ export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [categoriesOpen, setCategoriesOpen] = useState(false);
+  const { itemCount, isOpen: cartOpen, openCart, closeCart } = useCart();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -32,18 +40,21 @@ export function Navbar() {
   }, []);
 
   useEffect(() => {
-    document.body.style.overflow = menuOpen ? "hidden" : "";
+    document.body.style.overflow = menuOpen || cartOpen ? "hidden" : "";
     return () => {
       document.body.style.overflow = "";
     };
-  }, [menuOpen]);
+  }, [menuOpen, cartOpen]);
 
   useEffect(() => {
     setMenuOpen(false);
     setCategoriesOpen(false);
-  }, [pathname]);
+    closeCart();
+  }, [pathname, closeCart]);
 
   const navItems = mainNavLinks.filter((l) => l.label !== "Carrito");
+
+  const isActive = (href: string) => isLinkActive(pathname, href);
 
   return (
     <header
@@ -54,16 +65,16 @@ export function Navbar() {
       }`}
     >
       <nav className="mx-auto flex min-h-[4.75rem] max-w-7xl items-center gap-3 px-4 py-2 sm:min-h-[5.25rem] sm:py-2.5 lg:px-8">
-        <div className="flex items-center gap-2 lg:min-w-[200px]">
+        <div className="flex w-11 shrink-0 items-center lg:min-w-[200px]">
           <Button
             type="button"
             variant="icon"
             aria-label={menuOpen ? "Cerrar menú" : "Abrir menú"}
             aria-expanded={menuOpen}
-            className="lg:hidden"
+            className="lg:hidden hover:scale-[1.03] active:scale-[0.96]"
             onClick={() => setMenuOpen((o) => !o)}
           >
-            {menuOpen ? <IconClose /> : <IconMenu />}
+            <AnimatedMenuIcon open={menuOpen} />
           </Button>
         </div>
 
@@ -129,76 +140,22 @@ export function Navbar() {
           })}
         </ul>
 
-        <div className="ml-auto flex items-center gap-1 sm:gap-2 lg:ml-0">
-          <Button
-            href="/carrito"
-            variant="icon"
+        <div className="ml-auto flex w-11 shrink-0 items-center justify-end lg:min-w-[200px] lg:ml-0">
+          <HeaderIconButton
             aria-label="Carrito de compras"
-            className={`relative ${
-              pathname === "/carrito"
-                ? "border-white/20 bg-white/10 text-white"
-                : "text-[var(--muted)]"
-            }`}
+            onClick={openCart}
+            badge={<HeaderCartBadge count={itemCount} />}
           >
-            <IconCart />
-            <span
-              className={getButtonClassName({
-                variant: "surface-primary",
-                size: "surface",
-                className:
-                  "pointer-events-none absolute -top-0.5 -right-0.5 h-4 min-w-4 px-1 text-[10px] font-bold",
-              })}
-            >
-              0
-            </span>
-          </Button>
-          <Button href="/tienda" variant="primary" size="sm" className="hidden sm:inline-flex">
-            Tienda
-          </Button>
+            <HeaderIconCart />
+          </HeaderIconButton>
         </div>
       </nav>
 
-      {menuOpen && (
-        <div className="glass fixed inset-0 top-[4.75rem] z-40 overflow-y-auto sm:top-[5.25rem] lg:hidden animate-fade-in">
-          <ul className="flex flex-col gap-1 p-4">
-            {mainNavLinks.map((link) => (
-              <li key={link.href}>
-                <Link
-                  href={link.href}
-                  className={`block rounded-xl px-4 py-3.5 text-base transition-colors ${
-                    isLinkActive(pathname, link.href)
-                      ? "bg-white/10 text-white"
-                      : "text-zinc-300 hover:bg-white/5 hover:text-white"
-                  }`}
-                >
-                  {link.label}
-                </Link>
-              </li>
-            ))}
-            <li className="mt-2 border-t border-white/[0.08] pt-3">
-              <p className="px-4 pb-2 text-xs font-semibold tracking-wider text-[var(--muted)] uppercase">
-                Categorías
-              </p>
-              <ul className="flex flex-col gap-1">
-                {categoryCatalog.map((cat) => (
-                  <li key={cat.id}>
-                    <Link
-                      href={cat.path}
-                      className={`block rounded-xl px-4 py-3 text-base transition-colors ${
-                        pathname === cat.path
-                          ? "bg-white/10 text-white"
-                          : "text-zinc-300 hover:bg-white/5 hover:text-white"
-                      }`}
-                    >
-                      {cat.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </li>
-          </ul>
-        </div>
-      )}
+      <MobileNavDrawer
+        open={menuOpen}
+        onClose={() => setMenuOpen(false)}
+        isLinkActive={isActive}
+      />
     </header>
   );
 }

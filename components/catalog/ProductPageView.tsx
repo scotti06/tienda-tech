@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { Button } from "@/components/ui/Button";
+import { AddToCartButton } from "@/components/cart/AddToCartButton";
 import { ScrollReveal, SCROLL_REVEAL_STAGGER_MS } from "@/components/ui/ScrollReveal";
 import { formatPrice, type Product } from "@/lib/data";
 import { getCategoryById } from "@/lib/catalog";
@@ -83,9 +84,7 @@ export function ProductPageView({ product }: ProductPageViewProps) {
               >
                 Consultar por WhatsApp
               </Button>
-              <Button href="/carrito" variant="secondary" size="lg">
-                Agregar al carrito
-              </Button>
+              <AddToCartButton product={product} variant="secondary" size="lg" />
             </div>
 
             {category && (

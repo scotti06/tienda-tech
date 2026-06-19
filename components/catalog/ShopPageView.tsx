@@ -7,6 +7,7 @@ import { ScrollReveal, SCROLL_REVEAL_STAGGER_MS } from "@/components/ui/ScrollRe
 import { navigableCategories } from "@/lib/catalog";
 import { products } from "@/lib/data";
 import { Button } from "@/components/ui/Button";
+import { OpenCartButton } from "@/components/cart/OpenCartButton";
 
 export function ShopPageView() {
   return (
@@ -98,9 +99,7 @@ export function ShopPageView() {
                 <Button href="/contacto" variant="primary" size="md">
                   Contacto
                 </Button>
-                <Button href="/carrito" variant="secondary" size="md">
-                  Ver carrito
-                </Button>
+                <OpenCartButton variant="secondary" size="md" />
               </div>
             </div>
           </ScrollReveal>

@@ -8,6 +8,7 @@ import { siteConfig } from "@/lib/data";
 import { getProductBySlug } from "@/lib/catalog";
 import { Button, getButtonClassName } from "@/components/ui/Button";
 import { IconClose } from "@/components/ui/Icons";
+import { useWhatsAppAssistant } from "@/components/layout/WhatsAppAssistantContext";
 
 type QuickReply = {
   id: string;
@@ -121,7 +122,7 @@ function tryOpenWhatsApp(url: string): boolean {
 
 export function WhatsAppAssistant() {
   const pathname = usePathname();
-  const [open, setOpen] = useState(false);
+  const { isOpen: open, setIsOpen: setOpen } = useWhatsAppAssistant();
   const [connectingUrl, setConnectingUrl] = useState<string | null>(null);
   const [showFallback, setShowFallback] = useState(false);
   const [reduceMotion, setReduceMotion] = useState(false);
@@ -133,7 +134,7 @@ export function WhatsAppAssistant() {
     return getProductBySlug(slug)?.name ?? null;
   }, [pathname]);
 
-  const close = useCallback(() => setOpen(false), []);
+  const close = useCallback(() => setOpen(false), [setOpen]);
 
   const clearHandoff = useCallback(() => {
     if (handoffTimerRef.current !== null) {
@@ -403,7 +404,7 @@ export function WhatsAppAssistant() {
         }
         aria-expanded={open}
         disabled={Boolean(connectingUrl)}
-        onClick={() => setOpen((value) => !value)}
+        onClick={() => setOpen(!open)}
         className={`fixed bottom-6 right-6 z-[80] flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg shadow-black/30 transition-all duration-300 hover:scale-105 hover:shadow-xl disabled:pointer-events-none disabled:opacity-60 ${open ? "scale-95 ring-2 ring-white/25" : ""}`}
       >
         <WhatsAppGlyph />

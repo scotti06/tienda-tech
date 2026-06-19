@@ -1,4 +1,9 @@
-import { products, type Category, type Product } from "@/lib/data";
+import {
+  getImageFrame,
+  products,
+  type Category,
+  type Product,
+} from "@/lib/data";
 
 export type CategoryMeta = Category & {
   slug: string;
@@ -147,6 +152,13 @@ function validateProductCatalog(): void {
   const seen = new Map<string, string>();
 
   for (const product of products) {
+    if (!product.imageFrame?.width || !product.imageFrame?.height) {
+      console.error("[product-catalog] imageFrame inválido", {
+        id: product.id,
+        name: product.name,
+      });
+    }
+
     const slug = product.slug?.trim();
 
     if (!slug) {
@@ -175,15 +187,24 @@ export function getAllCategoryPaths(): string[] {
   return categoryCatalog.map((c) => c.path);
 }
 
+if (process.env.NODE_ENV === "development") {
+  for (const category of categoryCatalog) {
+    if (!category.imageFrame?.width || !category.imageFrame?.height) {
+      console.error("[category-catalog] imageFrame inválido", {
+        id: category.id,
+        name: category.name,
+      });
+    }
+  }
+}
+
 /** Categorías con href actualizado para cards y footer */
-export const navigableCategories: Category[] = categoryCatalog.map(
-  ({ id, name, description, href, accent, image, imageFrame }) => ({
-    id,
-    name,
-    description,
-    href,
-    accent,
-    image,
-    imageFrame,
-  }),
-);
+export const navigableCategories: Category[] = categoryCatalog.map((meta) => ({
+  id: meta.id,
+  name: meta.name,
+  description: meta.description,
+  href: meta.href,
+  accent: meta.accent,
+  image: meta.image,
+  imageFrame: getImageFrame(meta.imageFrame),
+}));

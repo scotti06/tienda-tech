@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Product } from "@/lib/data";
-import { formatPrice } from "@/lib/data";
+import { formatPrice, getImageFrame } from "@/lib/data";
 import { getProductHref } from "@/lib/catalog";
 import { getButtonClassName } from "@/components/ui/Button";
 
@@ -14,6 +14,7 @@ type ProductCardProps = {
 
 export function ProductCard({ product, layout = "default" }: ProductCardProps) {
   const productHref = getProductHref(product);
+  const imageFrame = getImageFrame(product.imageFrame);
   const isHome = layout === "home";
 
   if (isHome) {
@@ -31,8 +32,8 @@ export function ProductCard({ product, layout = "default" }: ProductCardProps) {
             <div
               className="relative card-hover-image h-full w-full"
               style={{
-                maxWidth: `${product.imageFrame.width}px`,
-                aspectRatio: `${product.imageFrame.width} / ${product.imageFrame.height}`,
+                maxWidth: `${imageFrame.width}px`,
+                aspectRatio: `${imageFrame.width} / ${imageFrame.height}`,
               }}
             >
               <Image
@@ -96,8 +97,8 @@ export function ProductCard({ product, layout = "default" }: ProductCardProps) {
           <div
             className="relative card-hover-image"
             style={{
-              width: `min(100%, ${product.imageFrame.width}px)`,
-              aspectRatio: `${product.imageFrame.width} / ${product.imageFrame.height}`,
+              width: `min(100%, ${imageFrame.width}px)`,
+              aspectRatio: `${imageFrame.width} / ${imageFrame.height}`,
               maxHeight: "100%",
             }}
           >
@@ -106,7 +107,7 @@ export function ProductCard({ product, layout = "default" }: ProductCardProps) {
               alt={product.name}
               fill
               className="object-contain object-center drop-shadow-[0_14px_22px_rgba(0,0,0,0.22)]"
-              sizes={`(max-width: 768px) 50vw, ${Math.max(product.imageFrame.width, product.imageFrame.height)}px`}
+              sizes={`(max-width: 768px) 50vw, ${Math.max(imageFrame.width, imageFrame.height)}px`}
             />
           </div>
         </div>

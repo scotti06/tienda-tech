@@ -9,6 +9,15 @@ export type Category = {
   imageFrame: { width: number; height: number };
 };
 
+export const DEFAULT_IMAGE_FRAME = { width: 300, height: 300 } as const;
+
+export function getImageFrame(
+  frame: { width: number; height: number } | undefined | null,
+): { width: number; height: number } {
+  if (frame && frame.width > 0 && frame.height > 0) return frame;
+  return DEFAULT_IMAGE_FRAME;
+}
+
 export type Product = {
   id: string;
   slug: string;

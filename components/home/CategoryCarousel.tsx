@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import type { Category } from "@/lib/data";
+import { getImageFrame, type Category } from "@/lib/data";
 
 type CategoryCarouselProps = {
   categories: Category[];
@@ -15,7 +15,10 @@ export function CategoryCarousel({ categories }: CategoryCarouselProps) {
         className="scroll-snap-x hide-scrollbar -mx-4 flex items-start gap-2.5 overflow-x-auto px-4 pb-1"
         aria-label="Categorías"
       >
-        {categories.map((category) => (
+        {categories.map((category) => {
+          const imageFrame = getImageFrame(category.imageFrame);
+
+          return (
           <Link
             key={category.id}
             href={category.href}
@@ -27,8 +30,8 @@ export function CategoryCarousel({ categories }: CategoryCarouselProps) {
               <div
                 className="relative mt-0.5 shrink-0"
                 style={{
-                  width: `min(72%, ${Math.round(category.imageFrame.width * 0.3)}px)`,
-                  aspectRatio: `${category.imageFrame.width} / ${category.imageFrame.height}`,
+                  width: `min(72%, ${Math.round(imageFrame.width * 0.3)}px)`,
+                  aspectRatio: `${imageFrame.width} / ${imageFrame.height}`,
                   maxHeight: "44px",
                 }}
               >
@@ -51,7 +54,8 @@ export function CategoryCarousel({ categories }: CategoryCarouselProps) {
               </div>
             </div>
           </Link>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

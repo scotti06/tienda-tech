@@ -1,8 +1,6 @@
 import { StoreShell } from "@/components/layout/StoreShell";
 import { Hero } from "@/components/sections/Hero";
-import { TrustBar } from "@/components/sections/TrustBar";
-import { Categories } from "@/components/sections/Categories";
-import { ProductGrid } from "@/components/sections/ProductGrid";
+import { HomePageBody } from "@/components/home/HomePageBody";
 import { Benefits } from "@/components/sections/Benefits";
 import { Testimonials } from "@/components/sections/Testimonials";
 import { Newsletter } from "@/components/sections/Newsletter";
@@ -12,9 +10,7 @@ export default function Home() {
     <StoreShell withTopPadding={false}>
       <main>
         <Hero />
-        <TrustBar />
-        <Categories />
-        <ProductGrid />
+        <HomePageBody />
         <Benefits />
         <Testimonials />
         <Newsletter />

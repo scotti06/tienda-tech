@@ -60,12 +60,9 @@ export default function ContactoPage() {
               <ul className="mt-4 space-y-2">
                 {categoryCatalog.map((cat) => (
                   <li key={cat.id}>
-                    <a
-                      href={cat.path}
-                      className="text-sm text-[var(--brand-cyan)] transition-colors hover:text-white"
-                    >
+                    <Button href={cat.path} variant="inline-link" className="text-sm">
                       {cat.name}
-                    </a>
+                    </Button>
                   </li>
                 ))}
               </ul>

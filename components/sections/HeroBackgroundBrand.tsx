@@ -46,10 +46,10 @@ export function HeroBackgroundBrand() {
       </div>
 
       {/* Scrim central — protege legibilidad del copy sin tapar el mark en los bordes */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_52%_48%_at_50%_30%,var(--void)_0%,rgba(3,3,4,0.72)_42%,transparent_68%)]" />
-      <div className="absolute inset-0 bg-gradient-to-r from-[var(--void)]/85 via-[var(--void)]/25 to-transparent" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_52%_48%_at_50%_30%,var(--void)_0%,rgba(3,3,4,0.80)_42%,transparent_70%)]" />
+      <div className="absolute inset-0 bg-gradient-to-r from-[var(--void)]/92 via-[var(--void)]/34 to-transparent md:from-[var(--void)]/85 md:via-[var(--void)]/25" />
 
-      <div className="absolute inset-x-0 bottom-0 h-[38%] bg-gradient-to-t from-[var(--void)] via-[var(--void)]/40 to-transparent" />
+      <div className="absolute inset-x-0 bottom-0 h-[38%] bg-gradient-to-t from-[var(--void)] via-[var(--void)]/48 to-transparent" />
     </div>
   );
 }

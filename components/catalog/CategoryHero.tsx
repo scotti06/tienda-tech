@@ -1,4 +1,5 @@
 import type { CategoryMeta } from "@/lib/catalog";
+import { ScrollReveal } from "@/components/ui/ScrollReveal";
 
 type CategoryHeroProps = {
   category: CategoryMeta;
@@ -13,7 +14,7 @@ export function CategoryHero({ category }: CategoryHeroProps) {
         <div className="absolute -right-[20%] top-0 h-[320px] w-[320px] rounded-full bg-[var(--brand-purple)]/[0.12] blur-[100px]" />
         <div className="absolute -left-[10%] bottom-0 h-[240px] w-[240px] rounded-full bg-[var(--brand-cyan)]/[0.08] blur-[80px]" />
       </div>
-      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <ScrollReveal className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <p className="text-[11px] font-semibold tracking-[0.2em] text-[var(--brand-cyan)] uppercase">
           {hero.eyebrow}
         </p>
@@ -24,7 +25,7 @@ export function CategoryHero({ category }: CategoryHeroProps) {
         <p className="mt-5 max-w-xl text-base leading-relaxed text-[var(--muted)] md:text-lg">
           {hero.description}
         </p>
-      </div>
+      </ScrollReveal>
     </section>
   );
 }

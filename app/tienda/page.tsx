@@ -5,7 +5,7 @@ import { ShopPageView } from "@/components/catalog/ShopPageView";
 export const metadata: Metadata = {
   title: "Tienda — Techstylebv",
   description:
-    "Fundas, vidrios templados, cargadores originales Apple y AirPods para iPhone.",
+    "Explorá accesorios, tecnología y productos para el hogar. Buscá por nombre, categoría o modelo.",
 };
 
 export default function TiendaPage() {

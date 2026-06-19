@@ -8,6 +8,7 @@ import { categoryCatalog } from "@/lib/catalog";
 import { Button, getButtonClassName } from "@/components/ui/Button";
 import { Logo } from "@/components/ui/Logo";
 import { IconCart, IconClose, IconMenu } from "@/components/ui/Icons";
+import { useCart } from "@/components/cart/CartProvider";
 
 function isLinkActive(pathname: string, href: string): boolean {
   const base = href.split("#")[0];
@@ -20,6 +21,7 @@ function isLinkActive(pathname: string, href: string): boolean {
 
 export function Navbar() {
   const pathname = usePathname();
+  const { totalItems } = useCart();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [categoriesOpen, setCategoriesOpen] = useState(false);
@@ -149,7 +151,7 @@ export function Navbar() {
                   "pointer-events-none absolute -top-0.5 -right-0.5 h-4 min-w-4 px-1 text-[10px] font-bold",
               })}
             >
-              0
+              {totalItems}
             </span>
           </Button>
           <Button href="/tienda" variant="primary" size="sm" className="hidden sm:inline-flex">

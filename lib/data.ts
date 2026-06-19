@@ -18,6 +18,56 @@ export function getImageFrame(
   return DEFAULT_IMAGE_FRAME;
 }
 
+type ProductImageSizing = {
+  imageFrameFill?: number;
+};
+
+export function getProductImagePaddingClass(
+  product: ProductImageSizing,
+  defaultClass: string,
+): string {
+  if (!product.imageFrameFill) return defaultClass;
+  const inset = ((1 - product.imageFrameFill) / 2) * 100;
+  return `p-[${inset}%]`;
+}
+
+export function getProductImageBoxStyle(
+  product: ProductImageSizing,
+  imageFrame: { width: number; height: number },
+  layout: "home" | "default" | "detail" = "default",
+): {
+  width?: string;
+  height?: string;
+  maxWidth?: string;
+  maxHeight?: string;
+  aspectRatio: string;
+} {
+  const aspectRatio = `${imageFrame.width} / ${imageFrame.height}`;
+
+  if (product.imageFrameFill) {
+    return {
+      width: "100%",
+      height: "100%",
+      maxWidth: "100%",
+      maxHeight: "100%",
+      aspectRatio,
+    };
+  }
+
+  if (layout === "home") {
+    return {
+      maxWidth: `${imageFrame.width}px`,
+      aspectRatio,
+    };
+  }
+
+  return {
+    width: `min(100%, ${imageFrame.width}px)`,
+    maxHeight: "100%",
+    aspectRatio,
+  };
+}
+
 export type Product = {
   id: string;
   slug: string;
@@ -32,6 +82,8 @@ export type Product = {
   image: string;
   /** Max frame (px) for card presentation; object-contain preserves aspect ratio. */
   imageFrame: { width: number; height: number };
+  /** Optional fraction of the image container to fill (e.g. 0.9 = 90%). */
+  imageFrameFill?: number;
   rating: number;
   freeShipping?: boolean;
   installments?: string;
@@ -151,7 +203,7 @@ export const products: Product[] = [
     name: "Funda para iPhone",
     category: "Fundas",
     categoryId: "fundas",
-    price: 0,
+    price: 14900,
     accent: "bg-[radial-gradient(ellipse_at_50%_0%,#1a2e28_0%,#0a0c10_70%)]",
     image: "/products/funda-iphone.webp",
     imageFrame: { width: 204, height: 224 },
@@ -163,7 +215,7 @@ export const products: Product[] = [
     name: "Funda con MagSafe para iPhone",
     category: "Fundas",
     categoryId: "fundas",
-    price: 0,
+    price: 21900,
     accent: "bg-[radial-gradient(ellipse_at_50%_0%,#1a2430_0%,#0a0c10_70%)]",
     image: "/products/funda-magsafe-iphone.webp",
     imageFrame: { width: 210, height: 230 },
@@ -175,7 +227,7 @@ export const products: Product[] = [
     name: "Vidrio templado para iPhone",
     category: "Vidrios templados",
     categoryId: "vidrios",
-    price: 0,
+    price: 6900,
     accent: "bg-[radial-gradient(ellipse_at_50%_0%,#152228_0%,#0a0c10_70%)]",
     image: "/products/vidrio-templado-iphone.webp",
     imageFrame: { width: 248, height: 172 },
@@ -187,7 +239,7 @@ export const products: Product[] = [
     name: "Vidrio templado — pack x2",
     category: "Vidrios templados",
     categoryId: "vidrios",
-    price: 0,
+    price: 11900,
     accent: "bg-[radial-gradient(ellipse_at_50%_0%,#1a2828_0%,#0a0c10_70%)]",
     image: "/products/vidrio-templado-pack.webp",
     imageFrame: { width: 242, height: 192 },
@@ -199,7 +251,7 @@ export const products: Product[] = [
     name: "Cargador original Apple 20W USB-C",
     category: "Cargadores",
     categoryId: "carga",
-    price: 0,
+    price: 48900,
     accent: "bg-[radial-gradient(ellipse_at_50%_0%,#2a1f18_0%,#0a0c10_70%)]",
     image: "/products/cargador-apple-20w.webp",
     imageFrame: { width: 230, height: 230 },
@@ -211,7 +263,7 @@ export const products: Product[] = [
     name: "Cargador original Apple para iPhone",
     category: "Cargadores",
     categoryId: "carga",
-    price: 0,
+    price: 54900,
     accent: "bg-[radial-gradient(ellipse_at_50%_0%,#1c1c22_0%,#0a0c10_70%)]",
     image: "/products/cargador-apple-iphone.webp",
     imageFrame: { width: 246, height: 212 },
@@ -220,13 +272,14 @@ export const products: Product[] = [
   {
     id: "7",
     slug: "airpods",
-    name: "AirPods",
+    name: "AirPods Max",
     category: "AirPods",
     categoryId: "airpods",
-    price: 0,
+    price: 189900,
     accent: "bg-[radial-gradient(ellipse_at_50%_0%,#15252a_0%,#0a0c10_70%)]",
-    image: "/products/airpods.webp",
-    imageFrame: { width: 216, height: 216 },
+    image: "/products/auriculares_transparente.png",
+    imageFrame: { width: 640, height: 640 },
+    imageFrameFill: 0.9,
     rating: 0,
   },
   {
@@ -235,7 +288,7 @@ export const products: Product[] = [
     name: "AirPods Pro",
     category: "AirPods",
     categoryId: "airpods",
-    price: 0,
+    price: 289900,
     accent: "bg-[radial-gradient(ellipse_at_50%_0%,#1a2030_0%,#0a0c10_70%)]",
     image: "/products/airpods-pro.webp",
     imageFrame: { width: 220, height: 220 },

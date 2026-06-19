@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Product } from "@/lib/data";
-import { formatPrice, getImageFrame } from "@/lib/data";
+import { formatPrice, getImageFrame, getProductImageBoxStyle, getProductImagePaddingClass } from "@/lib/data";
 import { getProductHref } from "@/lib/catalog";
 import { getButtonClassName } from "@/components/ui/Button";
 
@@ -28,13 +28,12 @@ export function ProductCard({ product, layout = "default" }: ProductCardProps) {
         >
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_100%,rgba(157,78,221,0.1),transparent_60%)]" />
 
-          <div className="absolute inset-0 flex items-center justify-center p-2.5 sm:p-3">
+          <div
+            className={`absolute inset-0 flex items-center justify-center ${getProductImagePaddingClass(product, "p-2.5 sm:p-3")}`}
+          >
             <div
               className="relative card-hover-image h-full w-full"
-              style={{
-                maxWidth: `${imageFrame.width}px`,
-                aspectRatio: `${imageFrame.width} / ${imageFrame.height}`,
-              }}
+              style={getProductImageBoxStyle(product, imageFrame, "home")}
             >
               <Image
                 src={product.image}
@@ -93,14 +92,12 @@ export function ProductCard({ product, layout = "default" }: ProductCardProps) {
           </span>
         )}
 
-        <div className="absolute inset-0 flex items-center justify-center p-8">
+        <div
+          className={`absolute inset-0 flex items-center justify-center ${getProductImagePaddingClass(product, "p-8")}`}
+        >
           <div
             className="relative card-hover-image"
-            style={{
-              width: `min(100%, ${imageFrame.width}px)`,
-              aspectRatio: `${imageFrame.width} / ${imageFrame.height}`,
-              maxHeight: "100%",
-            }}
+            style={getProductImageBoxStyle(product, imageFrame, "default")}
           >
             <Image
               src={product.image}

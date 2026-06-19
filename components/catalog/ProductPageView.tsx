@@ -2,9 +2,10 @@ import Image from "next/image";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { Button } from "@/components/ui/Button";
 import { ScrollReveal, SCROLL_REVEAL_STAGGER_MS } from "@/components/ui/ScrollReveal";
-import { formatPrice, type Product } from "@/lib/data";
+import { AddToCartButton } from "@/components/cart/AddToCartButton";
+import { SimilarProductsCarousel } from "@/components/catalog/SimilarProductsCarousel";
+import { formatPrice, getImageFrame, getProductImageBoxStyle, getProductImagePaddingClass, type Product } from "@/lib/data";
 import { getCategoryById } from "@/lib/catalog";
-import { siteConfig } from "@/lib/data";
 
 type ProductPageViewProps = {
   product: Product;
@@ -12,9 +13,6 @@ type ProductPageViewProps = {
 
 export function ProductPageView({ product }: ProductPageViewProps) {
   const category = getCategoryById(product.categoryId);
-  const whatsappText = encodeURIComponent(
-    `Hola! Quiero consultar por: ${product.name}`,
-  );
 
   return (
     <main className="pb-20">
@@ -36,14 +34,16 @@ export function ProductPageView({ product }: ProductPageViewProps) {
               className={`relative aspect-square overflow-hidden rounded-3xl border border-white/[0.08] ${product.accent}`}
             >
               <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_50%,rgba(157,78,221,0.12),transparent_65%)]" />
-              <div className="absolute inset-0 flex items-center justify-center p-12">
+              <div
+                className={`absolute inset-0 flex items-center justify-center ${getProductImagePaddingClass(product, "p-12")}`}
+              >
                 <div
                   className="relative"
-                  style={{
-                    width: `min(100%, ${product.imageFrame.width}px)`,
-                    aspectRatio: `${product.imageFrame.width} / ${product.imageFrame.height}`,
-                    maxHeight: "100%",
-                  }}
+                  style={getProductImageBoxStyle(
+                    product,
+                    getImageFrame(product.imageFrame),
+                    "detail",
+                  )}
                 >
                   <Image
                     src={product.image}
@@ -74,32 +74,31 @@ export function ProductPageView({ product }: ProductPageViewProps) {
               nuestro local o por WhatsApp.
             </p>
 
-            <div className="mt-10 flex flex-col gap-3 sm:flex-row">
-              <Button
-                href={`https://wa.me/${siteConfig.whatsapp}?text=${whatsappText}`}
-                variant="primary"
-                size="lg"
-                className="sm:flex-1"
-              >
-                Consultar por WhatsApp
-              </Button>
-              <Button href="/carrito" variant="secondary" size="lg">
-                Agregar al carrito
-              </Button>
+            <div className="mt-10">
+              <AddToCartButton
+                product={{
+                  id: product.id,
+                  name: product.name,
+                  image: product.image,
+                  price: product.price,
+                }}
+              />
             </div>
-
-            {category && (
-              <Button
-                href={category.path}
-                variant="inline-link"
-                className="mt-8 text-sm font-medium hover:text-white"
-              >
-                ← Volver a {category.name}
-              </Button>
-            )}
             </div>
           </ScrollReveal>
         </div>
+
+        {category && (
+          <Button
+            href={category.path}
+            variant="inline-link"
+            className="mt-8 text-sm font-medium hover:text-white"
+          >
+            ← Volver a {category.name}
+          </Button>
+        )}
+
+        <SimilarProductsCarousel product={product} />
       </div>
     </main>
   );

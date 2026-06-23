@@ -1,6 +1,6 @@
 import {
   getImageFrame,
-  products,
+  products as seedProducts,
   type Category,
   type Product,
 } from "@/lib/data";
@@ -112,12 +112,6 @@ export function getCategoryById(id: string): CategoryMeta | undefined {
   return categoryCatalog.find((c) => c.id === id);
 }
 
-export function getProductsByCategoryId(categoryId: string): Product[] {
-  const meta = getCategoryById(categoryId);
-  if (!meta) return [];
-  return products.filter((p) => p.category === meta.productCategory);
-}
-
 export function normalizeProductSlug(slug: string): string {
   try {
     return decodeURIComponent(slug).trim().toLowerCase();
@@ -140,48 +134,11 @@ export function getProductHref(product: Pick<Product, "id" | "slug" | "name">): 
   return `/producto/${slug}`;
 }
 
-export function getProductBySlug(rawSlug: string): Product | undefined {
+export function getProductBySlugFromSeed(rawSlug: string): Product | undefined {
   const slug = normalizeProductSlug(rawSlug);
   if (!slug) return undefined;
-  return products.find((p) => normalizeProductSlug(p.slug) === slug);
+  return seedProducts.find((product) => normalizeProductSlug(product.slug) === slug);
 }
-
-function validateProductCatalog(): void {
-  if (process.env.NODE_ENV !== "development") return;
-
-  const seen = new Map<string, string>();
-
-  for (const product of products) {
-    if (!product.imageFrame?.width || !product.imageFrame?.height) {
-      console.error("[product-catalog] imageFrame inválido", {
-        id: product.id,
-        name: product.name,
-      });
-    }
-
-    const slug = product.slug?.trim();
-
-    if (!slug) {
-      console.error("[product-catalog] slug vacío", {
-        id: product.id,
-        name: product.name,
-      });
-      continue;
-    }
-
-    const key = slug.toLowerCase();
-    if (seen.has(key)) {
-      console.error("[product-catalog] slug duplicado", {
-        slug: key,
-        ids: [seen.get(key), product.id],
-      });
-    } else {
-      seen.set(key, product.id);
-    }
-  }
-}
-
-validateProductCatalog();
 
 export function getAllCategoryPaths(): string[] {
   return categoryCatalog.map((c) => c.path);

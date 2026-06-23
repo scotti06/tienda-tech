@@ -5,10 +5,11 @@ import { ShopFilters } from "@/components/catalog/ShopFilters";
 import { SearchBar } from "@/components/ui/SearchBar";
 import { ScrollReveal, SCROLL_REVEAL_STAGGER_MS } from "@/components/ui/ScrollReveal";
 import { navigableCategories } from "@/lib/catalog";
-import { products } from "@/lib/data";
+import { getProducts } from "@/lib/products";
 import { Button } from "@/components/ui/Button";
 
 export function ShopPageView() {
+  const products = getProducts();
   return (
     <main>
       <section className="relative overflow-hidden border-b border-white/[0.06] py-14 md:py-20">

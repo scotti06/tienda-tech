@@ -1,34 +1,22 @@
 "use client";
 
-import { useCallback, useMemo, useRef } from "react";
+import { useCallback, useRef } from "react";
 import { ProductCard } from "@/components/ui/ProductCard";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { Button } from "@/components/ui/Button";
 import { IconChevronLeft, IconChevronRight } from "@/components/ui/Icons";
-import { products, type Product } from "@/lib/data";
-import { getProductsByCategoryId } from "@/lib/catalog";
+import type { Product } from "@/lib/data";
 
 type SimilarProductsCarouselProps = {
   product: Product;
+  similarProducts: Product[];
 };
 
-function getSimilarProducts(current: Product): Product[] {
-  const sameCategory = getProductsByCategoryId(current.categoryId).filter(
-    (item) => item.id !== current.id,
-  );
-
-  const related = products.filter(
-    (item) =>
-      item.id !== current.id &&
-      !sameCategory.some((categoryItem) => categoryItem.id === item.id),
-  );
-
-  return [...sameCategory, ...related];
-}
-
-export function SimilarProductsCarousel({ product }: SimilarProductsCarouselProps) {
+export function SimilarProductsCarousel({
+  product,
+  similarProducts,
+}: SimilarProductsCarouselProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const similarProducts = useMemo(() => getSimilarProducts(product), [product]);
 
   const scrollByCard = useCallback((direction: "prev" | "next") => {
     const container = scrollRef.current;

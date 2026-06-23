@@ -7,6 +7,7 @@
   --foreground: #f8f8fa;
   --muted: #9494a8;
   --border: rgba(255, 255, 255, 0.08);
+  --primary: oklch(0.85 0.15 55);
   --brand-purple: #9d4edd;
   --brand-purple-soft: #b57bee;
   --brand-cyan: #00b4d8;
@@ -26,6 +27,7 @@
   --color-elevated: var(--elevated);
   --color-foreground: var(--foreground);
   --color-muted: var(--muted);
+  --color-primary: var(--primary);
   --color-mint: var(--brand-cyan);
   --color-cyan: var(--brand-cyan);
   --color-purple: var(--brand-purple);
@@ -305,4 +307,20 @@ body {
     opacity: 1;
     transform: none;
   }
+}
+
+.admin-input {
+  width: 100%;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #111118;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  color: #f8f8fa;
+  outline: none;
+}
+
+.admin-input:focus {
+  border-color: var(--brand-cyan);
 }

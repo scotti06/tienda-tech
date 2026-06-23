@@ -1,0 +1,260 @@
+{
+  "version": 1,
+  "products": [
+    {
+      "id": "9",
+      "slug": "funda-transparente-iphone",
+      "name": "Funda Transparente iPhone",
+      "categoryId": "fundas",
+      "category": "Fundas",
+      "subcategory": "iPhone",
+      "description": "Funda transparente reforzada",
+      "price": 12000,
+      "originalPrice": 10000,
+      "cashPrice": 12000,
+      "stock": 10,
+      "sku": "TS-0009",
+      "brand": "Techstylebv",
+      "accent": "bg-[radial-gradient(ellipse_at_50%_0%,#1a2e28_0%,#0a0c10_70%)]",
+      "images": [],
+      "imageFrame": {
+        "width": 300,
+        "height": 300
+      },
+      "rating": 0,
+      "freeShipping": false,
+      "updatedAt": "2026-06-23T21:38:28.865Z"
+    },
+    {
+      "id": "1",
+      "slug": "funda-iphone",
+      "name": "Funda para iPhone",
+      "category": "Fundas",
+      "categoryId": "fundas",
+      "price": 14899,
+      "accent": "bg-[radial-gradient(ellipse_at_50%_0%,#1a2e28_0%,#0a0c10_70%)]",
+      "image": "/products/funda-iphone.webp",
+      "imageFrame": {
+        "width": 204,
+        "height": 224
+      },
+      "rating": 0,
+      "description": "Funda para iPhone. Consultá modelos compatibles y disponibilidad en el local.",
+      "subcategory": "Fundas",
+      "stock": 24,
+      "sku": "TS-0001",
+      "brand": "Techstylebv",
+      "images": [
+        "/products/funda-iphone.webp"
+      ],
+      "updatedAt": "2026-06-19T22:58:03.229Z",
+      "badge": "",
+      "installments": "",
+      "freeShipping": false
+    },
+    {
+      "id": "2",
+      "slug": "funda-magsafe-iphone",
+      "name": "Funda con MagSafe para iPhone",
+      "category": "Fundas",
+      "categoryId": "fundas",
+      "price": 21900,
+      "accent": "bg-[radial-gradient(ellipse_at_50%_0%,#1a2430_0%,#0a0c10_70%)]",
+      "image": "/products/funda-magsafe-iphone.webp",
+      "imageFrame": {
+        "width": 210,
+        "height": 230
+      },
+      "rating": 0,
+      "description": "Funda con MagSafe para iPhone. Consultá modelos compatibles y disponibilidad en el local.",
+      "subcategory": "Fundas",
+      "stock": 18,
+      "sku": "TS-0002",
+      "brand": "Techstylebv",
+      "images": [
+        "/products/funda-magsafe-iphone.webp"
+      ],
+      "updatedAt": "2026-06-19T21:46:35.912Z"
+    },
+    {
+      "id": "3",
+      "slug": "vidrio-templado-iphone",
+      "name": "Vidrio templado para iPhone",
+      "category": "Vidrios templados",
+      "categoryId": "vidrios",
+      "price": 6900,
+      "accent": "bg-[radial-gradient(ellipse_at_50%_0%,#152228_0%,#0a0c10_70%)]",
+      "image": "/products/vidrio-templado-iphone.webp",
+      "imageFrame": {
+        "width": 248,
+        "height": 172
+      },
+      "rating": 0,
+      "description": "Vidrio templado para iPhone. Consultá modelos compatibles y disponibilidad en el local.",
+      "subcategory": "Vidrios templados",
+      "stock": 32,
+      "sku": "TS-0003",
+      "brand": "Techstylebv",
+      "images": [
+        "/products/vidrio-templado-iphone.webp"
+      ],
+      "updatedAt": "2026-06-19T21:46:35.912Z"
+    },
+    {
+      "id": "4",
+      "slug": "vidrio-templado-pack",
+      "name": "Vidrio templado — pack x2",
+      "category": "Vidrios templados",
+      "categoryId": "vidrios",
+      "price": 11900,
+      "accent": "bg-[radial-gradient(ellipse_at_50%_0%,#1a2828_0%,#0a0c10_70%)]",
+      "image": "/products/vidrio-templado-pack.webp",
+      "imageFrame": {
+        "width": 242,
+        "height": 192
+      },
+      "rating": 0,
+      "description": "Vidrio templado — pack x2. Consultá modelos compatibles y disponibilidad en el local.",
+      "subcategory": "Vidrios templados",
+      "stock": 12,
+      "sku": "TS-0004",
+      "brand": "Techstylebv",
+      "images": [
+        "/products/vidrio-templado-pack.webp"
+      ],
+      "updatedAt": "2026-06-19T21:46:35.912Z"
+    },
+    {
+      "id": "5",
+      "slug": "cargador-apple-20w",
+      "name": "Cargador original Apple 20W USB-C",
+      "category": "Cargadores",
+      "categoryId": "carga",
+      "price": 48900,
+      "accent": "bg-[radial-gradient(ellipse_at_50%_0%,#2a1f18_0%,#0a0c10_70%)]",
+      "image": "/products/cargador-apple-20w.webp",
+      "imageFrame": {
+        "width": 230,
+        "height": 230
+      },
+      "rating": 0,
+      "description": "Cargador original Apple 20W USB-C. Consultá modelos compatibles y disponibilidad en el local.",
+      "subcategory": "Cargadores",
+      "stock": 8,
+      "sku": "TS-0005",
+      "brand": "Apple",
+      "images": [
+        "/products/cargador-apple-20w.webp"
+      ],
+      "updatedAt": "2026-06-19T21:46:35.912Z"
+    },
+    {
+      "id": "6",
+      "slug": "cargador-apple-iphone",
+      "name": "Cargador original Apple para iPhone",
+      "category": "Cargadores",
+      "categoryId": "carga",
+      "price": 54899,
+      "accent": "bg-[radial-gradient(ellipse_at_50%_0%,#1c1c22_0%,#0a0c10_70%)]",
+      "image": "/products/cargador-apple-iphone.webp",
+      "imageFrame": {
+        "width": 246,
+        "height": 212
+      },
+      "rating": 0,
+      "description": "Cargador original Apple para iPhone. Consultá modelos compatibles y disponibilidad en el local.",
+      "subcategory": "Cargadores",
+      "stock": 15,
+      "sku": "TS-0006",
+      "brand": "Apple",
+      "images": [
+        "/products/cargador-apple-iphone.webp"
+      ],
+      "updatedAt": "2026-06-19T22:38:42.702Z",
+      "badge": "",
+      "installments": "",
+      "freeShipping": false
+    },
+    {
+      "id": "7",
+      "slug": "airpods",
+      "name": "AirPods Max",
+      "category": "AirPods",
+      "categoryId": "airpods",
+      "price": 189900,
+      "accent": "bg-[radial-gradient(ellipse_at_50%_0%,#15252a_0%,#0a0c10_70%)]",
+      "image": "/products/auriculares_transparente.png",
+      "imageFrame": {
+        "width": 640,
+        "height": 640
+      },
+      "imageFrameFill": 0.9,
+      "rating": 0,
+      "description": "AirPods Max. Consultá modelos compatibles y disponibilidad en el local.",
+      "subcategory": "AirPods",
+      "stock": 6,
+      "sku": "TS-0007",
+      "brand": "Apple",
+      "images": [
+        "/products/auriculares_transparente.png"
+      ],
+      "updatedAt": "2026-06-19T21:46:35.912Z"
+    },
+    {
+      "id": "8",
+      "slug": "airpods-pro",
+      "name": "AirPods Pro",
+      "category": "AirPods",
+      "categoryId": "airpods",
+      "price": 289900,
+      "accent": "bg-[radial-gradient(ellipse_at_50%_0%,#1a2030_0%,#0a0c10_70%)]",
+      "image": "/products/airpods-pro.webp",
+      "imageFrame": {
+        "width": 220,
+        "height": 220
+      },
+      "rating": 0,
+      "description": "AirPods Pro. Consultá modelos compatibles y disponibilidad en el local.",
+      "subcategory": "AirPods",
+      "stock": 0,
+      "sku": "TS-0008",
+      "brand": "Apple",
+      "images": [
+        "/products/airpods-pro.webp"
+      ],
+      "updatedAt": "2026-06-19T21:46:35.912Z"
+    }
+  ],
+  "orders": [
+    {
+      "id": "order-1781909290047",
+      "orderNumber": "TS-2026-0001",
+      "customerName": "Cliente de la tienda",
+      "items": [
+        {
+          "productId": "2",
+          "name": "Funda con MagSafe para iPhone",
+          "image": "/products/funda-magsafe-iphone.webp",
+          "price": 21900,
+          "quantity": 1
+        }
+      ],
+      "total": 21900,
+      "status": "entregado",
+      "createdAt": "2026-06-19T22:48:10.047Z"
+    }
+  ],
+  "notifications": [
+    {
+      "id": "notif-order-1781909290047",
+      "type": "purchase",
+      "title": "Nueva compra realizada",
+      "orderId": "order-1781909290047",
+      "orderNumber": "TS-2026-0001",
+      "customerName": "Cliente de la tienda",
+      "total": 21900,
+      "createdAt": "2026-06-19T22:48:10.047Z",
+      "read": true
+    }
+  ]
+}

@@ -4,9 +4,6 @@ import { Button } from "@/components/ui/Button";
 import type { Product } from "@/lib/data";
 import {
   filterHomeProducts,
-  homeBestsellers,
-  homeFeatured,
-  homeNew,
   type HomeCategoryFilter,
 } from "@/lib/home";
 
@@ -60,10 +57,16 @@ function ProductSection({
 
 type HomeProductSectionsProps = {
   activeCategory: HomeCategoryFilter;
+  featured: Product[];
+  newest: Product[];
+  bestsellers: Product[];
 };
 
 export function HomeProductSections({
   activeCategory,
+  featured,
+  newest,
+  bestsellers,
 }: HomeProductSectionsProps) {
   return (
     <>
@@ -72,7 +75,7 @@ export function HomeProductSections({
         eyebrow="Destacados"
         title="Lo más elegido"
         description="Consultá precios y modelos por WhatsApp o en el local."
-        products={homeFeatured}
+        products={featured}
         activeCategory={activeCategory}
         className="home-section-tight max-md:pt-4 max-md:pb-6 md:pt-14"
       />
@@ -81,7 +84,7 @@ export function HomeProductSections({
         id="productos-novedades"
         eyebrow="Novedades"
         title="Recién llegados"
-        products={homeNew}
+        products={newest}
         activeCategory={activeCategory}
       />
 
@@ -89,7 +92,7 @@ export function HomeProductSections({
         id="productos-mas-vendidos"
         eyebrow="Más vendidos"
         title="Favoritos del local"
-        products={homeBestsellers}
+        products={bestsellers}
         activeCategory={activeCategory}
       />
 

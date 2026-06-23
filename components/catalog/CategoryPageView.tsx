@@ -1,10 +1,8 @@
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { CategoryHero } from "@/components/catalog/CategoryHero";
 import { ProductGridSection } from "@/components/catalog/ProductGridSection";
-import {
-  getProductsByCategoryId,
-  type CategoryMeta,
-} from "@/lib/catalog";
+import type { CategoryMeta } from "@/lib/catalog";
+import { getProductsByCategoryId } from "@/lib/products";
 
 type CategoryPageViewProps = {
   category: CategoryMeta;

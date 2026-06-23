@@ -4,7 +4,9 @@ import Image from "next/image";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { Button } from "@/components/ui/Button";
 import { useCart } from "@/components/cart/CartProvider";
+import { CheckoutConsultButton } from "@/components/cart/CheckoutConsultButton";
 import { formatPrice } from "@/lib/data";
+import { TextScramble } from "@/components/ui/text-scramble";
 
 export function CartPageView() {
   const { items, subtotal, total, removeItem, updateQuantity } = useCart();
@@ -92,7 +94,11 @@ export function CartPageView() {
                     {item.name}
                   </h2>
                   <p className="mt-1 text-sm text-[var(--muted)]">
-                    {formatPrice(item.price)} c/u
+                    <TextScramble
+                      variant="price"
+                      text={formatPrice(item.price)}
+                    />{" "}
+                    c/u
                   </p>
 
                   <div className="mt-4 flex flex-wrap items-center gap-3">
@@ -132,7 +138,10 @@ export function CartPageView() {
                 </div>
 
                 <p className="shrink-0 text-base font-semibold text-white">
-                  {formatPrice(item.price * item.quantity)}
+                  <TextScramble
+                    variant="price"
+                    text={formatPrice(item.price * item.quantity)}
+                  />
                 </p>
               </div>
             </li>
@@ -142,20 +151,22 @@ export function CartPageView() {
         <div className="mt-8 rounded-2xl border border-white/[0.08] glass-card px-6 py-6 md:px-8">
           <div className="flex items-center justify-between text-sm text-[var(--muted)]">
             <span>Subtotal</span>
-            <span>{formatPrice(subtotal)}</span>
+            <span>
+              <TextScramble variant="price" text={formatPrice(subtotal)} />
+            </span>
           </div>
           <div className="mt-3 flex items-center justify-between text-lg font-semibold text-white">
             <span>Total</span>
-            <span>{formatPrice(total)}</span>
+            <span>
+              <TextScramble variant="price" text={formatPrice(total)} />
+            </span>
           </div>
 
           <div className="mt-6 flex flex-col gap-3 sm:flex-row">
             <Button href="/tienda" variant="secondary" size="lg" className="sm:flex-1">
               Seguir comprando
             </Button>
-            <Button href="/contacto" variant="primary" size="lg" className="sm:flex-1">
-              Consultar compra
-            </Button>
+            <CheckoutConsultButton items={items} />
           </div>
         </div>
       </div>

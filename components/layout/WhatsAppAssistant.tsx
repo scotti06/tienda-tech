@@ -5,7 +5,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { siteConfig } from "@/lib/data";
-import { getProductBySlug } from "@/lib/catalog";
+import { getProductBySlugFromSeed } from "@/lib/catalog";
 import { Button, getButtonClassName } from "@/components/ui/Button";
 import { IconClose } from "@/components/ui/Icons";
 import { useWhatsAppAssistant } from "@/components/layout/WhatsAppAssistantContext";
@@ -131,7 +131,7 @@ export function WhatsAppAssistant() {
   const productName = useMemo(() => {
     const slug = getProductSlugFromPath(pathname);
     if (!slug) return null;
-    return getProductBySlug(slug)?.name ?? null;
+    return getProductBySlugFromSeed(slug)?.name ?? null;
   }, [pathname]);
 
   const close = useCallback(() => setOpen(false), [setOpen]);

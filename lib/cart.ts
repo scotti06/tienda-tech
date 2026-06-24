@@ -1,95 +1,95 @@
-import type { Product } from "@/lib/data";
-import { formatPrice, siteConfig } from "@/lib/data";
-
-export const CART_STORAGE_KEY = "techstylebv-cart";
-
 export type CartItem = {
-  productId: string;
-  slug: string;
+  id: string;
   name: string;
-  model: string;
-  price: number;
   image: string;
-  imageFrame: { width: number; height: number };
-  accent: string;
+  price: number;
   quantity: number;
 };
 
-export function productToCartItem(product: Product): Omit<CartItem, "quantity"> {
-  return {
-    productId: product.id,
-    slug: product.slug,
-    name: product.name,
-    model: product.category,
-    price: product.price,
-    image: product.image,
-    imageFrame: product.imageFrame,
-    accent: product.accent,
-  };
-}
+export type CartProductInput = Pick<CartItem, "id" | "name" | "image" | "price">;
 
-export function getCartItemCount(items: CartItem[]): number {
-  return items.reduce((total, item) => total + item.quantity, 0);
-}
+export const CART_STORAGE_KEY = "techstylebv-cart";
 
-export function getCartSubtotal(items: CartItem[]): number {
-  return items.reduce((total, item) => total + item.price * item.quantity, 0);
-}
-
-export function formatCartSubtotal(items: CartItem[]): string {
-  const subtotal = getCartSubtotal(items);
-  if (!subtotal || subtotal <= 0) {
-    return "Consultar precio";
-  }
-  return formatPrice(subtotal);
-}
-
-export function buildCartWhatsAppMessage(items: CartItem[]): string {
-  const lines = items.map(
-    (item) =>
-      `• ${item.name} (${item.model}) x${item.quantity} — ${formatPrice(item.price * item.quantity || item.price)}`,
-  );
-
-  return [
-    "Hola! Quiero continuar con mi pedido:",
-    "",
-    ...lines,
-    "",
-    `Subtotal: ${formatCartSubtotal(items)}`,
-  ].join("\n");
-}
-
-export function buildCartWhatsAppUrl(items: CartItem[]): string {
-  const text = encodeURIComponent(buildCartWhatsAppMessage(items));
-  return `https://wa.me/${siteConfig.whatsapp}?text=${text}`;
-}
-
-export function scrollToCatalog(pathname: string): void {
-  const targetId = pathname === "/" ? "productos" : "categorias";
-  const element = document.getElementById(targetId);
-
-  if (element) {
-    element.scrollIntoView({ behavior: "smooth", block: "start" });
-    return;
-  }
-
-  window.location.assign(pathname === "/" ? "/#productos" : "/tienda#categorias");
-}
-
-export function readStoredCart(): CartItem[] {
+export function readCartFromStorage(): CartItem[] {
   if (typeof window === "undefined") return [];
 
   try {
     const raw = window.localStorage.getItem(CART_STORAGE_KEY);
     if (!raw) return [];
-    const parsed = JSON.parse(raw) as CartItem[];
-    return Array.isArray(parsed) ? parsed : [];
+
+    const parsed = JSON.parse(raw) as unknown;
+    if (!Array.isArray(parsed)) return [];
+
+    return parsed.filter(isValidCartItem);
   } catch {
     return [];
   }
 }
 
-export function writeStoredCart(items: CartItem[]): void {
+export function writeCartToStorage(items: CartItem[]): void {
   if (typeof window === "undefined") return;
   window.localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
+}
+
+function isValidCartItem(value: unknown): value is CartItem {
+  if (!value || typeof value !== "object") return false;
+
+  const item = value as Partial<CartItem>;
+
+  return (
+    typeof item.id === "string" &&
+    typeof item.name === "string" &&
+    typeof item.image === "string" &&
+    typeof item.price === "number" &&
+    typeof item.quantity === "number" &&
+    item.quantity > 0
+  );
+}
+
+export function addCartItem(
+  items: CartItem[],
+  product: CartProductInput,
+  quantity = 1,
+): CartItem[] {
+  const existing = items.find((item) => item.id === product.id);
+
+  if (existing) {
+    return items.map((item) =>
+      item.id === product.id
+        ? { ...item, quantity: item.quantity + quantity }
+        : item,
+    );
+  }
+
+  return [...items, { ...product, quantity }];
+}
+
+export function removeCartItem(items: CartItem[], id: string): CartItem[] {
+  return items.filter((item) => item.id !== id);
+}
+
+export function setCartItemQuantity(
+  items: CartItem[],
+  id: string,
+  quantity: number,
+): CartItem[] {
+  if (quantity <= 0) return removeCartItem(items, id);
+
+  return items.map((item) =>
+    item.id === id ? { ...item, quantity } : item,
+  );
+}
+
+export function getCartTotals(items: CartItem[]) {
+  const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
+  const subtotal = items.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0,
+  );
+
+  return {
+    totalItems,
+    subtotal,
+    total: subtotal,
+  };
 }

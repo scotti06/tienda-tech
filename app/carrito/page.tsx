@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { StoreShell } from "@/components/layout/StoreShell";
-import { CartRedirect } from "@/components/cart/CartRedirect";
+import { CartPageView } from "@/components/cart/CartPageView";
 
 export const metadata: Metadata = {
   title: "Carrito — Techstylebv",
@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 export default function CarritoPage() {
   return (
     <StoreShell>
-      <CartRedirect />
+      <CartPageView />
     </StoreShell>
   );
 }

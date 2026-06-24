@@ -2,9 +2,10 @@ import { ProductCard } from "@/components/ui/ProductCard";
 import { ScrollReveal, SCROLL_REVEAL_STAGGER_MS } from "@/components/ui/ScrollReveal";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { Button } from "@/components/ui/Button";
-import { products } from "@/lib/data";
+import { getProducts } from "@/lib/products";
 
 export function ProductGrid() {
+  const products = getProducts();
   return (
     <section id="productos" className="py-24 md:py-32">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

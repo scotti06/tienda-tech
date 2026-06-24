@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useCart } from "@/components/layout/CartContext";
+import { useCart } from "@/components/cart/CartProvider";
 
 export function CartRedirect() {
   const router = useRouter();

@@ -93,3 +93,64 @@ export function getCartTotals(items: CartItem[]) {
     total: subtotal,
   };
 }
+
+export function getCartSubtotal(items: CartItem[]): number {
+  return getCartTotals(items).subtotal;
+}
+
+export function formatCartSubtotal(items: CartItem[]): string {
+  const { subtotal } = getCartTotals(items);
+  if (!subtotal || subtotal <= 0) {
+    return "Consultar precio";
+  }
+
+  return new Intl.NumberFormat("es-AR", {
+    style: "currency",
+    currency: "ARS",
+    maximumFractionDigits: 0,
+  }).format(subtotal);
+}
+
+export function buildCartWhatsAppMessage(items: CartItem[]): string {
+  const lines = items.map((item) => {
+    const lineTotal = item.price * item.quantity;
+    const priceLabel =
+      lineTotal > 0
+        ? new Intl.NumberFormat("es-AR", {
+            style: "currency",
+            currency: "ARS",
+            maximumFractionDigits: 0,
+          }).format(lineTotal)
+        : "Consultar precio";
+
+    return `• ${item.name} x${item.quantity} — ${priceLabel}`;
+  });
+
+  return [
+    "Hola! Quiero continuar con mi pedido:",
+    "",
+    ...lines,
+    "",
+    `Subtotal: ${formatCartSubtotal(items)}`,
+  ].join("\n");
+}
+
+export function buildCartWhatsAppUrl(
+  items: CartItem[],
+  whatsappNumber: string,
+): string {
+  const text = encodeURIComponent(buildCartWhatsAppMessage(items));
+  return `https://wa.me/${whatsappNumber}?text=${text}`;
+}
+
+export function scrollToCatalog(pathname: string): void {
+  const targetId = pathname === "/" ? "productos" : "categorias";
+  const element = document.getElementById(targetId);
+
+  if (element) {
+    element.scrollIntoView({ behavior: "smooth", block: "start" });
+    return;
+  }
+
+  window.location.assign(pathname === "/" ? "/#productos" : "/tienda#categorias");
+}

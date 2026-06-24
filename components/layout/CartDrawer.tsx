@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ShoppingCart } from "lucide-react";
 import { useEffect } from "react";
-import { useCart } from "@/components/layout/CartContext";
+import { useCart } from "@/components/cart/CartProvider";
 import { IconClose, IconWhatsApp } from "@/components/ui/Icons";
 import {
   buildCartWhatsAppUrl,
@@ -14,7 +14,7 @@ import {
   scrollToCatalog,
   type CartItem,
 } from "@/lib/cart";
-import { formatPrice } from "@/lib/data";
+import { formatPrice, siteConfig } from "@/lib/data";
 
 const PREMIUM_EASE = [0.22, 1, 0.36, 1] as const;
 const DRAWER_DURATION = 0.32;
@@ -186,7 +186,6 @@ function CartLineItem({ item, index, onDecrease, onIncrease }: CartLineItemProps
           <h3 className="truncate text-[15px] font-semibold leading-tight tracking-tight text-white">
             {item.name}
           </h3>
-          <p className="truncate text-[13px] leading-tight text-zinc-500">{item.model}</p>
         </div>
 
         <div className="flex items-center justify-between gap-3">
@@ -270,7 +269,7 @@ export function CartDrawer() {
 
   const handleWhatsApp = () => {
     if (!hasItems) return;
-    window.open(buildCartWhatsAppUrl(items), "_blank", "noopener,noreferrer");
+    window.open(buildCartWhatsAppUrl(items, siteConfig.whatsapp), "_blank", "noopener,noreferrer");
   };
 
   const showSubtotal = hasFixedPrice(getCartSubtotal(items));
@@ -328,14 +327,14 @@ export function CartDrawer() {
                       <AnimatePresence initial={false}>
                         {items.map((item, index) => (
                           <CartLineItem
-                            key={item.productId}
+                            key={item.id}
                             item={item}
                             index={index}
                             onDecrease={() =>
-                              updateQuantity(item.productId, item.quantity - 1)
+                              updateQuantity(item.id, item.quantity - 1)
                             }
                             onIncrease={() =>
-                              updateQuantity(item.productId, item.quantity + 1)
+                              updateQuantity(item.id, item.quantity + 1)
                             }
                           />
                         ))}

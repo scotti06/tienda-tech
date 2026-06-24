@@ -14,12 +14,29 @@ export type OrderItem = {
   quantity: number;
 };
 
+export type PaymentMethod = "mercadopago" | "card" | "transfer";
+
+export type ShippingMethod = "pickup" | "standard" | "express";
+
+export type OrderShippingAddress = {
+  street: string;
+  city: string;
+  province: string;
+  postalCode: string;
+  notes?: string;
+};
+
 export type Order = {
   id: string;
   orderNumber: string;
   customerName: string;
   customerEmail?: string;
   customerPhone?: string;
+  shippingAddress?: OrderShippingAddress;
+  shippingMethod?: ShippingMethod;
+  shippingCost?: number;
+  subtotal?: number;
+  paymentMethod?: PaymentMethod;
   items: OrderItem[];
   total: number;
   status: OrderStatus;

@@ -4,7 +4,6 @@ import Image from "next/image";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { Button } from "@/components/ui/Button";
 import { useCart } from "@/components/cart/CartProvider";
-import { CheckoutConsultButton } from "@/components/cart/CheckoutConsultButton";
 import { formatPrice } from "@/lib/data";
 import { TextScramble } from "@/components/ui/text-scramble";
 
@@ -166,7 +165,9 @@ export function CartPageView() {
             <Button href="/tienda" variant="secondary" size="lg" className="sm:flex-1">
               Seguir comprando
             </Button>
-            <CheckoutConsultButton items={items} />
+            <Button href="/carrito/checkout" variant="primary" size="lg" className="sm:flex-1">
+              Continuar al checkout
+            </Button>
           </div>
         </div>
       </div>

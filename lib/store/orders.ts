@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import type { CheckoutFormData } from "@/lib/checkout";
 import type { CartItem } from "@/lib/cart";
 import {
   createNotificationForOrder,
@@ -12,9 +13,10 @@ import type { Order } from "@/lib/store/types";
 
 type RegisterOrderInput = {
   items: CartItem[];
-  customerName?: string;
-  customerEmail?: string;
-  customerPhone?: string;
+  form: CheckoutFormData;
+  subtotal: number;
+  shippingCost: number;
+  total: number;
 };
 
 export async function registerCartOrder(input: RegisterOrderInput) {
@@ -29,9 +31,20 @@ export async function registerCartOrder(input: RegisterOrderInput) {
   const order: Order = {
     id: orderId,
     orderNumber: generateOrderNumber(store),
-    customerName: input.customerName?.trim() || "Cliente de la tienda",
-    customerEmail: input.customerEmail?.trim() || undefined,
-    customerPhone: input.customerPhone?.trim() || undefined,
+    customerName: input.form.customerName.trim(),
+    customerEmail: input.form.customerEmail.trim(),
+    customerPhone: input.form.customerPhone.trim(),
+    shippingAddress: {
+      street: input.form.street.trim(),
+      city: input.form.city.trim(),
+      province: input.form.province.trim(),
+      postalCode: input.form.postalCode.trim(),
+      notes: input.form.shippingNotes.trim() || undefined,
+    },
+    shippingMethod: input.form.shippingMethod || undefined,
+    shippingCost: input.shippingCost,
+    subtotal: input.subtotal,
+    paymentMethod: input.form.paymentMethod || undefined,
     items: input.items.map((item) => ({
       productId: item.id,
       name: item.name,
@@ -39,10 +52,7 @@ export async function registerCartOrder(input: RegisterOrderInput) {
       price: item.price,
       quantity: item.quantity,
     })),
-    total: input.items.reduce(
-      (sum, item) => sum + item.price * item.quantity,
-      0,
-    ),
+    total: input.total,
     status: "pendiente",
     createdAt: now,
   };

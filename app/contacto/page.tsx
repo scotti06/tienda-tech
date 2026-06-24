@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { StoreLocationSection } from "@/components/contact/StoreLocationSection";
 import { StoreShell } from "@/components/layout/StoreShell";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { Button } from "@/components/ui/Button";
@@ -68,6 +69,8 @@ export default function ContactoPage() {
               </ul>
             </div>
           </div>
+
+          <StoreLocationSection />
 
           <div className="mt-8 rounded-2xl border border-white/[0.08] glass-card p-6 md:p-8">
             <h2 className="text-lg font-semibold text-white">

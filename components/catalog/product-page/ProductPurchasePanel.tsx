@@ -87,6 +87,7 @@ export function ProductPurchasePanel({
         name: product.name,
         image: product.image,
         price: product.price,
+        model,
       },
       quantity,
     );

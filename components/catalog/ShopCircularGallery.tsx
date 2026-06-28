@@ -80,17 +80,30 @@ function useGalleryMetrics(): GalleryMetrics {
   return metrics;
 }
 
+const AUTOPLAY_INTERVAL_MS = 4000;
+const AUTOPLAY_RESUME_MS = 5000;
+
 type ShopCircularGalleryProps = {
   products: Product[];
+  /** Intervalo entre slides automáticos (ms). `0` desactiva autoplay. */
+  autoplayInterval?: number;
 };
 
-export function ShopCircularGallery({ products }: ShopCircularGalleryProps) {
+export function ShopCircularGallery({
+  products,
+  autoplayInterval = AUTOPLAY_INTERVAL_MS,
+}: ShopCircularGalleryProps) {
   const metrics = useGalleryMetrics();
   const [activeIndex, setActiveIndex] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  const [autoplayPaused, setAutoplayPaused] = useState(false);
   const dragStartX = useRef(0);
   const regionRef = useRef<HTMLDivElement>(null);
+  const resumeAutoplayRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const autoplayPausedRef = useRef(false);
+  const isDraggingRef = useRef(false);
+  const isInViewRef = useRef(true);
 
   const count = products.length;
   const anglePerItem = count > 0 ? 360 / count : 0;
@@ -105,8 +118,37 @@ export function ShopCircularGallery({ products }: ShopCircularGalleryProps) {
     [count],
   );
 
-  const goPrev = useCallback(() => goTo(activeIndex - 1), [activeIndex, goTo]);
-  const goNext = useCallback(() => goTo(activeIndex + 1), [activeIndex, goTo]);
+  const pauseAutoplay = useCallback((resumeAfterMs = AUTOPLAY_RESUME_MS) => {
+    autoplayPausedRef.current = true;
+    setAutoplayPaused(true);
+    if (resumeAutoplayRef.current) {
+      clearTimeout(resumeAutoplayRef.current);
+    }
+    if (resumeAfterMs > 0) {
+      resumeAutoplayRef.current = setTimeout(() => {
+        autoplayPausedRef.current = false;
+        setAutoplayPaused(false);
+      }, resumeAfterMs);
+    }
+  }, []);
+
+  const goPrev = useCallback(() => {
+    pauseAutoplay();
+    goTo(activeIndex - 1);
+  }, [activeIndex, goTo, pauseAutoplay]);
+
+  const goNext = useCallback(() => {
+    pauseAutoplay();
+    goTo(activeIndex + 1);
+  }, [activeIndex, goTo, pauseAutoplay]);
+
+  const goToInteractive = useCallback(
+    (index: number) => {
+      pauseAutoplay();
+      goTo(index);
+    },
+    [goTo, pauseAutoplay],
+  );
 
   useEffect(() => {
     setActiveIndex(0);
@@ -121,14 +163,54 @@ export function ShopCircularGallery({ products }: ShopCircularGalleryProps) {
   }, []);
 
   useEffect(() => {
-    if (prefersReducedMotion || count <= 1 || isDragging) return;
+    return () => {
+      if (resumeAutoplayRef.current) {
+        window.clearTimeout(resumeAutoplayRef.current);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    isDraggingRef.current = isDragging;
+  }, [isDragging]);
+
+  useEffect(() => {
+    autoplayPausedRef.current = autoplayPaused;
+  }, [autoplayPaused]);
+
+  useEffect(() => {
+    const region = regionRef.current;
+    if (!region) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isInViewRef.current = entry.isIntersecting;
+      },
+      { threshold: 0.25 },
+    );
+
+    observer.observe(region);
+    return () => observer.disconnect();
+  }, [count]);
+
+  useEffect(() => {
+    if (autoplayInterval <= 0 || count <= 1) return;
 
     const id = window.setInterval(() => {
+      if (
+        autoplayPausedRef.current ||
+        isDraggingRef.current ||
+        !isInViewRef.current ||
+        document.hidden
+      ) {
+        return;
+      }
+
       setActiveIndex((prev) => (prev + 1) % count);
-    }, 5000);
+    }, autoplayInterval);
 
     return () => window.clearInterval(id);
-  }, [count, isDragging, prefersReducedMotion]);
+  }, [autoplayInterval, count, products]);
 
   useEffect(() => {
     const region = regionRef.current;
@@ -163,18 +245,20 @@ export function ShopCircularGallery({ products }: ShopCircularGalleryProps) {
 
       if (delta > threshold) goPrev();
       else if (delta < -threshold) goNext();
+      else pauseAutoplay();
 
       setIsDragging(false);
       if (event.currentTarget.hasPointerCapture(event.pointerId)) {
         event.currentTarget.releasePointerCapture(event.pointerId);
       }
     },
-    [goNext, goPrev, isDragging],
+    [goNext, goPrev, isDragging, pauseAutoplay],
   );
 
   const handlePointerCancel = useCallback(() => {
     setIsDragging(false);
-  }, []);
+    pauseAutoplay();
+  }, [pauseAutoplay]);
 
   const itemOpacity = useCallback(
     (index: number) => {
@@ -198,8 +282,8 @@ export function ShopCircularGallery({ products }: ShopCircularGalleryProps) {
   if (count === 0) return null;
 
   const transitionClass = prefersReducedMotion
-    ? "transition-none"
-    : "transition-transform duration-700 ease-[cubic-bezier(0.4,0,0.2,1)]";
+    ? "transition-[transform,opacity] duration-500 ease-out"
+    : "transition-[transform,opacity] duration-700 ease-[cubic-bezier(0.4,0,0.2,1)]";
 
   return (
     <div className="relative">
@@ -357,7 +441,7 @@ export function ShopCircularGallery({ products }: ShopCircularGalleryProps) {
               role="tab"
               aria-selected={index === activeIndex}
               aria-label={`Ver ${product.name}`}
-              onClick={() => goTo(index)}
+              onClick={() => goToInteractive(index)}
               className={`min-h-11 min-w-11 rounded-full p-2 transition-all duration-350 ease-[cubic-bezier(0.4,0,0.2,1)] ${
                 index === activeIndex
                   ? "bg-[var(--brand-cyan)]/20 ring-1 ring-[var(--brand-cyan)]/40"

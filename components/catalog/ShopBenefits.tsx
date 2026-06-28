@@ -22,11 +22,11 @@ const shopBenefits = [
   },
 ] as const;
 
-export function ShopBenefits() {
+export function ShopBenefits({ className = "" }: { className?: string }) {
   return (
     <section
       aria-label="Beneficios de compra"
-      className="border-t border-white/[0.06] py-16 md:py-20"
+      className={`border-t border-white/[0.06] py-16 md:py-20 ${className}`.trim()}
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <ul className="mx-auto flex max-w-2xl flex-col gap-4">

@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { mainNavLinks } from "@/lib/catalog";
 import { categoryCatalog } from "@/lib/catalog";
+import { hamburgerCategoryMenus } from "@/lib/hamburgerMenu";
 import { Button, getButtonClassName } from "@/components/ui/Button";
 import { Logo } from "@/components/ui/Logo";
 import { IconCart, IconClose, IconMenu } from "@/components/ui/Icons";
@@ -25,6 +26,7 @@ export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [categoriesOpen, setCategoriesOpen] = useState(false);
+  const [activeCategoryId, setActiveCategoryId] = useState<string | null>(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -43,9 +45,34 @@ export function Navbar() {
   useEffect(() => {
     setMenuOpen(false);
     setCategoriesOpen(false);
+    setActiveCategoryId(null);
   }, [pathname]);
 
+  useEffect(() => {
+    if (!menuOpen) setActiveCategoryId(null);
+  }, [menuOpen]);
+
   const navItems = mainNavLinks.filter((l) => l.label !== "Carrito");
+
+  const mobileNavItems = mainNavLinks.filter(
+    (link) => link.label !== "Categorías" && link.label !== "Carrito",
+  );
+
+  const activeCategoryGroup = hamburgerCategoryMenus.find(
+    (group) => group.id === activeCategoryId,
+  );
+
+  const mobileMenuLinkClass = (active: boolean) =>
+    `block w-full rounded-xl px-4 py-3.5 text-left text-base transition-colors ${
+      active
+        ? "bg-white/10 text-white"
+        : "text-zinc-300 hover:bg-white/5 hover:text-white"
+    }`;
+
+  const isHamburgerSubcategoryActive = (href: string) => {
+    if (href === "/tienda") return false;
+    return pathname === href.split("#")[0];
+  };
 
   return (
     <header
@@ -163,7 +190,7 @@ export function Navbar() {
       {menuOpen && (
         <div className="glass fixed inset-0 top-[4.75rem] z-40 overflow-y-auto sm:top-[5.25rem] lg:hidden animate-fade-in">
           <ul className="flex flex-col gap-1 p-4">
-            {mainNavLinks.map((link) => (
+            {mobileNavItems.map((link) => (
               <li key={link.href}>
                 <Link
                   href={link.href}
@@ -178,25 +205,58 @@ export function Navbar() {
               </li>
             ))}
             <li className="mt-2 border-t border-white/[0.08] pt-3">
-              <p className="px-4 pb-2 text-xs font-semibold tracking-wider text-[var(--muted)] uppercase">
-                Categorías
-              </p>
-              <ul className="flex flex-col gap-1">
-                {categoryCatalog.map((cat) => (
-                  <li key={cat.id}>
-                    <Link
-                      href={cat.path}
-                      className={`block rounded-xl px-4 py-3 text-base transition-colors ${
-                        pathname === cat.path
-                          ? "bg-white/10 text-white"
-                          : "text-zinc-300 hover:bg-white/5 hover:text-white"
-                      }`}
-                    >
-                      {cat.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+              {!activeCategoryGroup ? (
+                <>
+                  <p className="px-4 pb-2 text-xs font-semibold tracking-wider text-[var(--muted)] uppercase">
+                    Categorías
+                  </p>
+                  <ul className="flex flex-col gap-1">
+                    {hamburgerCategoryMenus.map((group) => (
+                      <li key={group.id}>
+                        <button
+                          type="button"
+                          className={mobileMenuLinkClass(false)}
+                          onClick={() => setActiveCategoryId(group.id)}
+                        >
+                          {group.label}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              ) : (
+                <>
+                  <p className="px-4 pb-2 text-xs font-semibold tracking-wider text-[var(--muted)] uppercase">
+                    {activeCategoryGroup.label}
+                  </p>
+                  <ul className="flex flex-col gap-1">
+                    {activeCategoryGroup.children?.map((item) => {
+                      const href = item.href ?? "/tienda";
+                      return (
+                        <li key={item.id}>
+                          <Link
+                            href={href}
+                            className={mobileMenuLinkClass(
+                              isHamburgerSubcategoryActive(href),
+                            )}
+                          >
+                            {item.label}
+                          </Link>
+                        </li>
+                      );
+                    })}
+                    <li>
+                      <button
+                        type="button"
+                        className={mobileMenuLinkClass(false)}
+                        onClick={() => setActiveCategoryId(null)}
+                      >
+                        ← Volver
+                      </button>
+                    </li>
+                  </ul>
+                </>
+              )}
             </li>
           </ul>
         </div>

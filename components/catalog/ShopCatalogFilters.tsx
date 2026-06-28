@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import {
   getSubcategoriesForGroup,
   shopGroups,
@@ -19,6 +20,9 @@ const groupPills: { id: ShopFilterGroup; label: string }[] = [
   { id: "all", label: "Todos" },
   ...shopGroups.map((g) => ({ id: g.id as ShopFilterGroup, label: g.name })),
 ];
+
+const filterRowClassName =
+  "scroll-snap-x hide-scrollbar flex gap-2 overflow-x-auto md:flex-wrap md:overflow-visible";
 
 function FilterPill({
   label,
@@ -45,6 +49,60 @@ function FilterPill({
   );
 }
 
+function FilterPillRow({ children }: { children: ReactNode }) {
+  return <div className={filterRowClassName}>{children}</div>;
+}
+
+function StickyFilterBars({
+  activeGroup,
+  activeSubcategory,
+  onGroupChange,
+  onSubcategoryChange,
+}: Omit<ShopCatalogFiltersProps, "layout">) {
+  const subcategories =
+    activeGroup === "all" ? [] : getSubcategoriesForGroup(activeGroup);
+
+  return (
+    <nav
+      aria-label="Filtrar catálogo"
+      className="sticky top-[4.75rem] z-40 border-b border-white/[0.06] glass sm:top-[5.25rem]"
+    >
+      <div className="mx-auto max-w-7xl px-4 py-2.5 sm:px-6 lg:px-8">
+        <div className="flex flex-col">
+          <FilterPillRow>
+            {groupPills.map((pill) => (
+              <FilterPill
+                key={pill.id}
+                label={pill.label}
+                isActive={activeGroup === pill.id}
+                onClick={() => onGroupChange(pill.id)}
+              />
+            ))}
+          </FilterPillRow>
+
+          {activeGroup !== "all" && (
+            <FilterPillRow>
+              <FilterPill
+                label="Todas"
+                isActive={activeSubcategory === "all"}
+                onClick={() => onSubcategoryChange("all")}
+              />
+              {subcategories.map((sub) => (
+                <FilterPill
+                  key={sub.id}
+                  label={sub.name}
+                  isActive={activeSubcategory === sub.id}
+                  onClick={() => onSubcategoryChange(sub.id)}
+                />
+              ))}
+            </FilterPillRow>
+          )}
+        </div>
+      </div>
+    </nav>
+  );
+}
+
 function FilterContent({
   activeGroup,
   activeSubcategory,
@@ -62,7 +120,7 @@ function FilterContent({
         <p className="mb-2 text-[10px] font-semibold tracking-[0.15em] text-[var(--muted)] uppercase">
           Categoría
         </p>
-        <div className="scroll-snap-x hide-scrollbar flex flex-wrap gap-2">
+        <FilterPillRow>
           {groupPills.map((pill) => (
             <FilterPill
               key={pill.id}
@@ -71,14 +129,14 @@ function FilterContent({
               onClick={() => onGroupChange(pill.id)}
             />
           ))}
-        </div>
+        </FilterPillRow>
       </div>
 
       <div>
         <p className="mb-2 text-[10px] font-semibold tracking-[0.15em] text-[var(--muted)] uppercase">
           Subcategoría
         </p>
-        <div className="scroll-snap-x hide-scrollbar flex flex-wrap gap-2">
+        <FilterPillRow>
           <FilterPill
             label="Todas"
             isActive={activeSubcategory === "all"}
@@ -92,7 +150,7 @@ function FilterContent({
               onClick={() => onSubcategoryChange(sub.id)}
             />
           ))}
-        </div>
+        </FilterPillRow>
       </div>
     </div>
   );
@@ -107,21 +165,12 @@ export function ShopCatalogFilters({
 }: ShopCatalogFiltersProps) {
   if (layout === "sticky-mobile") {
     return (
-      <nav
-        aria-label="Filtrar catálogo"
-        className="sticky top-[4.75rem] z-40 border-b border-white/[0.06] glass md:hidden"
-      >
-        <div className="scroll-snap-x hide-scrollbar flex gap-2 overflow-x-auto px-4 py-2.5">
-          {groupPills.map((pill) => (
-            <FilterPill
-              key={pill.id}
-              label={pill.label}
-              isActive={activeGroup === pill.id}
-              onClick={() => onGroupChange(pill.id)}
-            />
-          ))}
-        </div>
-      </nav>
+      <StickyFilterBars
+        activeGroup={activeGroup}
+        activeSubcategory={activeSubcategory}
+        onGroupChange={onGroupChange}
+        onSubcategoryChange={onSubcategoryChange}
+      />
     );
   }
 
@@ -137,56 +186,17 @@ export function ShopCatalogFilters({
   );
 }
 
-export function ShopCatalogFiltersMobileSubcategories({
-  activeGroup,
-  activeSubcategory,
-  onSubcategoryChange,
-}: Pick<
-  ShopCatalogFiltersProps,
-  "activeGroup" | "activeSubcategory" | "onSubcategoryChange"
->) {
-  if (activeGroup === "all") return null;
-
-  const subcategories = getSubcategoriesForGroup(activeGroup);
-
-  return (
-    <nav
-      aria-label="Filtrar por subcategoría"
-      className="border-b border-white/[0.06] glass md:hidden"
-    >
-      <div className="scroll-snap-x hide-scrollbar flex gap-2 overflow-x-auto px-4 py-2.5">
-        <FilterPill
-          label="Todas"
-          isActive={activeSubcategory === "all"}
-          onClick={() => onSubcategoryChange("all")}
-        />
-        {subcategories.map((sub) => (
-          <FilterPill
-            key={sub.id}
-            label={sub.name}
-            isActive={activeSubcategory === sub.id}
-            onClick={() => onSubcategoryChange(sub.id)}
-          />
-        ))}
-      </div>
-    </nav>
-  );
+export function ShopCatalogFiltersMobileSubcategories(
+  _props: Pick<
+    ShopCatalogFiltersProps,
+    "activeGroup" | "activeSubcategory" | "onSubcategoryChange"
+  >,
+) {
+  return null;
 }
 
-export function ShopCatalogFiltersDesktop({
-  activeGroup,
-  activeSubcategory,
-  onGroupChange,
-  onSubcategoryChange,
-}: Omit<ShopCatalogFiltersProps, "layout">) {
-  return (
-    <div className="hidden md:block">
-      <FilterContent
-        activeGroup={activeGroup}
-        activeSubcategory={activeSubcategory}
-        onGroupChange={onGroupChange}
-        onSubcategoryChange={onSubcategoryChange}
-      />
-    </div>
-  );
+export function ShopCatalogFiltersDesktop(
+  _props: Omit<ShopCatalogFiltersProps, "layout">,
+) {
+  return null;
 }

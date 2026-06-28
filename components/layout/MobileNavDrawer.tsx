@@ -3,8 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import type { ReactNode } from "react";
-import { categoryCatalog } from "@/lib/catalog";
+import { useEffect, useState, type ReactNode } from "react";
+import { hamburgerCategoryMenus } from "@/lib/hamburgerMenu";
 import { siteConfig } from "@/lib/data";
 
 type MobileNavDrawerProps = {
@@ -93,6 +93,27 @@ export function MobileNavDrawer({
 }: MobileNavDrawerProps) {
   const reduceMotion = useReducedMotion();
   const duration = reduceMotion ? 0.01 : PANEL_DURATION;
+  const [activeCategoryId, setActiveCategoryId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!open) setActiveCategoryId(null);
+  }, [open]);
+
+  const activeCategoryGroup = hamburgerCategoryMenus.find(
+    (group) => group.id === activeCategoryId,
+  );
+
+  const categoryPillClass = (active: boolean) =>
+    `inline-flex rounded-full border px-3.5 py-1.5 text-[13px] tracking-[0.02em] transition-all duration-[180ms] ${
+      active
+        ? "border-[rgba(168,85,247,0.24)] bg-white/[0.03] text-white"
+        : "border-white/[0.07] text-zinc-400 hover:border-[rgba(168,85,247,0.16)] hover:text-zinc-300"
+    }`;
+
+  const isHamburgerSubcategoryActive = (href: string) => {
+    if (href === "/tienda") return false;
+    return isLinkActive(href);
+  };
 
   return (
     <AnimatePresence>
@@ -170,32 +191,63 @@ export function MobileNavDrawer({
 
               <StaggerItem delay={220}>
                 <section className="mt-11" aria-label="Categorías">
-                  <h2 className="mb-4 text-[13px] font-medium tracking-[0.18em] text-zinc-500 uppercase">
-                    Categorías
-                  </h2>
-                  <ul className="flex flex-wrap gap-2.5">
-                    {categoryCatalog.map((category) => {
-                      const active = isLinkActive(category.path);
+                  {!activeCategoryGroup ? (
+                    <>
+                      <h2 className="mb-4 text-[13px] font-medium tracking-[0.18em] text-zinc-500 uppercase">
+                        Categorías
+                      </h2>
+                      <ul className="flex flex-wrap gap-2.5">
+                        {hamburgerCategoryMenus.map((group) => (
+                          <li key={group.id}>
+                            <button
+                              type="button"
+                              className={categoryPillClass(false)}
+                              style={{ transitionTimingFunction: NAV_TRANSITION }}
+                              onClick={() => setActiveCategoryId(group.id)}
+                            >
+                              {group.label}
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    </>
+                  ) : (
+                    <>
+                      <h2 className="mb-4 text-[13px] font-medium tracking-[0.18em] text-zinc-500 uppercase">
+                        {activeCategoryGroup.label}
+                      </h2>
+                      <ul className="flex flex-wrap gap-2.5">
+                        {activeCategoryGroup.children?.map((item) => {
+                          const href = item.href ?? "/tienda";
+                          const active = isHamburgerSubcategoryActive(href);
 
-                      return (
-                        <li key={category.id}>
-                          <Link
-                            href={category.path}
-                            onClick={onClose}
-                            aria-current={active ? "page" : undefined}
-                            className={`inline-flex rounded-full border px-3.5 py-1.5 text-[13px] tracking-[0.02em] transition-all duration-[180ms] ${
-                              active
-                                ? "border-[rgba(168,85,247,0.24)] bg-white/[0.03] text-white"
-                                : "border-white/[0.07] text-zinc-400 hover:border-[rgba(168,85,247,0.16)] hover:text-zinc-300"
-                            }`}
+                          return (
+                            <li key={item.id}>
+                              <Link
+                                href={href}
+                                onClick={onClose}
+                                aria-current={active ? "page" : undefined}
+                                className={categoryPillClass(active)}
+                                style={{ transitionTimingFunction: NAV_TRANSITION }}
+                              >
+                                {item.label}
+                              </Link>
+                            </li>
+                          );
+                        })}
+                        <li>
+                          <button
+                            type="button"
+                            className={categoryPillClass(false)}
                             style={{ transitionTimingFunction: NAV_TRANSITION }}
+                            onClick={() => setActiveCategoryId(null)}
                           >
-                            {category.name}
-                          </Link>
+                            ← Volver
+                          </button>
                         </li>
-                      );
-                    })}
-                  </ul>
+                      </ul>
+                    </>
+                  )}
                 </section>
               </StaggerItem>
             </div>

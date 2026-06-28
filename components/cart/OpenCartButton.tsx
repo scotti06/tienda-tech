@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/Button";
-import { useCart } from "@/components/layout/CartContext";
+import { useCart } from "@/components/cart/CartProvider";
 import type { ButtonSize, ButtonVariant } from "@/components/ui/Button";
 
 type OpenCartButtonProps = {

@@ -17,6 +17,7 @@ export type ShopSubcategory = {
   groupId: ShopGroupId;
   name: string;
   productCategory: string;
+  productCategoryIds: string[];
 };
 
 export const shopGroups: ShopGroup[] = [
@@ -44,35 +45,87 @@ export const shopGroups: ShopGroup[] = [
 ];
 
 export const shopSubcategories: ShopSubcategory[] = [
-  { id: "airpods", groupId: "accesorios", name: "Auriculares", productCategory: "AirPods" },
-  { id: "carga", groupId: "accesorios", name: "Cargadores", productCategory: "Cargadores" },
-  { id: "fundas", groupId: "accesorios", name: "Fundas", productCategory: "Fundas" },
+  {
+    id: "auriculares",
+    groupId: "accesorios",
+    name: "Auriculares",
+    productCategory: "AirPods",
+    productCategoryIds: ["airpods"],
+  },
+  {
+    id: "cargadores",
+    groupId: "accesorios",
+    name: "Cargadores",
+    productCategory: "Cargadores",
+    productCategoryIds: ["carga"],
+  },
+  {
+    id: "fundas",
+    groupId: "accesorios",
+    name: "Fundas",
+    productCategory: "Fundas",
+    productCategoryIds: ["fundas"],
+  },
   {
     id: "vidrios",
     groupId: "accesorios",
     name: "Vidrios templados",
     productCategory: "Vidrios templados",
+    productCategoryIds: ["vidrios"],
   },
   {
-    id: "consolas",
+    id: "playstation",
     groupId: "tecnologia",
-    name: "Consolas y Gaming",
+    name: "PlayStation",
     productCategory: "Consolas y Gaming",
+    productCategoryIds: ["consolas"],
   },
-  { id: "parlantes", groupId: "tecnologia", name: "Parlantes", productCategory: "Parlantes" },
   {
-    id: "apple-watch",
+    id: "parlantes",
     groupId: "tecnologia",
-    name: "Apple Watch",
-    productCategory: "Apple Watch",
+    name: "Parlantes",
+    productCategory: "Parlantes",
+    productCategoryIds: ["parlantes"],
   },
-  { id: "tv-stick", groupId: "hogar", name: "TV Stick", productCategory: "TV Stick" },
-  { id: "tv-box", groupId: "hogar", name: "TV Box", productCategory: "TV Box" },
-  { id: "termos", groupId: "hogar", name: "Termos", productCategory: "Termos" },
-  { id: "vasos", groupId: "hogar", name: "Vasos", productCategory: "Vasos" },
+  {
+    id: "relojes-apple-watch",
+    groupId: "tecnologia",
+    name: "Relojes Apple Watch",
+    productCategory: "Apple Watch",
+    productCategoryIds: ["apple-watch"],
+  },
+  {
+    id: "tv-stick-box",
+    groupId: "hogar",
+    name: "TV Stick / TV Box",
+    productCategory: "TV Stick",
+    productCategoryIds: ["tv-stick", "tv-box"],
+  },
+  {
+    id: "termos-vasos",
+    groupId: "hogar",
+    name: "Termos y Vasos",
+    productCategory: "Termos",
+    productCategoryIds: ["termos", "vasos"],
+  },
 ];
 
 const subcategoryById = new Map(shopSubcategories.map((s) => [s.id, s]));
+
+function subcategoryMatchesProduct(
+  subcategory: ShopSubcategory,
+  productCategoryId: string,
+): boolean {
+  return subcategory.productCategoryIds.includes(productCategoryId);
+}
+
+function findSubcategoryForProduct(
+  product: Product,
+): ShopSubcategory | undefined {
+  return shopSubcategories.find((subcategory) =>
+    subcategoryMatchesProduct(subcategory, product.categoryId),
+  );
+}
 
 export function getSubcategoryById(id: string): ShopSubcategory | undefined {
   return subcategoryById.get(id);
@@ -84,7 +137,7 @@ export function getSubcategoriesForGroup(groupId: ShopFilterGroup): ShopSubcateg
 }
 
 export function getGroupForProduct(product: Product): ShopGroupId | undefined {
-  return subcategoryById.get(product.categoryId)?.groupId;
+  return findSubcategoryForProduct(product)?.groupId;
 }
 
 export function countProductsByGroup(groupId: ShopGroupId): number {
@@ -92,7 +145,14 @@ export function countProductsByGroup(groupId: ShopGroupId): number {
 }
 
 export function countProductsBySubcategory(subcategoryId: string): number {
-  return products.filter((p) => p.categoryId === subcategoryId).length;
+  const subcategory = getSubcategoryById(subcategoryId);
+  if (!subcategory) {
+    return products.filter((p) => p.categoryId === subcategoryId).length;
+  }
+
+  return products.filter((p) =>
+    subcategoryMatchesProduct(subcategory, p.categoryId),
+  ).length;
 }
 
 export type ShopFilterState = {
@@ -127,8 +187,15 @@ export function filterShopProducts(
       if (productGroup !== groupId) return false;
     }
 
-    if (subcategoryId !== "all" && product.categoryId !== subcategoryId) {
-      return false;
+    if (subcategoryId !== "all") {
+      const subcategory = getSubcategoryById(subcategoryId);
+      if (subcategory) {
+        if (!subcategoryMatchesProduct(subcategory, product.categoryId)) {
+          return false;
+        }
+      } else if (product.categoryId !== subcategoryId) {
+        return false;
+      }
     }
 
     if (normalizedQuery && !productSearchText(product).includes(normalizedQuery)) {

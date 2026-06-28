@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ShoppingCart } from "lucide-react";
 import { useEffect } from "react";
-import { useCart } from "@/components/layout/CartContext";
+import { useCart } from "@/components/cart/CartProvider";
 import { IconClose, IconWhatsApp } from "@/components/ui/Icons";
 import {
   buildCartWhatsAppUrl,
@@ -186,7 +186,9 @@ function CartLineItem({ item, index, onDecrease, onIncrease }: CartLineItemProps
           <h3 className="truncate text-[15px] font-semibold leading-tight tracking-tight text-white">
             {item.name}
           </h3>
-          <p className="truncate text-[13px] leading-tight text-zinc-500">{item.model}</p>
+          <p className="truncate text-[13px] leading-tight text-zinc-500">
+            {item.model ?? ""}
+          </p>
         </div>
 
         <div className="flex items-center justify-between gap-3">
@@ -328,14 +330,14 @@ export function CartDrawer() {
                       <AnimatePresence initial={false}>
                         {items.map((item, index) => (
                           <CartLineItem
-                            key={item.productId}
+                            key={item.id}
                             item={item}
                             index={index}
                             onDecrease={() =>
-                              updateQuantity(item.productId, item.quantity - 1)
+                              updateQuantity(item.id, item.quantity - 1)
                             }
                             onIncrease={() =>
-                              updateQuantity(item.productId, item.quantity + 1)
+                              updateQuantity(item.id, item.quantity + 1)
                             }
                           />
                         ))}

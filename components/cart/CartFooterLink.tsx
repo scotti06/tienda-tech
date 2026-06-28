@@ -1,6 +1,6 @@
 "use client";
 
-import { useCart } from "@/components/layout/CartContext";
+import { useCart } from "@/components/cart/CartProvider";
 
 type CartFooterLinkProps = {
   children: React.ReactNode;

@@ -25,42 +25,17 @@ export const hamburgerCategoryMenus: MenuTreeItem[] = [
     id: "tecnologia",
     label: "Tecnología",
     children: [
-      {
-        id: "playstation-5",
-        label: "PlayStation 5",
-        href: "/tienda",
-        futurePath: "/tecnologia/playstation-5",
-      },
-      {
-        id: "parlantes",
-        label: "Parlantes",
-        href: "/tienda",
-        futurePath: "/tecnologia/parlantes",
-      },
-      {
-        id: "smartwatch",
-        label: "Smartwatch",
-        href: "/tienda",
-        futurePath: "/tecnologia/smartwatch",
-      },
+      { id: "playstation-5", label: "PlayStation 5", href: "/tienda" },
+      { id: "parlantes", label: "Parlantes", href: "/tienda" },
+      { id: "smartwatch", label: "Smartwatch", href: "/tienda" },
     ],
   },
   {
     id: "hogar",
     label: "Hogar",
     children: [
-      {
-        id: "tv",
-        label: "TV",
-        href: "/tienda",
-        futurePath: "/hogar/tv",
-      },
-      {
-        id: "termos",
-        label: "Termos",
-        href: "/tienda",
-        futurePath: "/hogar/termos",
-      },
+      { id: "tv", label: "TV", href: "/tienda" },
+      { id: "termos", label: "Termos", href: "/tienda" },
     ],
   },
 ];

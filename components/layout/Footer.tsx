@@ -67,7 +67,7 @@ export function Footer() {
               © {new Date().getFullYear()} {siteConfig.name}. Todos los derechos reservados.
             </p>
             <p className="text-xs text-[var(--muted)]">
-              Diseñado con precisión · Argentina
+              Diseñado por Code Crafted Studio · Argentina
             </p>
           </div>
         </div>

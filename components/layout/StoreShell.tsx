@@ -1,9 +1,9 @@
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { FloatingActions } from "@/components/layout/FloatingActions";
-import { CartDrawer } from "@/components/layout/CartDrawer";
 import { WhatsAppAssistantProvider } from "@/components/layout/WhatsAppAssistantContext";
 import { CartProvider } from "@/components/cart/CartProvider";
+import { CartDrawer } from "@/components/layout/CartDrawer";
 
 type StoreShellProps = {
   children: React.ReactNode;

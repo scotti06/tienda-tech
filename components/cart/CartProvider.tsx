@@ -74,6 +74,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setItems([]);
   }, []);
 
+  const openCart = useCallback(() => setIsOpen(true), []);
+  const closeCart = useCallback(() => setIsOpen(false), []);
+  const toggleCart = useCallback(() => setIsOpen((open) => !open), []);
+
   const totals = useMemo(() => getCartTotals(items), [items]);
 
   const value = useMemo(

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { StoreShell } from "@/components/layout/StoreShell";
-import { ShopPageView } from "@/components/catalog/ShopPageView";
+import { ShopPageBody } from "@/components/catalog/ShopPageBody";
 
 export const metadata: Metadata = {
   title: "Tienda — Techstylebv",
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 export default function TiendaPage() {
   return (
     <StoreShell>
-      <ShopPageView />
+      <ShopPageBody />
     </StoreShell>
   );
 }

@@ -1,12 +1,15 @@
+import { formatPrice, siteConfig, type Product } from "@/lib/data";
+
 export type CartItem = {
   id: string;
   name: string;
   image: string;
   price: number;
   quantity: number;
+  model?: string;
 };
 
-export type CartProductInput = Pick<CartItem, "id" | "name" | "image" | "price">;
+export type CartProductInput = Pick<CartItem, "id" | "name" | "image" | "price" | "model">;
 
 export const CART_STORAGE_KEY = "techstylebv-cart";
 
@@ -97,7 +100,6 @@ export function getCartTotals(items: CartItem[]) {
 export function getCartSubtotal(items: CartItem[]): number {
   return getCartTotals(items).subtotal;
 }
-
 export function formatCartSubtotal(items: CartItem[]): string {
   const { subtotal } = getCartTotals(items);
   if (!subtotal || subtotal <= 0) {
@@ -153,4 +155,61 @@ export function scrollToCatalog(pathname: string): void {
   }
 
   window.location.assign(pathname === "/" ? "/#productos" : "/tienda#categorias");
+export function getCartItemCount(items: CartItem[]): number {
+  return getCartTotals(items).totalItems;
+}
+
+export function formatCartSubtotal(items: CartItem[]): string {
+  return formatPrice(getCartSubtotal(items));
+}
+
+export const readStoredCart = readCartFromStorage;
+export const writeStoredCart = writeCartToStorage;
+
+export function productToCartItem(product: Product): Omit<CartItem, "quantity"> {
+  return {
+    id: product.id,
+    name: product.name,
+    image: product.image,
+    price: product.price,
+  };
+}
+
+export function buildCartWhatsAppUrl(items: CartItem[]): string {
+  const lines = items.map((item) => {
+    const modelPart = item.model ? ` (${item.model})` : "";
+    const lineTotal = item.price * item.quantity;
+    const pricePart =
+      lineTotal > 0 ? ` — ${formatPrice(lineTotal)}` : "";
+    return `• ${item.name}${modelPart} x${item.quantity}${pricePart}`;
+  });
+
+  const subtotal = getCartSubtotal(items);
+  const subtotalPart =
+    subtotal > 0 ? `\n\nSubtotal estimado: ${formatPrice(subtotal)}` : "";
+
+  const message = `Hola! Quiero consultar por mi pedido:\n\n${lines.join("\n")}${subtotalPart}`;
+
+  return `https://wa.me/${siteConfig.whatsapp}?text=${encodeURIComponent(message)}`;
+}
+
+export function scrollToCatalog(pathname: string): void {
+  const scrollToId = (id: string) => {
+    document.getElementById(id)?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
+
+  if (pathname === "/tienda") {
+    scrollToId("catalogo-productos");
+    return;
+  }
+
+  if (pathname === "/") {
+    scrollToId("productos-destacados");
+    return;
+  }
+
+  window.location.assign("/tienda#catalogo-productos");
 }

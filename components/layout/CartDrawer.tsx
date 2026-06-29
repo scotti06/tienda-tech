@@ -186,6 +186,9 @@ function CartLineItem({ item, index, onDecrease, onIncrease }: CartLineItemProps
           <h3 className="truncate text-[15px] font-semibold leading-tight tracking-tight text-white">
             {item.name}
           </h3>
+          <p className="truncate text-[13px] leading-tight text-zinc-500">
+            {item.model ?? ""}
+          </p>
         </div>
 
         <div className="flex items-center justify-between gap-3">

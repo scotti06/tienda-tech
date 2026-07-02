@@ -34,7 +34,7 @@ function resolveCategoryFields(categoryId: string) {
 export async function GET() {
   try {
     await requireAdminSession();
-    const store = readStore();
+    const store = await readStore();
     return NextResponse.json(store.products);
   } catch {
     return NextResponse.json({ error: "No autorizado." }, { status: 401 });
@@ -45,7 +45,7 @@ export async function POST(request: Request) {
   try {
     await requireAdminSession();
     const body = (await request.json()) as Partial<StoreProduct>;
-    const store = readStore();
+    const store = await readStore();
 
     const categoryFields = resolveCategoryFields(body.categoryId ?? "");
     if (!categoryFields) {
@@ -98,7 +98,7 @@ export async function POST(request: Request) {
     };
 
     store.products.unshift(product);
-    writeStore(store);
+    await writeStore(store);
     revalidateCatalogPaths();
 
     return NextResponse.json(product, { status: 201 });

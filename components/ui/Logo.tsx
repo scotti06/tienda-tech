@@ -4,7 +4,8 @@ import Link from "next/link";
 type LogoProps = {
   className?: string;
   href?: string;
-  size?: "nav" | "footer";
+  size?: "nav" | "footer" | "drawer";
+  onClick?: () => void;
 };
 
 const sizeConfig = {
@@ -19,14 +20,26 @@ const sizeConfig = {
     width: 260,
     height: 260,
   },
+  drawer: {
+    className:
+      "h-16 w-auto max-w-[180px] sm:h-[4.5rem] sm:max-w-[210px]",
+    width: 210,
+    height: 210,
+  },
 };
 
-export function Logo({ className = "", href = "/", size = "nav" }: LogoProps) {
+export function Logo({
+  className = "",
+  href = "/",
+  size = "nav",
+  onClick,
+}: LogoProps) {
   const config = sizeConfig[size];
 
   return (
     <Link
       href={href}
+      onClick={onClick}
       className={`relative inline-flex shrink-0 items-center transition-opacity hover:opacity-90 ${className}`}
       aria-label="Techstylebv — accesorios para celulares"
     >
@@ -37,7 +50,13 @@ export function Logo({ className = "", href = "/", size = "nav" }: LogoProps) {
         height={config.height}
         className={`object-contain object-center ${config.className}`}
         priority={size === "nav"}
-        sizes={size === "nav" ? "(max-width: 640px) 140px, (max-width: 768px) 168px, 200px" : "260px"}
+        sizes={
+          size === "nav"
+            ? "(max-width: 640px) 140px, (max-width: 768px) 168px, 200px"
+            : size === "drawer"
+              ? "210px"
+              : "260px"
+        }
       />
     </Link>
   );

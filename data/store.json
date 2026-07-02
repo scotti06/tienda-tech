@@ -230,6 +230,36 @@
   ],
   "orders": [
     {
+      "id": "order-1782754999005",
+      "orderNumber": "TS-2026-0004",
+      "customerName": "Audit Test User",
+      "customerEmail": "audit@test.local",
+      "customerPhone": "1100000000",
+      "shippingAddress": {
+        "street": "Test 123",
+        "city": "CABA",
+        "province": "Buenos Aires",
+        "postalCode": "1000",
+        "notes": "E2E audit"
+      },
+      "shippingMethod": "pickup",
+      "shippingCost": 0,
+      "subtotal": 12000,
+      "paymentMethod": "transfer",
+      "items": [
+        {
+          "productId": "9",
+          "name": "Funda Transparente iPhone",
+          "image": "/products/funda-iphone.webp",
+          "price": 12000,
+          "quantity": 1
+        }
+      ],
+      "total": 12000,
+      "status": "pendiente",
+      "createdAt": "2026-06-29T17:43:19.004Z"
+    },
+    {
       "id": "order-1782256898193",
       "orderNumber": "TS-2026-0003",
       "customerName": "Ramiro Pereyra",
@@ -294,6 +324,17 @@
     }
   ],
   "notifications": [
+    {
+      "id": "notif-order-1782754999005",
+      "type": "purchase",
+      "title": "Nueva compra realizada",
+      "orderId": "order-1782754999005",
+      "orderNumber": "TS-2026-0004",
+      "customerName": "Audit Test User",
+      "total": 12000,
+      "createdAt": "2026-06-29T17:43:19.004Z",
+      "read": false
+    },
     {
       "id": "notif-order-1782256898193",
       "type": "purchase",

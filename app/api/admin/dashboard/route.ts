@@ -5,7 +5,7 @@ import { getDashboardStats } from "@/lib/store/repository";
 export async function GET() {
   try {
     await requireAdminSession();
-    return NextResponse.json(getDashboardStats());
+    return NextResponse.json(await getDashboardStats());
   } catch {
     return NextResponse.json({ error: "No autorizado." }, { status: 401 });
   }

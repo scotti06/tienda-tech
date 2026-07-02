@@ -4,8 +4,8 @@ import { SectionHeader } from "@/components/ui/SectionHeader";
 import { Button } from "@/components/ui/Button";
 import { getProducts } from "@/lib/products";
 
-export function ProductGrid() {
-  const products = getProducts();
+export async function ProductGrid() {
+  const products = await getProducts();
   return (
     <section id="productos" className="py-24 md:py-32">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

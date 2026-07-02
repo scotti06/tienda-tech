@@ -4,6 +4,7 @@ import { FloatingActions } from "@/components/layout/FloatingActions";
 import { WhatsAppAssistantProvider } from "@/components/layout/WhatsAppAssistantContext";
 import { CartProvider } from "@/components/cart/CartProvider";
 import { CartDrawer } from "@/components/layout/CartDrawer";
+import { getAdminSession } from "@/lib/admin/session";
 
 type StoreShellProps = {
   children: React.ReactNode;
@@ -11,14 +12,16 @@ type StoreShellProps = {
   withTopPadding?: boolean;
 };
 
-export function StoreShell({
+export async function StoreShell({
   children,
   withTopPadding = true,
 }: StoreShellProps) {
+  const adminSession = await getAdminSession();
+
   return (
     <WhatsAppAssistantProvider>
       <CartProvider>
-        <Navbar />
+        <Navbar isAdminAuthenticated={Boolean(adminSession)} />
         <div className={withTopPadding ? "pt-[4.75rem] sm:pt-[5.25rem]" : ""}>
           {children}
         </div>

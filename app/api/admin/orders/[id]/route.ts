@@ -20,7 +20,7 @@ export async function PATCH(request: Request, context: RouteContext) {
     await requireAdminSession();
     const { id } = await context.params;
     const body = (await request.json()) as { status?: OrderStatus };
-    const store = readStore();
+    const store = await readStore();
     const index = store.orders.findIndex((order) => order.id === id);
 
     if (index === -1) {
@@ -36,7 +36,7 @@ export async function PATCH(request: Request, context: RouteContext) {
       status: body.status,
     };
 
-    writeStore(store);
+    await writeStore(store);
     revalidatePath("/admin");
     revalidatePath("/admin/pedidos");
 

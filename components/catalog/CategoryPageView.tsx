@@ -8,8 +8,8 @@ type CategoryPageViewProps = {
   category: CategoryMeta;
 };
 
-export function CategoryPageView({ category }: CategoryPageViewProps) {
-  const categoryProducts = getProductsByCategoryId(category.id);
+export async function CategoryPageView({ category }: CategoryPageViewProps) {
+  const categoryProducts = await getProductsByCategoryId(category.id);
 
   return (
     <main>

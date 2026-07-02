@@ -64,11 +64,16 @@ export function AdminProductTable({
             {products.map((product) => {
               const badge = stockBadge(product.stock ?? 0);
               const active = isProductActive(product);
+              const isOutOfStock = (product.stock ?? 0) <= 0;
 
               return (
                 <tr
                   key={product.id}
-                  className="border-b border-white/[0.06] last:border-b-0"
+                  className={`border-b border-white/[0.06] last:border-b-0 ${
+                    isOutOfStock
+                      ? "border-l-4 border-l-red-500 bg-red-500/[0.07]"
+                      : ""
+                  }`}
                 >
                   <td className="px-4 py-4">
                     <div className="flex items-start gap-4">
@@ -82,7 +87,14 @@ export function AdminProductTable({
                         />
                       </div>
                       <div>
-                        <p className="font-medium text-white">{product.name}</p>
+                        <div className="flex flex-wrap items-center gap-2">
+                          <p className="font-medium text-white">{product.name}</p>
+                          {isOutOfStock && (
+                            <span className="inline-flex rounded-full border border-red-500/30 bg-red-500/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-red-200">
+                              Sin stock
+                            </span>
+                          )}
+                        </div>
                         <p className="text-xs text-[var(--muted)]">
                           SKU: {product.sku ?? "—"}
                           {product.brand ? ` · ${product.brand}` : ""}

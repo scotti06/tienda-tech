@@ -5,7 +5,7 @@ import { readStore } from "@/lib/store/repository";
 export async function GET() {
   try {
     await requireAdminSession();
-    const store = readStore();
+    const store = await readStore();
     return NextResponse.json(store.orders);
   } catch {
     return NextResponse.json({ error: "No autorizado." }, { status: 401 });

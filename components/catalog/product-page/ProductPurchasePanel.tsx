@@ -46,11 +46,12 @@ export function ProductPurchasePanel({
   const [quantity, setQuantity] = useState(1);
   const [model, setModel] = useState("");
   const [toast, setToast] = useState<string | null>(null);
+  const [showModelHint, setShowModelHint] = useState(false);
   const toastTimerRef = useRef<number | null>(null);
 
   const stock = product.stock ?? 0;
   const isOutOfStock = stock <= 0;
-  const maxQuantity = Math.max(stock, 1);
+  const maxQuantity = stock > 0 ? stock : 1;
 
   useEffect(() => {
     return () => {
@@ -76,10 +77,7 @@ export function ProductPurchasePanel({
 
   function handleAddToCart() {
     if (isOutOfStock) return;
-    if (!model) {
-      showToast("Seleccioná tu modelo de iPhone para continuar.");
-      return;
-    }
+    if (!model) return;
 
     addItem(
       {
@@ -89,7 +87,7 @@ export function ProductPurchasePanel({
         price: product.price,
         model,
       },
-      quantity,
+      Math.min(quantity, stock),
     );
     showToast(`${product.name} agregado al carrito.`);
   }
@@ -102,7 +100,10 @@ export function ProductPurchasePanel({
         </span>
         <select
           value={model}
-          onChange={(event) => setModel(event.target.value)}
+          onChange={(event) => {
+            setModel(event.target.value);
+            setShowModelHint(false);
+          }}
           className="w-full rounded-xl border border-white/[0.12] bg-[#111118] px-4 py-3 text-sm text-white outline-none focus:border-[var(--brand-cyan)]"
         >
           <option value="">Seleccioná tu iPhone</option>
@@ -115,44 +116,71 @@ export function ProductPurchasePanel({
       </label>
 
       <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-        <div className="inline-flex shrink-0 items-center rounded-full border border-white/[0.12] bg-white/[0.04]">
-          <Button
-            type="button"
-            variant="ghost"
-            size="compact"
-            aria-label="Disminuir cantidad"
-            disabled={isOutOfStock || quantity <= 1}
-            onClick={() => setQuantity((current) => Math.max(1, current - 1))}
-          >
-            −
-          </Button>
-          <span className="min-w-8 px-2 text-center text-sm font-semibold text-white">
-            {quantity}
-          </span>
-          <Button
-            type="button"
-            variant="ghost"
-            size="compact"
-            aria-label="Aumentar cantidad"
-            disabled={isOutOfStock || quantity >= maxQuantity}
-            onClick={() =>
-              setQuantity((current) => Math.min(maxQuantity, current + 1))
-            }
-          >
-            +
-          </Button>
-        </div>
+        {isOutOfStock ? (
+          <p className="text-sm font-medium text-red-300">Sin stock</p>
+        ) : (
+          <div className="inline-flex shrink-0 items-center rounded-full border border-white/[0.12] bg-white/[0.04]">
+            <Button
+              type="button"
+              variant="ghost"
+              size="compact"
+              aria-label="Disminuir cantidad"
+              disabled={quantity <= 1}
+              onClick={() => setQuantity((current) => Math.max(1, current - 1))}
+            >
+              −
+            </Button>
+            <span className="min-w-8 px-2 text-center text-sm font-semibold text-white">
+              {quantity}
+            </span>
+            <Button
+              type="button"
+              variant="ghost"
+              size="compact"
+              aria-label="Aumentar cantidad"
+              disabled={quantity >= maxQuantity}
+              onClick={() =>
+                setQuantity((current) => Math.min(maxQuantity, current + 1))
+              }
+            >
+              +
+            </Button>
+          </div>
+        )}
 
-        <Button
-          type="button"
-          variant="secondary"
-          size="lg"
+        <div
           className="min-w-[220px] flex-1 sm:flex-none"
-          disabled={isOutOfStock}
-          onClick={handleAddToCart}
+          onClick={() => {
+            if (!model && !isOutOfStock) {
+              setShowModelHint(true);
+            }
+          }}
         >
-          {isOutOfStock ? "Sin stock" : "Agregar al carrito"}
-        </Button>
+          <Button
+            type="button"
+            variant="secondary"
+            size="lg"
+            className={`w-full ${!model && !isOutOfStock ? "pointer-events-none" : ""}`}
+            disabled={isOutOfStock || !model}
+            onClick={(event) => {
+              event.stopPropagation();
+              handleAddToCart();
+            }}
+          >
+            {isOutOfStock ? "Sin stock" : "Agregar al carrito"}
+          </Button>
+          {!model && !isOutOfStock && (
+            <p
+              className={`mt-2 text-center text-xs transition-colors ${
+                showModelHint
+                  ? "text-[var(--brand-cyan-soft)]"
+                  : "text-[var(--muted)]/80"
+              }`}
+            >
+              Seleccioná un modelo
+            </p>
+          )}
+        </div>
 
         <Button
           href={buildWhatsAppUrl(product.name, model)}
@@ -250,7 +278,7 @@ export function ProductStickyBar({ product }: { product: StoreProduct }) {
           disabled={isOutOfStock}
           onClick={handleQuickAdd}
         >
-          {isOutOfStock ? "Agotado" : "Agregar"}
+          {isOutOfStock ? "Sin stock" : "Agregar"}
         </Button>
       </div>
     </div>

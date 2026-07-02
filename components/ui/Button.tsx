@@ -30,7 +30,7 @@ const liquidGlassHoverSubtle =
   "hover:border-white/[0.15] hover:bg-white/[0.12] hover:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.16),0_12px_32px_-8px_rgba(0,0,0,0.42),0_0_24px_rgba(157,78,221,0.1)]";
 
 export const buttonBaseClass =
-  "inline-flex items-center justify-center gap-2 transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-purple)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--void)] active:scale-[0.98]";
+  "inline-flex items-center justify-center gap-2 touch-manipulation transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-purple)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--void)] active:scale-[0.98]";
 
 export const variantStyles: Record<ButtonVariant, string> = {
   primary: `${liquidGlassCore} bg-gradient-to-b from-white/[0.12] via-[rgba(157,78,221,0.16)] to-[rgba(0,180,216,0.1)] text-white ${liquidGlassHoverCta} hover:from-white/[0.16] hover:via-[rgba(157,78,221,0.2)] hover:to-[rgba(0,180,216,0.12)]`,

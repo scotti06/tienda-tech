@@ -3,6 +3,7 @@ import "server-only";
 import type { Product } from "@/lib/data";
 import {
   getCatalogProducts,
+  getCatalogProductBySlug,
   getStoreProductBySlug,
 } from "@/lib/store/repository";
 import type { StoreProduct } from "@/lib/store/types";
@@ -13,36 +14,61 @@ import {
 
 export type ProductPageData = StoreProduct;
 
-export function getProducts(): Product[] {
-  return getCatalogProducts();
+let catalogValidated = false;
+
+export async function getProducts(): Promise<Product[]> {
+  const products = await getCatalogProducts();
+
+  if (!catalogValidated && process.env.NODE_ENV === "development") {
+    validateProductCatalog(products);
+    catalogValidated = true;
+  }
+
+  return products;
 }
 
-export function getProductBySlug(rawSlug: string): Product | undefined {
+export async function getProductBySlug(
+  rawSlug: string,
+): Promise<Product | undefined> {
   const slug = normalizeProductSlug(rawSlug);
   if (!slug) return undefined;
-  return getProducts().find(
+  const products = await getProducts();
+  return products.find(
     (product) => normalizeProductSlug(product.slug) === slug,
   );
 }
 
-export function getProductPageData(rawSlug: string): ProductPageData | undefined {
+export async function getProductPageData(
+  rawSlug: string,
+): Promise<ProductPageData | undefined> {
+  const slug = normalizeProductSlug(rawSlug);
+  if (!slug) return undefined;
+  return getCatalogProductBySlug(slug);
+}
+
+export async function getStoreProductBySlugForPage(
+  rawSlug: string,
+): Promise<ProductPageData | undefined> {
   const slug = normalizeProductSlug(rawSlug);
   if (!slug) return undefined;
   return getStoreProductBySlug(slug);
 }
 
-export function getProductsByCategoryId(categoryId: string): Product[] {
+export async function getProductsByCategoryId(
+  categoryId: string,
+): Promise<Product[]> {
   const meta = getCategoryById(categoryId);
   if (!meta) return [];
-  return getProducts().filter((product) => product.category === meta.productCategory);
+  const products = await getProducts();
+  return products.filter(
+    (product) => product.category === meta.productCategory,
+  );
 }
 
-function validateProductCatalog(): void {
-  if (process.env.NODE_ENV !== "development") return;
-
+function validateProductCatalog(products: Product[]): void {
   const seen = new Map<string, string>();
 
-  for (const product of getProducts()) {
+  for (const product of products) {
     if (!product.imageFrame?.width || !product.imageFrame?.height) {
       console.error("[product-catalog] imageFrame inválido", {
         id: product.id,
@@ -71,8 +97,6 @@ function validateProductCatalog(): void {
     }
   }
 }
-
-validateProductCatalog();
 
 export function getProductImages(product: ProductPageData): string[] {
   if (product.images?.length) return product.images;

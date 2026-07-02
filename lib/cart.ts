@@ -1,4 +1,4 @@
-import { formatPrice, siteConfig, type Product } from "@/lib/data";
+import { formatPrice, type Product } from "@/lib/data";
 
 export type CartItem = {
   id: string;
@@ -9,7 +9,10 @@ export type CartItem = {
   model?: string;
 };
 
-export type CartProductInput = Pick<CartItem, "id" | "name" | "image" | "price" | "model">;
+export type CartProductInput = Pick<
+  CartItem,
+  "id" | "name" | "image" | "price" | "model"
+>;
 
 export const CART_STORAGE_KEY = "techstylebv-cart";
 
@@ -34,6 +37,9 @@ export function writeCartToStorage(items: CartItem[]): void {
   window.localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
 }
 
+export const readStoredCart = readCartFromStorage;
+export const writeStoredCart = writeCartToStorage;
+
 function isValidCartItem(value: unknown): value is CartItem {
   if (!value || typeof value !== "object") return false;
 
@@ -45,7 +51,10 @@ function isValidCartItem(value: unknown): value is CartItem {
     typeof item.image === "string" &&
     typeof item.price === "number" &&
     typeof item.quantity === "number" &&
-    item.quantity > 0
+    item.quantity > 0 &&
+    (item.model === undefined ||
+      item.model === null ||
+      typeof item.model === "string")
   );
 }
 
@@ -59,12 +68,23 @@ export function addCartItem(
   if (existing) {
     return items.map((item) =>
       item.id === product.id
-        ? { ...item, quantity: item.quantity + quantity }
+        ? {
+            ...item,
+            quantity: item.quantity + quantity,
+            model: product.model?.trim() || item.model,
+          }
         : item,
     );
   }
 
-  return [...items, { ...product, quantity }];
+  return [
+    ...items,
+    {
+      ...product,
+      quantity,
+      model: product.model?.trim() || undefined,
+    },
+  ];
 }
 
 export function removeCartItem(items: CartItem[], id: string): CartItem[] {
@@ -100,41 +120,42 @@ export function getCartTotals(items: CartItem[]) {
 export function getCartSubtotal(items: CartItem[]): number {
   return getCartTotals(items).subtotal;
 }
+
+export function getCartItemCount(items: CartItem[]): number {
+  return getCartTotals(items).totalItems;
+}
+
 export function formatCartSubtotal(items: CartItem[]): string {
-  const { subtotal } = getCartTotals(items);
+  const subtotal = getCartSubtotal(items);
   if (!subtotal || subtotal <= 0) {
     return "Consultar precio";
   }
+  return formatPrice(subtotal);
+}
 
-  return new Intl.NumberFormat("es-AR", {
-    style: "currency",
-    currency: "ARS",
-    maximumFractionDigits: 0,
-  }).format(subtotal);
+export function productToCartItem(product: Product): Omit<CartItem, "quantity"> {
+  return {
+    id: product.id,
+    name: product.name,
+    image: product.image,
+    price: product.price,
+    model: product.category,
+  };
 }
 
 export function buildCartWhatsAppMessage(items: CartItem[]): string {
   const lines = items.map((item) => {
+    const modelPart = item.model ? ` (${item.model})` : "";
     const lineTotal = item.price * item.quantity;
-    const priceLabel =
-      lineTotal > 0
-        ? new Intl.NumberFormat("es-AR", {
-            style: "currency",
-            currency: "ARS",
-            maximumFractionDigits: 0,
-          }).format(lineTotal)
-        : "Consultar precio";
-
-    return `• ${item.name} x${item.quantity} — ${priceLabel}`;
+    const pricePart = lineTotal > 0 ? ` — ${formatPrice(lineTotal)}` : "";
+    return `• ${item.name}${modelPart} x${item.quantity}${pricePart}`;
   });
 
-  return [
-    "Hola! Quiero continuar con mi pedido:",
-    "",
-    ...lines,
-    "",
-    `Subtotal: ${formatCartSubtotal(items)}`,
-  ].join("\n");
+  const subtotal = getCartSubtotal(items);
+  const subtotalPart =
+    subtotal > 0 ? `\n\nSubtotal estimado: ${formatPrice(subtotal)}` : "";
+
+  return `Hola! Quiero consultar por mi pedido:\n\n${lines.join("\n")}${subtotalPart}`;
 }
 
 export function buildCartWhatsAppUrl(
@@ -143,54 +164,6 @@ export function buildCartWhatsAppUrl(
 ): string {
   const text = encodeURIComponent(buildCartWhatsAppMessage(items));
   return `https://wa.me/${whatsappNumber}?text=${text}`;
-}
-
-export function scrollToCatalog(pathname: string): void {
-  const targetId = pathname === "/" ? "productos" : "categorias";
-  const element = document.getElementById(targetId);
-
-  if (element) {
-    element.scrollIntoView({ behavior: "smooth", block: "start" });
-    return;
-  }
-
-  window.location.assign(pathname === "/" ? "/#productos" : "/tienda#categorias");
-export function getCartItemCount(items: CartItem[]): number {
-  return getCartTotals(items).totalItems;
-}
-
-export function formatCartSubtotal(items: CartItem[]): string {
-  return formatPrice(getCartSubtotal(items));
-}
-
-export const readStoredCart = readCartFromStorage;
-export const writeStoredCart = writeCartToStorage;
-
-export function productToCartItem(product: Product): Omit<CartItem, "quantity"> {
-  return {
-    id: product.id,
-    name: product.name,
-    image: product.image,
-    price: product.price,
-  };
-}
-
-export function buildCartWhatsAppUrl(items: CartItem[]): string {
-  const lines = items.map((item) => {
-    const modelPart = item.model ? ` (${item.model})` : "";
-    const lineTotal = item.price * item.quantity;
-    const pricePart =
-      lineTotal > 0 ? ` — ${formatPrice(lineTotal)}` : "";
-    return `• ${item.name}${modelPart} x${item.quantity}${pricePart}`;
-  });
-
-  const subtotal = getCartSubtotal(items);
-  const subtotalPart =
-    subtotal > 0 ? `\n\nSubtotal estimado: ${formatPrice(subtotal)}` : "";
-
-  const message = `Hola! Quiero consultar por mi pedido:\n\n${lines.join("\n")}${subtotalPart}`;
-
-  return `https://wa.me/${siteConfig.whatsapp}?text=${encodeURIComponent(message)}`;
 }
 
 export function scrollToCatalog(pathname: string): void {

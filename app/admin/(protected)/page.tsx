@@ -3,9 +3,9 @@ import { DashboardCards } from "@/components/admin/DashboardCards";
 import { AdminNotificationsList } from "@/components/admin/AdminNotificationsList";
 import { getDashboardStats, readStore } from "@/lib/store/repository";
 
-export default function AdminDashboardPage() {
-  const stats = getDashboardStats();
-  const notifications = readStore()
+export default async function AdminDashboardPage() {
+  const stats = await getDashboardStats();
+  const notifications = (await readStore())
     .notifications.filter((notification) => !notification.read)
     .slice(0, 5);
 

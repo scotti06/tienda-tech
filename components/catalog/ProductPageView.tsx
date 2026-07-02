@@ -25,10 +25,10 @@ type ProductPageViewProps = {
   product: StoreProduct;
 };
 
-export function ProductPageView({ product }: ProductPageViewProps) {
+export async function ProductPageView({ product }: ProductPageViewProps) {
   const category = getCategoryById(product.categoryId);
   const priceWithoutTax = getPriceWithoutTax(product.price);
-  const similarProducts = getSimilarProducts(product, getProducts());
+  const similarProducts = getSimilarProducts(product, await getProducts());
   const images = getProductImages(product);
   const hasDiscount =
     product.originalPrice && product.originalPrice > product.price;

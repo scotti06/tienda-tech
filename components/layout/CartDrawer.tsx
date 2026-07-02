@@ -1,12 +1,14 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ShoppingCart } from "lucide-react";
 import { useEffect } from "react";
 import { useCart } from "@/components/cart/CartProvider";
 import { IconClose, IconWhatsApp } from "@/components/ui/Icons";
+import { getButtonClassName } from "@/components/ui/Button";
 import {
   buildCartWhatsAppUrl,
   formatCartSubtotal,
@@ -302,7 +304,7 @@ export function CartDrawer() {
 
           <motion.aside
             aria-label="Carrito de compras"
-            className="fixed inset-y-0 right-0 z-[58] flex h-[100dvh] w-full flex-col overflow-hidden border-l border-white/[0.06] shadow-[-24px_0_80px_rgba(0,0,0,0.55)] md:max-w-[380px] lg:max-w-[420px] lg:rounded-bl-[24px] lg:rounded-tl-[24px]"
+            className="fixed inset-y-0 right-0 z-[58] flex h-[100dvh] w-[90vw] max-w-[420px] flex-col overflow-hidden border-l border-white/[0.06] shadow-[-24px_0_80px_rgba(0,0,0,0.55)] lg:rounded-bl-[24px] lg:rounded-tl-[24px]"
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
@@ -357,13 +359,25 @@ export function CartDrawer() {
                       </div>
                     )}
 
+                    <Link
+                      href="/carrito/checkout"
+                      onClick={closeCart}
+                      className={getButtonClassName({
+                        variant: "primary",
+                        size: "lg",
+                        className: "h-[50px] w-full",
+                      })}
+                    >
+                      Continuar al checkout
+                    </Link>
+
                     <button
                       type="button"
                       onClick={handleWhatsApp}
-                      className="inline-flex h-[50px] w-full items-center justify-center gap-2 rounded-full border border-[rgba(37,211,102,0.24)] bg-[rgba(37,211,102,0.14)] text-[14px] font-semibold tracking-tight text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transition-[transform,box-shadow,border-color,background-color] duration-200 hover:scale-[1.01] hover:border-[rgba(37,211,102,0.32)] hover:bg-[rgba(37,211,102,0.18)] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_0_24px_rgba(37,211,102,0.08)] active:scale-[0.98]"
+                      className="mt-3 inline-flex h-[46px] w-full items-center justify-center gap-2 rounded-full border border-white/[0.1] bg-white/[0.04] text-[13px] font-medium tracking-tight text-white/90 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] transition-[transform,box-shadow,border-color,background-color] duration-200 hover:scale-[1.01] hover:border-[rgba(37,211,102,0.22)] hover:bg-[rgba(37,211,102,0.08)] active:scale-[0.98]"
                       style={{ transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)" }}
                     >
-                      <IconWhatsApp className="h-4 w-4 opacity-90" />
+                      <IconWhatsApp className="h-4 w-4 opacity-80" />
                       Continuar por WhatsApp
                     </button>
 

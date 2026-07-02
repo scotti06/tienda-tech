@@ -51,9 +51,16 @@ export function AdminOrdersTable({ orders }: AdminOrdersTableProps) {
                 {order.customerName} · {formatDate(order.createdAt)}
               </p>
               <ul className="mt-4 space-y-2 text-sm text-white">
-                {order.items.map((item) => (
-                  <li key={`${order.id}-${item.productId}`}>
-                    {item.quantity}x {item.name} — {formatPrice(item.price)}
+                {order.items.map((item, index) => (
+                  <li key={`${order.id}-${item.productId}-${index}`}>
+                    {item.quantity}x {item.name}
+                    {item.model ? (
+                      <span className="text-[var(--brand-cyan-soft)]">
+                        {" "}
+                        · {item.model}
+                      </span>
+                    ) : null}{" "}
+                    — {formatPrice(item.price)}
                   </li>
                 ))}
               </ul>

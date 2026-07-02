@@ -82,6 +82,8 @@ function useGalleryMetrics(): GalleryMetrics {
 
 const AUTOPLAY_INTERVAL_MS = 4000;
 const AUTOPLAY_RESUME_MS = 5000;
+const TAP_THRESHOLD_PX = 10;
+const DRAG_THRESHOLD_PX = 40;
 
 type ShopCircularGalleryProps = {
   products: Product[];
@@ -99,6 +101,9 @@ export function ShopCircularGallery({
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const [autoplayPaused, setAutoplayPaused] = useState(false);
   const dragStartX = useRef(0);
+  const dragStartY = useRef(0);
+  const didDragRef = useRef(false);
+  const pointerActiveRef = useRef(false);
   const regionRef = useRef<HTMLDivElement>(null);
   const resumeAutoplayRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const autoplayPausedRef = useRef(false);
@@ -231,34 +236,69 @@ export function ShopCircularGallery({
   }, [goNext, goPrev]);
 
   const handlePointerDown = useCallback((event: React.PointerEvent) => {
-    setIsDragging(true);
+    pointerActiveRef.current = true;
+    didDragRef.current = false;
     dragStartX.current = event.clientX;
-    event.currentTarget.setPointerCapture(event.pointerId);
+    dragStartY.current = event.clientY;
+    setIsDragging(false);
+  }, []);
+
+  const handlePointerMove = useCallback((event: React.PointerEvent) => {
+    if (!pointerActiveRef.current) return;
+
+    const deltaX = event.clientX - dragStartX.current;
+    const deltaY = event.clientY - dragStartY.current;
+    const distance = Math.hypot(deltaX, deltaY);
+
+    if (distance > TAP_THRESHOLD_PX) {
+      didDragRef.current = true;
+      setIsDragging(true);
+    }
   }, []);
 
   const handlePointerUp = useCallback(
     (event: React.PointerEvent) => {
-      if (!isDragging) return;
+      if (!pointerActiveRef.current) return;
 
-      const delta = event.clientX - dragStartX.current;
-      const threshold = 40;
+      const deltaX = event.clientX - dragStartX.current;
+      const deltaY = event.clientY - dragStartY.current;
+      const distance = Math.hypot(deltaX, deltaY);
 
-      if (delta > threshold) goPrev();
-      else if (delta < -threshold) goNext();
-      else pauseAutoplay();
-
+      pointerActiveRef.current = false;
       setIsDragging(false);
-      if (event.currentTarget.hasPointerCapture(event.pointerId)) {
-        event.currentTarget.releasePointerCapture(event.pointerId);
+
+      if (Math.abs(deltaX) > DRAG_THRESHOLD_PX) {
+        if (deltaX > 0) goPrev();
+        else goNext();
+        return;
       }
+
+      if (distance < TAP_THRESHOLD_PX) {
+        pauseAutoplay();
+        return;
+      }
+
+      pauseAutoplay();
     },
-    [goNext, goPrev, isDragging, pauseAutoplay],
+    [goNext, goPrev, pauseAutoplay],
   );
 
   const handlePointerCancel = useCallback(() => {
+    pointerActiveRef.current = false;
+    didDragRef.current = false;
     setIsDragging(false);
     pauseAutoplay();
   }, [pauseAutoplay]);
+
+  const handleProductLinkClick = useCallback(
+    (event: React.MouseEvent<HTMLAnchorElement>) => {
+      if (didDragRef.current) {
+        event.preventDefault();
+      }
+      didDragRef.current = false;
+    },
+    [],
+  );
 
   const itemOpacity = useCallback(
     (index: number) => {
@@ -307,6 +347,7 @@ export function ShopCircularGallery({
           className="relative touch-pan-y select-none"
           style={{ height: metrics.stageHeight }}
           onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
           onPointerUp={handlePointerUp}
           onPointerCancel={handlePointerCancel}
         >
@@ -349,7 +390,8 @@ export function ShopCircularGallery({
                     <Link
                       href={productHref}
                       tabIndex={isActive ? 0 : -1}
-                      className={`card-hover group relative flex h-full w-full flex-col overflow-hidden rounded-2xl border bg-[var(--surface)] ${
+                      onClick={handleProductLinkClick}
+                      className={`card-hover card-tap group relative flex h-full w-full flex-col overflow-hidden rounded-2xl border bg-[var(--surface)] ${
                         isActive
                           ? "border-[var(--brand-purple)]/30 shadow-[0_0_24px_rgba(157,78,221,0.15)]"
                           : "border-white/[0.08]"

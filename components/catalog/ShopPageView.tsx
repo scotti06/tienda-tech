@@ -14,9 +14,8 @@ import { Button } from "@/components/ui/Button";
 
 
 
-export function ShopPageView() {
-
-  const products = getProducts();
+export async function ShopPageView() {
+  const products = await getProducts();
 
   return (
 

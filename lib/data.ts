@@ -128,7 +128,7 @@ export const siteConfig = {
   tagline: "Accesorios para celulares",
   description:
     "Cargadores originales Apple, fundas, vidrios templados y AirPods para iPhone. Consultá modelos y disponibilidad.",
-  whatsapp: "5491112345678",
+  whatsapp: "5491151535057",
   logo: "/brand/logo.png",
 };
 

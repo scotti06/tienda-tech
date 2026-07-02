@@ -11,8 +11,8 @@ import {
   getHomeNew,
 } from "@/lib/home";
 
-export default function Home() {
-  const products = getProducts();
+export default async function Home() {
+  const products = await getProducts();
 
   return (
     <StoreShell withTopPadding={false}>

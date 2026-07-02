@@ -4,6 +4,18 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 
 export const SCROLL_REVEAL_STAGGER_MS = 80;
 
+/** Matches Tailwind `md` — scroll reveal is skipped below this width (iOS Safari IO issues). */
+const MOBILE_MAX_WIDTH_MEDIA = "(max-width: 767px)";
+
+function shouldSkipRevealAnimation(): boolean {
+  if (typeof window === "undefined") return false;
+
+  return (
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+    window.matchMedia(MOBILE_MAX_WIDTH_MEDIA).matches
+  );
+}
+
 type ScrollRevealProps = {
   children: ReactNode;
   className?: string;
@@ -35,7 +47,7 @@ export function ScrollReveal({
     const el = ref.current;
     if (!el) return;
 
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    if (shouldSkipRevealAnimation()) {
       setVisible(true);
       return;
     }

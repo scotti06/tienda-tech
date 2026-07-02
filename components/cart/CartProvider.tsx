@@ -23,6 +23,7 @@ import {
 type CartContextValue = {
   items: CartItem[];
   totalItems: number;
+  itemCount: number;
   subtotal: number;
   total: number;
   hydrated: boolean;
@@ -53,6 +54,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
     writeCartToStorage(items);
   }, [items, hydrated]);
 
+  const openCart = useCallback(() => setIsOpen(true), []);
+  const closeCart = useCallback(() => setIsOpen(false), []);
+  const toggleCart = useCallback(() => setIsOpen((open) => !open), []);
+
   const addItem = useCallback((product: CartProductInput, quantity = 1) => {
     setItems((current) => addCartItem(current, product, quantity));
   }, []);
@@ -69,16 +74,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setItems([]);
   }, []);
 
-  const openCart = useCallback(() => setIsOpen(true), []);
-  const closeCart = useCallback(() => setIsOpen(false), []);
-  const toggleCart = useCallback(() => setIsOpen((open) => !open), []);
-
   const totals = useMemo(() => getCartTotals(items), [items]);
 
   const value = useMemo(
     () => ({
       items,
       totalItems: totals.totalItems,
+      itemCount: totals.totalItems,
       subtotal: totals.subtotal,
       total: totals.total,
       hydrated,

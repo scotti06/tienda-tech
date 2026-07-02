@@ -12,6 +12,7 @@ export type OrderItem = {
   image: string;
   price: number;
   quantity: number;
+  model?: string;
 };
 
 export type PaymentMethod = "mercadopago" | "card" | "transfer";

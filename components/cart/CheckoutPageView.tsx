@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { useCart } from "@/components/cart/CartProvider";
 import { PaymentIcon } from "@/components/cart/checkout/PaymentIcons";
 import { submitCheckoutOrderAction } from "@/app/carrito/actions";
+import { CheckoutOrderSuccess } from "@/components/cart/CheckoutOrderSuccess";
 import { formatPrice } from "@/lib/data";
 import {
   CHECKOUT_STEPS,
@@ -33,43 +34,118 @@ function CheckoutField({
   children: React.ReactNode;
 }) {
   return (
-    <label className="block space-y-2">
+    <label className="block w-full space-y-2">
       <span className="text-sm font-medium text-white">{label}</span>
       {children}
     </label>
   );
 }
 
-function StepIndicator({ currentStep }: { currentStep: CheckoutStepId }) {
-  return (
-    <ol className="grid grid-cols-2 gap-3 sm:grid-cols-5">
-      {CHECKOUT_STEPS.map((step) => {
-        const active = step.id === currentStep;
-        const completed = step.id < currentStep;
+const checkoutInputClass =
+  "admin-input min-h-12 w-full text-base md:min-h-0 md:text-sm";
 
-        return (
-          <li
-            key={step.id}
-            className={`rounded-xl border px-3 py-3 text-center ${
-              active
-                ? "border-[var(--brand-cyan)]/40 bg-[var(--brand-cyan)]/10"
-                : completed
-                  ? "border-emerald-500/20 bg-emerald-500/5"
-                  : "border-white/[0.08] bg-white/[0.02]"
-            }`}
-          >
-            <p
-              className={`text-[10px] font-semibold tracking-[0.14em] uppercase ${
-                active ? "text-[var(--brand-cyan)]" : "text-[var(--muted)]"
+const checkoutTextareaClass =
+  "admin-input min-h-24 w-full resize-y text-base md:text-sm";
+
+function StepCheckIcon({ className = "h-4 w-4" }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={2.5}
+      aria-hidden
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+    </svg>
+  );
+}
+
+function StepIndicator({ currentStep }: { currentStep: CheckoutStepId }) {
+  const currentStepMeta = CHECKOUT_STEPS.find((step) => step.id === currentStep);
+
+  return (
+    <>
+      <div className="md:hidden">
+        <ol
+          className="flex items-center"
+          aria-label="Pasos del checkout"
+        >
+          {CHECKOUT_STEPS.map((step, index) => {
+            const active = step.id === currentStep;
+            const completed = step.id < currentStep;
+            const isLast = index === CHECKOUT_STEPS.length - 1;
+
+            return (
+              <li
+                key={step.id}
+                className={`flex items-center ${isLast ? "shrink-0" : "min-w-0 flex-1"}`}
+              >
+                <div
+                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 text-xs font-semibold transition-colors ${
+                    active
+                      ? "border-[var(--brand-cyan)] bg-[var(--brand-cyan)] text-[var(--void)]"
+                      : completed
+                        ? "border-emerald-500 bg-emerald-500 text-white"
+                        : "border-white/20 bg-transparent text-[var(--muted)]"
+                  }`}
+                  aria-current={active ? "step" : undefined}
+                >
+                  {completed ? (
+                    <StepCheckIcon />
+                  ) : (
+                    <span>{step.id}</span>
+                  )}
+                </div>
+                {!isLast && (
+                  <div
+                    className={`mx-1.5 h-0.5 min-w-3 flex-1 rounded-full ${
+                      step.id < currentStep ? "bg-emerald-500" : "bg-white/15"
+                    }`}
+                    aria-hidden
+                  />
+                )}
+              </li>
+            );
+          })}
+        </ol>
+        {currentStepMeta && (
+          <p className="mt-2.5 text-center text-sm font-medium text-white">
+            {currentStepMeta.label}
+          </p>
+        )}
+      </div>
+
+      <ol className="hidden gap-3 md:grid md:grid-cols-5">
+        {CHECKOUT_STEPS.map((step) => {
+          const active = step.id === currentStep;
+          const completed = step.id < currentStep;
+
+          return (
+            <li
+              key={step.id}
+              className={`rounded-xl border px-3 py-3 text-center ${
+                active
+                  ? "border-[var(--brand-cyan)]/40 bg-[var(--brand-cyan)]/10"
+                  : completed
+                    ? "border-emerald-500/20 bg-emerald-500/5"
+                    : "border-white/[0.08] bg-white/[0.02]"
               }`}
             >
-              Paso {step.id}
-            </p>
-            <p className="mt-1 text-xs font-medium text-white">{step.label}</p>
-          </li>
-        );
-      })}
-    </ol>
+              <p
+                className={`text-[10px] font-semibold tracking-[0.14em] uppercase ${
+                  active ? "text-[var(--brand-cyan)]" : "text-[var(--muted)]"
+                }`}
+              >
+                Paso {step.id}
+              </p>
+              <p className="mt-1 text-xs font-medium text-white">{step.label}</p>
+            </li>
+          );
+        })}
+      </ol>
+    </>
   );
 }
 
@@ -167,10 +243,60 @@ export function CheckoutPageView() {
     startTransition(async () => {
       const cartSnapshot = [...items];
       const result = await submitCheckoutOrderAction(cartSnapshot, form);
+
       if (!result.ok) {
         setError(result.error ?? "No se pudo completar la compra.");
         return;
       }
+
+      if (form.paymentMethod === "mercadopago") {
+        try {
+          const preferenceResponse = await fetch("/api/mp/create-preference", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              orderNumber: result.orderNumber,
+              total,
+              shippingCost,
+              items: cartSnapshot.map((item) => ({
+                id: item.id,
+                name: item.name,
+                image: item.image,
+                price: item.price,
+                quantity: item.quantity,
+              })),
+              payer: {
+                name: form.customerName.trim(),
+                email: form.customerEmail.trim(),
+                phone: form.customerPhone.trim(),
+              },
+            }),
+          });
+
+          const preferenceData = (await preferenceResponse.json()) as {
+            preferenceId?: string;
+            initPoint?: string;
+            error?: string;
+          };
+
+          if (!preferenceResponse.ok || !preferenceData.initPoint) {
+            setError(
+              preferenceData.error ??
+                "El pedido fue registrado, pero no pudimos iniciar el pago con Mercado Pago. Contactanos con tu número de pedido.",
+            );
+            return;
+          }
+
+          window.location.assign(preferenceData.initPoint);
+          return;
+        } catch {
+          setError(
+            "El pedido fue registrado, pero no pudimos conectar con Mercado Pago. Contactanos con tu número de pedido.",
+          );
+          return;
+        }
+      }
+
       setOrderNumber(result.orderNumber);
       clearCart();
     });
@@ -187,33 +313,7 @@ export function CheckoutPageView() {
   }
 
   if (orderNumber) {
-    return (
-      <main className="pb-24">
-        <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6 lg:px-8">
-          <div className="rounded-3xl border border-emerald-500/20 bg-emerald-500/10 px-6 py-12 text-center md:px-10">
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-500/20 text-3xl">
-              ✓
-            </div>
-            <h1 className="mt-6 text-2xl font-semibold tracking-tight text-white">
-              ¡Compra realizada con éxito!
-            </h1>
-            <p className="mt-3 text-sm text-[var(--muted)]">
-              Tu pedido <span className="font-semibold text-white">{orderNumber}</span>{" "}
-              fue registrado correctamente. Te contactaremos para coordinar el pago
-              y la entrega.
-            </p>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
-              <Button href="/tienda" variant="primary" size="lg">
-                Seguir comprando
-              </Button>
-              <Button href="/" variant="secondary" size="lg">
-                Volver al inicio
-              </Button>
-            </div>
-          </div>
-        </div>
-      </main>
-    );
+    return <CheckoutOrderSuccess orderNumber={orderNumber} />;
   }
 
   if (items.length === 0) return null;
@@ -236,11 +336,11 @@ export function CheckoutPageView() {
           Completá los pasos para confirmar tu pedido.
         </p>
 
-        <div className="mt-8">
+        <div className="mt-6 md:mt-8">
           <StepIndicator currentStep={step} />
         </div>
 
-        <div className="mt-8 rounded-2xl border border-white/[0.08] glass-card p-5 md:p-8">
+        <div className="mt-3 rounded-2xl border border-white/[0.08] glass-card p-5 md:mt-8 md:p-8">
           {step === 1 && (
             <div className="space-y-5">
               <h2 className="text-xl font-semibold text-white">Datos del cliente</h2>
@@ -250,7 +350,7 @@ export function CheckoutPageView() {
                   onChange={(event) =>
                     updateForm("customerName", event.target.value)
                   }
-                  className="admin-input"
+                  className={checkoutInputClass}
                   autoComplete="name"
                 />
               </CheckoutField>
@@ -261,7 +361,7 @@ export function CheckoutPageView() {
                   onChange={(event) =>
                     updateForm("customerEmail", event.target.value)
                   }
-                  className="admin-input"
+                  className={checkoutInputClass}
                   autoComplete="email"
                 />
               </CheckoutField>
@@ -272,7 +372,7 @@ export function CheckoutPageView() {
                   onChange={(event) =>
                     updateForm("customerPhone", event.target.value)
                   }
-                  className="admin-input"
+                  className={checkoutInputClass}
                   autoComplete="tel"
                 />
               </CheckoutField>
@@ -288,7 +388,7 @@ export function CheckoutPageView() {
                 <input
                   value={form.street}
                   onChange={(event) => updateForm("street", event.target.value)}
-                  className="admin-input"
+                  className={checkoutInputClass}
                   autoComplete="street-address"
                 />
               </CheckoutField>
@@ -297,7 +397,7 @@ export function CheckoutPageView() {
                   <input
                     value={form.city}
                     onChange={(event) => updateForm("city", event.target.value)}
-                    className="admin-input"
+                    className={checkoutInputClass}
                     autoComplete="address-level2"
                   />
                 </CheckoutField>
@@ -307,7 +407,7 @@ export function CheckoutPageView() {
                     onChange={(event) =>
                       updateForm("province", event.target.value)
                     }
-                    className="admin-input"
+                    className={checkoutInputClass}
                     autoComplete="address-level1"
                   />
                 </CheckoutField>
@@ -318,7 +418,7 @@ export function CheckoutPageView() {
                   onChange={(event) =>
                     updateForm("postalCode", event.target.value)
                   }
-                  className="admin-input"
+                  className={checkoutInputClass}
                   autoComplete="postal-code"
                 />
               </CheckoutField>
@@ -328,7 +428,7 @@ export function CheckoutPageView() {
                   onChange={(event) =>
                     updateForm("shippingNotes", event.target.value)
                   }
-                  className="admin-input min-h-24 resize-y"
+                  className={checkoutTextareaClass}
                   placeholder="Piso, departamento, entre calles..."
                 />
               </CheckoutField>
@@ -505,7 +605,11 @@ export function CheckoutPageView() {
                 onClick={handleFinalize}
                 disabled={isPending}
               >
-                {isPending ? "Procesando..." : "Finalizar Compra"}
+                {isPending
+                  ? form.paymentMethod === "mercadopago"
+                    ? "Redirigiendo a Mercado Pago..."
+                    : "Procesando..."
+                  : "Finalizar Compra"}
               </Button>
             )}
           </div>

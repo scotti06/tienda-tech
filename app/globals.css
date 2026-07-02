@@ -38,6 +38,31 @@ html {
   scroll-behavior: smooth;
 }
 
+@media (max-width: 767px) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .hero-mobile-carousel {
+    scroll-behavior: auto;
+  }
+
+  button,
+  a,
+  [role="button"],
+  .card-tap,
+  .card-hover {
+    touch-action: manipulation;
+  }
+
+  .scroll-reveal {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    transition: none;
+  }
+}
+
 body {
   background: var(--void);
   color: var(--foreground);

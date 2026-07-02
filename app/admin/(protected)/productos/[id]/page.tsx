@@ -9,7 +9,7 @@ type PageProps = {
 
 export default async function AdminEditProductPage({ params }: PageProps) {
   const { id } = await params;
-  const product = getStoreProductById(id);
+  const product = await getStoreProductById(id);
 
   if (!product) notFound();
 

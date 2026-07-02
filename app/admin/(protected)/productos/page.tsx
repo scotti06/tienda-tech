@@ -3,8 +3,8 @@ import { AdminProductsSection } from "@/components/admin/AdminProductsSection";
 import { Button } from "@/components/ui/Button";
 import { getStoreProducts } from "@/lib/store/repository";
 
-export default function AdminProductsPage() {
-  const products = getStoreProducts();
+export default async function AdminProductsPage() {
+  const products = await getStoreProducts();
 
   return (
     <AdminShell

@@ -5,11 +5,11 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { mainNavLinks } from "@/lib/catalog";
 import { categoryCatalog } from "@/lib/catalog";
-import { hamburgerCategoryMenus } from "@/lib/hamburgerMenu";
 import { Button, getButtonClassName } from "@/components/ui/Button";
 import { Logo } from "@/components/ui/Logo";
 import { IconCart, IconClose, IconMenu } from "@/components/ui/Icons";
 import { useCart } from "@/components/cart/CartProvider";
+import { MobileNavDrawer } from "@/components/layout/MobileNavDrawer";
 
 function isLinkActive(pathname: string, href: string): boolean {
   const base = href.split("#")[0];
@@ -17,16 +17,22 @@ function isLinkActive(pathname: string, href: string): boolean {
   if (base === "/tienda") {
     return pathname === "/tienda" || categoryCatalog.some((c) => c.path === pathname);
   }
+  if (base === "/admin") {
+    return pathname === "/admin" || pathname.startsWith("/admin/");
+  }
   return pathname === base || pathname.startsWith(`${base}/`);
 }
 
-export function Navbar() {
+type NavbarProps = {
+  isAdminAuthenticated?: boolean;
+};
+
+export function Navbar({ isAdminAuthenticated = false }: NavbarProps) {
   const pathname = usePathname();
-  const { totalItems } = useCart();
+  const { totalItems, openCart } = useCart();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [categoriesOpen, setCategoriesOpen] = useState(false);
-  const [activeCategoryId, setActiveCategoryId] = useState<string | null>(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -45,52 +51,39 @@ export function Navbar() {
   useEffect(() => {
     setMenuOpen(false);
     setCategoriesOpen(false);
-    setActiveCategoryId(null);
   }, [pathname]);
 
   useEffect(() => {
-    if (!menuOpen) setActiveCategoryId(null);
+    if (!menuOpen) return;
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMenuOpen(false);
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
   }, [menuOpen]);
 
   const navItems = mainNavLinks.filter((l) => l.label !== "Carrito");
-
-  const mobileNavItems = mainNavLinks.filter(
-    (link) => link.label !== "Categorías" && link.label !== "Carrito",
-  );
-
-  const activeCategoryGroup = hamburgerCategoryMenus.find(
-    (group) => group.id === activeCategoryId,
-  );
-
-  const mobileMenuLinkClass = (active: boolean) =>
-    `block w-full rounded-xl px-4 py-3.5 text-left text-base transition-colors ${
-      active
-        ? "bg-white/10 text-white"
-        : "text-zinc-300 hover:bg-white/5 hover:text-white"
-    }`;
-
-  const isHamburgerSubcategoryActive = (href: string) => {
-    if (href === "/tienda") return false;
-    return pathname === href.split("#")[0];
-  };
+  const showNavBar = scrolled || pathname !== "/";
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
-        scrolled || pathname !== "/"
-          ? "glass border-b border-[var(--brand-purple)]/10 shadow-[0_8px_32px_rgba(0,0,0,0.5),0_0_40px_var(--glow-purple)]"
-          : "bg-transparent"
+      className={`fixed inset-x-0 top-0 z-50 transition-[background-color,box-shadow,backdrop-filter,border-color] duration-500 ${
+        showNavBar
+          ? "border-b border-white/10 bg-black/60 shadow-[0_4px_24px_rgba(0,0,0,0.3)] backdrop-blur-md"
+          : "border-b border-transparent bg-transparent shadow-none backdrop-blur-none"
       }`}
     >
       <nav className="mx-auto flex min-h-[4.75rem] max-w-7xl items-center gap-3 px-4 py-2 sm:min-h-[5.25rem] sm:py-2.5 lg:px-8">
-        <div className="flex items-center gap-2 lg:min-w-[200px]">
+        <div className="flex w-10 shrink-0 items-center lg:min-w-[200px]">
           <Button
             type="button"
             variant="icon"
             aria-label={menuOpen ? "Cerrar menú" : "Abrir menú"}
             aria-expanded={menuOpen}
             className="lg:hidden"
-            onClick={() => setMenuOpen((o) => !o)}
+            onClick={() => setMenuOpen((open) => !open)}
           >
             {menuOpen ? <IconClose /> : <IconMenu />}
           </Button>
@@ -158,16 +151,13 @@ export function Navbar() {
           })}
         </ul>
 
-        <div className="ml-auto flex items-center gap-1 sm:gap-2 lg:ml-0">
+        <div className="ml-auto flex w-10 shrink-0 items-center justify-end lg:ml-0 lg:min-w-[200px]">
           <Button
-            href="/carrito"
+            type="button"
             variant="icon"
             aria-label="Carrito de compras"
-            className={`relative ${
-              pathname === "/carrito"
-                ? "border-white/20 bg-white/10 text-white"
-                : "text-[var(--muted)]"
-            }`}
+            className="relative text-[var(--muted)]"
+            onClick={openCart}
           >
             <IconCart />
             <span
@@ -181,86 +171,15 @@ export function Navbar() {
               {totalItems}
             </span>
           </Button>
-          <Button href="/tienda" variant="primary" size="sm" className="hidden sm:inline-flex">
-            Tienda
-          </Button>
         </div>
       </nav>
 
-      {menuOpen && (
-        <div className="glass fixed inset-0 top-[4.75rem] z-40 overflow-y-auto sm:top-[5.25rem] lg:hidden animate-fade-in">
-          <ul className="flex flex-col gap-1 p-4">
-            {mobileNavItems.map((link) => (
-              <li key={link.href}>
-                <Link
-                  href={link.href}
-                  className={`block rounded-xl px-4 py-3.5 text-base transition-colors ${
-                    isLinkActive(pathname, link.href)
-                      ? "bg-white/10 text-white"
-                      : "text-zinc-300 hover:bg-white/5 hover:text-white"
-                  }`}
-                >
-                  {link.label}
-                </Link>
-              </li>
-            ))}
-            <li className="mt-2 border-t border-white/[0.08] pt-3">
-              {!activeCategoryGroup ? (
-                <>
-                  <p className="px-4 pb-2 text-xs font-semibold tracking-wider text-[var(--muted)] uppercase">
-                    Categorías
-                  </p>
-                  <ul className="flex flex-col gap-1">
-                    {hamburgerCategoryMenus.map((group) => (
-                      <li key={group.id}>
-                        <button
-                          type="button"
-                          className={mobileMenuLinkClass(false)}
-                          onClick={() => setActiveCategoryId(group.id)}
-                        >
-                          {group.label}
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </>
-              ) : (
-                <>
-                  <p className="px-4 pb-2 text-xs font-semibold tracking-wider text-[var(--muted)] uppercase">
-                    {activeCategoryGroup.label}
-                  </p>
-                  <ul className="flex flex-col gap-1">
-                    {activeCategoryGroup.children?.map((item) => {
-                      const href = item.href ?? "/tienda";
-                      return (
-                        <li key={item.id}>
-                          <Link
-                            href={href}
-                            className={mobileMenuLinkClass(
-                              isHamburgerSubcategoryActive(href),
-                            )}
-                          >
-                            {item.label}
-                          </Link>
-                        </li>
-                      );
-                    })}
-                    <li>
-                      <button
-                        type="button"
-                        className={mobileMenuLinkClass(false)}
-                        onClick={() => setActiveCategoryId(null)}
-                      >
-                        ← Volver
-                      </button>
-                    </li>
-                  </ul>
-                </>
-              )}
-            </li>
-          </ul>
-        </div>
-      )}
+      <MobileNavDrawer
+        open={menuOpen}
+        onClose={() => setMenuOpen(false)}
+        isLinkActive={(href) => isLinkActive(pathname, href)}
+        isAdminAuthenticated={isAdminAuthenticated}
+      />
     </header>
   );
 }

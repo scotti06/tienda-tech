@@ -6,6 +6,7 @@ import {
   ensureUniqueSlug,
   generateProductId,
   readStore,
+  getStoreProductById,
   slugify,
   writeStore,
 } from "@/lib/store/repository";
@@ -39,7 +40,7 @@ export async function GET(_request: Request, context: RouteContext) {
   try {
     await requireAdminSession();
     const { id } = await context.params;
-    const product = readStore().products.find((item) => item.id === id);
+    const product = await getStoreProductById(id);
 
     if (!product) {
       return NextResponse.json({ error: "Producto no encontrado." }, { status: 404 });
@@ -56,7 +57,7 @@ export async function PUT(request: Request, context: RouteContext) {
     await requireAdminSession();
     const { id } = await context.params;
     const body = (await request.json()) as Partial<StoreProduct>;
-    const store = readStore();
+    const store = await readStore();
     const index = store.products.findIndex((item) => item.id === id);
 
     if (index === -1) {
@@ -114,7 +115,7 @@ export async function PUT(request: Request, context: RouteContext) {
     };
 
     store.products[index] = updated;
-    writeStore(store);
+    await writeStore(store);
     revalidateCatalogPaths();
 
     return NextResponse.json(updated);
@@ -127,7 +128,7 @@ export async function DELETE(_request: Request, context: RouteContext) {
   try {
     await requireAdminSession();
     const { id } = await context.params;
-    const store = readStore();
+    const store = await readStore();
     const nextProducts = store.products.filter((item) => item.id !== id);
 
     if (nextProducts.length === store.products.length) {
@@ -135,7 +136,7 @@ export async function DELETE(_request: Request, context: RouteContext) {
     }
 
     store.products = nextProducts;
-    writeStore(store);
+    await writeStore(store);
     revalidateCatalogPaths();
 
     return NextResponse.json({ ok: true });
@@ -151,7 +152,7 @@ export async function PATCH(request: Request, context: RouteContext) {
     const body = (await request.json()) as { action?: string; delta?: number };
 
     if (body.action === "duplicate") {
-      const store = readStore();
+      const store = await readStore();
       const source = store.products.find((item) => item.id === id);
 
       if (!source) {
@@ -177,7 +178,7 @@ export async function PATCH(request: Request, context: RouteContext) {
       };
 
       store.products.unshift(duplicate);
-      writeStore(store);
+      await writeStore(store);
       revalidateCatalogPaths();
       return NextResponse.json(duplicate, { status: 201 });
     }
@@ -191,7 +192,7 @@ export async function PATCH(request: Request, context: RouteContext) {
         );
       }
 
-      const store = readStore();
+      const store = await readStore();
       const index = store.products.findIndex((item) => item.id === id);
 
       if (index === -1) {
@@ -209,7 +210,7 @@ export async function PATCH(request: Request, context: RouteContext) {
         updatedAt: new Date().toISOString(),
       };
 
-      writeStore(store);
+      await writeStore(store);
       revalidateCatalogPaths();
       return NextResponse.json(store.products[index]);
     }

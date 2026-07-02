@@ -2,8 +2,8 @@ import { AdminShell } from "@/components/admin/AdminShell";
 import { AdminNotificationsList } from "@/components/admin/AdminNotificationsList";
 import { readStore } from "@/lib/store/repository";
 
-export default function AdminNotificationsPage() {
-  const notifications = readStore().notifications;
+export default async function AdminNotificationsPage() {
+  const notifications = (await readStore()).notifications;
 
   return (
     <AdminShell

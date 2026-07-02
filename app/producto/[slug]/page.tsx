@@ -4,9 +4,10 @@ import { StoreShell } from "@/components/layout/StoreShell";
 import { ProductPageView } from "@/components/catalog/ProductPageView";
 import { siteConfig } from "@/lib/data";
 import {
-  getProductBySlug,
   getProductPageData,
   getProducts,
+  getStoreProductBySlugForPage,
+  type ProductPageData,
 } from "@/lib/products";
 import { normalizeProductSlug } from "@/lib/catalog";
 
@@ -14,8 +15,9 @@ type PageProps = {
   params: Promise<{ slug: string }>;
 };
 
-export function generateStaticParams() {
-  return getProducts()
+export async function generateStaticParams() {
+  const products = await getProducts();
+  return products
     .filter((product) => product.slug?.trim())
     .map((product) => ({ slug: product.slug.trim() }));
 }
@@ -23,13 +25,12 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug: rawSlug } = await params;
   const slug = normalizeProductSlug(rawSlug);
-  const productData = getProductPageData(slug);
-  const product = productData ?? getProductBySlug(slug);
+  const product = await getProductPageData(slug);
 
   if (!product) return { title: "Producto — Techstylebv" };
 
   const description =
-    productData?.description?.trim() ||
+    product.description?.trim() ||
     `Consultá disponibilidad y precio de ${product.name} en ${siteConfig.name}. Accesorios originales para iPhone.`;
 
   return {
@@ -43,7 +44,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-function ProductJsonLd({ product }: { product: NonNullable<ReturnType<typeof getProductPageData>> }) {
+function ProductJsonLd({ product }: { product: ProductPageData }) {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -76,9 +77,9 @@ function ProductJsonLd({ product }: { product: NonNullable<ReturnType<typeof get
 export default async function ProductoPage({ params }: PageProps) {
   const { slug: rawSlug } = await params;
   const slug = normalizeProductSlug(rawSlug);
-  const product = getProductPageData(slug);
+  const product = await getStoreProductBySlugForPage(slug);
 
-  if (!product) {
+  if (!product || product.active === false) {
     notFound();
   }
 

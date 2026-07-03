@@ -11,7 +11,12 @@ export default async function AdminProductsPage() {
       title="Productos"
       description="Gestioná el catálogo completo: precios, stock, imágenes y disponibilidad."
       actions={
-        <Button href="/admin/productos/nuevo" variant="primary" size="md">
+        <Button
+          href="/admin/productos/nuevo"
+          variant="primary"
+          size="md"
+          className="w-full sm:w-auto"
+        >
           Crear producto
         </Button>
       }

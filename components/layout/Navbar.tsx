@@ -24,10 +24,10 @@ function isLinkActive(pathname: string, href: string): boolean {
 }
 
 type NavbarProps = {
-  isAdminAuthenticated?: boolean;
+  isAdmin?: boolean;
 };
 
-export function Navbar({ isAdminAuthenticated = false }: NavbarProps) {
+export function Navbar({ isAdmin = false }: NavbarProps) {
   const pathname = usePathname();
   const { totalItems, openCart } = useCart();
   const [scrolled, setScrolled] = useState(false);
@@ -178,7 +178,7 @@ export function Navbar({ isAdminAuthenticated = false }: NavbarProps) {
         open={menuOpen}
         onClose={() => setMenuOpen(false)}
         isLinkActive={(href) => isLinkActive(pathname, href)}
-        isAdminAuthenticated={isAdminAuthenticated}
+        isAdmin={isAdmin}
       />
     </header>
   );

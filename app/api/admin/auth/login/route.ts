@@ -16,7 +16,16 @@ export async function POST(request: Request) {
   const username = body.username?.trim() ?? "";
   const password = body.password ?? "";
 
-  if (!verifyAdminCredentials(username, password)) {
+  console.log("[admin/login] POST received:", {
+    username,
+    passwordLength: password.length,
+  });
+
+  const credentialsValid = verifyAdminCredentials(username, password);
+
+  console.log("[admin/login] verifyAdminCredentials result:", credentialsValid);
+
+  if (!credentialsValid) {
     return NextResponse.json(
       { error: "Usuario o contraseña incorrectos." },
       { status: 401 },

@@ -34,132 +34,191 @@ function stockBadge(stock: number) {
   };
 }
 
+function ProductMobileCard({ product }: { product: StoreProduct }) {
+  const isOutOfStock = (product.stock ?? 0) <= 0;
+
+  return (
+    <article
+      className={`rounded-2xl border border-white/[0.08] bg-white/[0.03] p-4 ${
+        isOutOfStock ? "border-l-4 border-l-red-500 bg-red-500/[0.07]" : ""
+      }`}
+    >
+      <div className="flex gap-3">
+        <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border border-white/[0.08] bg-white/[0.06]">
+          <Image
+            src={product.image}
+            alt={product.name}
+            fill
+            className="object-contain p-1.5"
+            sizes="64px"
+          />
+        </div>
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <p className="font-medium text-white">{product.name}</p>
+            {isOutOfStock && (
+              <span className="inline-flex rounded-full border border-red-500/30 bg-red-500/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-red-200">
+                Sin stock
+              </span>
+            )}
+          </div>
+          <p className="mt-1 text-base font-semibold text-white">
+            {formatPrice(product.price)}
+          </p>
+          <p className="mt-0.5 text-xs text-[var(--muted)]">
+            Stock: {product.stock ?? 0}
+          </p>
+        </div>
+      </div>
+      <div className="mt-3 flex flex-wrap gap-2 border-t border-white/[0.06] pt-3">
+        <Link
+          href={`/admin/productos/${product.id}`}
+          className="rounded-lg border border-white/[0.12] px-3 py-1.5 text-xs font-medium text-white hover:bg-white/[0.05]"
+        >
+          Editar
+        </Link>
+        <AdminProductActions productId={product.id} />
+      </div>
+    </article>
+  );
+}
+
 export function AdminProductTable({
   products,
   emptyMessage = "No hay productos para mostrar.",
 }: AdminProductTableProps) {
   if (products.length === 0) {
     return (
-      <div className="rounded-2xl border border-dashed border-white/[0.12] px-6 py-16 text-center">
+      <div className="rounded-2xl border border-dashed border-white/[0.12] px-4 py-16 text-center md:px-6">
         <p className="text-sm text-[var(--muted)]">{emptyMessage}</p>
       </div>
     );
   }
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.03]">
-      <div className="overflow-x-auto">
-        <table className="min-w-full text-left text-sm">
-          <thead className="border-b border-white/[0.08] bg-white/[0.02] text-[var(--muted)]">
-            <tr>
-              <th className="px-4 py-3 font-medium">Producto</th>
-              <th className="px-4 py-3 font-medium">Categoría</th>
-              <th className="px-4 py-3 font-medium">Precio</th>
-              <th className="px-4 py-3 font-medium">Stock</th>
-              <th className="px-4 py-3 font-medium">Estado</th>
-              <th className="px-4 py-3 font-medium">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {products.map((product) => {
-              const badge = stockBadge(product.stock ?? 0);
-              const active = isProductActive(product);
-              const isOutOfStock = (product.stock ?? 0) <= 0;
+    <>
+      <div className="space-y-3 md:hidden">
+        {products.map((product) => (
+          <ProductMobileCard key={product.id} product={product} />
+        ))}
+      </div>
 
-              return (
-                <tr
-                  key={product.id}
-                  className={`border-b border-white/[0.06] last:border-b-0 ${
-                    isOutOfStock
-                      ? "border-l-4 border-l-red-500 bg-red-500/[0.07]"
-                      : ""
-                  }`}
-                >
-                  <td className="px-4 py-4">
-                    <div className="flex items-start gap-4">
-                      <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.06] sm:h-24 sm:w-24">
-                        <Image
-                          src={product.image}
-                          alt={product.name}
-                          fill
-                          className="object-contain p-2"
-                          sizes="96px"
-                        />
-                      </div>
-                      <div>
-                        <div className="flex flex-wrap items-center gap-2">
-                          <p className="font-medium text-white">{product.name}</p>
-                          {isOutOfStock && (
-                            <span className="inline-flex rounded-full border border-red-500/30 bg-red-500/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-red-200">
-                              Sin stock
-                            </span>
-                          )}
+      <div className="hidden overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.03] md:block">
+        <div className="overflow-x-auto">
+          <table className="min-w-full text-left text-sm">
+            <thead className="border-b border-white/[0.08] bg-white/[0.02] text-[var(--muted)]">
+              <tr>
+                <th className="px-4 py-3 font-medium">Producto</th>
+                <th className="px-4 py-3 font-medium">Categoría</th>
+                <th className="px-4 py-3 font-medium">Precio</th>
+                <th className="px-4 py-3 font-medium">Stock</th>
+                <th className="px-4 py-3 font-medium">Estado</th>
+                <th className="px-4 py-3 font-medium">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {products.map((product) => {
+                const badge = stockBadge(product.stock ?? 0);
+                const active = isProductActive(product);
+                const isOutOfStock = (product.stock ?? 0) <= 0;
+
+                return (
+                  <tr
+                    key={product.id}
+                    className={`border-b border-white/[0.06] last:border-b-0 ${
+                      isOutOfStock
+                        ? "border-l-4 border-l-red-500 bg-red-500/[0.07]"
+                        : ""
+                    }`}
+                  >
+                    <td className="px-4 py-4">
+                      <div className="flex items-start gap-4">
+                        <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.06] sm:h-24 sm:w-24">
+                          <Image
+                            src={product.image}
+                            alt={product.name}
+                            fill
+                            className="object-contain p-2"
+                            sizes="96px"
+                          />
                         </div>
-                        <p className="text-xs text-[var(--muted)]">
-                          SKU: {product.sku ?? "—"}
-                          {product.brand ? ` · ${product.brand}` : ""}
-                        </p>
+                        <div>
+                          <div className="flex flex-wrap items-center gap-2">
+                            <p className="font-medium text-white">
+                              {product.name}
+                            </p>
+                            {isOutOfStock && (
+                              <span className="inline-flex rounded-full border border-red-500/30 bg-red-500/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-red-200">
+                                Sin stock
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-xs text-[var(--muted)]">
+                            SKU: {product.sku ?? "—"}
+                            {product.brand ? ` · ${product.brand}` : ""}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  </td>
-                  <td className="px-4 py-4 text-[var(--muted)]">
-                    <p>{getCategoryDisplayName(product.categoryId)}</p>
-                    {product.subcategory &&
-                      product.subcategory !== product.category && (
-                        <p className="mt-1 text-xs">{product.subcategory}</p>
-                      )}
-                  </td>
-                  <td className="px-4 py-4 font-medium text-white">
-                    {formatPrice(product.price)}
-                  </td>
-                  <td className="px-4 py-4">
-                    <span
-                      className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${
-                        product.stock <= 0
-                          ? "bg-red-500/15 text-red-200"
-                          : product.stock <= 10
-                            ? "bg-amber-500/15 text-amber-100"
-                            : "bg-emerald-500/15 text-emerald-100"
-                      }`}
-                    >
-                      {product.stock}
-                    </span>
-                  </td>
-                  <td className="px-4 py-4">
-                    <div className="flex flex-col gap-2">
+                    </td>
+                    <td className="px-4 py-4 text-[var(--muted)]">
+                      <p>{getCategoryDisplayName(product.categoryId)}</p>
+                      {product.subcategory &&
+                        product.subcategory !== product.category && (
+                          <p className="mt-1 text-xs">{product.subcategory}</p>
+                        )}
+                    </td>
+                    <td className="px-4 py-4 font-medium text-white">
+                      {formatPrice(product.price)}
+                    </td>
+                    <td className="px-4 py-4">
                       <span
-                        className={`inline-flex w-fit rounded-full px-2.5 py-1 text-xs font-medium ${
-                          active
-                            ? "bg-emerald-500/15 text-emerald-100"
-                            : "bg-white/[0.06] text-[var(--muted)]"
+                        className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${
+                          product.stock <= 0
+                            ? "bg-red-500/15 text-red-200"
+                            : product.stock <= 10
+                              ? "bg-amber-500/15 text-amber-100"
+                              : "bg-emerald-500/15 text-emerald-100"
                         }`}
                       >
-                        {active ? "Activo" : "Inactivo"}
+                        {product.stock}
                       </span>
-                      <span
-                        className={`inline-flex w-fit rounded-full px-2.5 py-1 text-xs font-medium ${badge.className}`}
-                      >
-                        {badge.label}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="px-4 py-4">
-                    <div className="flex flex-wrap gap-2">
-                      <Link
-                        href={`/admin/productos/${product.id}`}
-                        className="rounded-lg border border-white/[0.12] px-3 py-1.5 text-xs font-medium text-white hover:bg-white/[0.05]"
-                      >
-                        Editar
-                      </Link>
-                      <AdminProductActions productId={product.id} />
-                    </div>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+                    </td>
+                    <td className="px-4 py-4">
+                      <div className="flex flex-col gap-2">
+                        <span
+                          className={`inline-flex w-fit rounded-full px-2.5 py-1 text-xs font-medium ${
+                            active
+                              ? "bg-emerald-500/15 text-emerald-100"
+                              : "bg-white/[0.06] text-[var(--muted)]"
+                          }`}
+                        >
+                          {active ? "Activo" : "Inactivo"}
+                        </span>
+                        <span
+                          className={`inline-flex w-fit rounded-full px-2.5 py-1 text-xs font-medium ${badge.className}`}
+                        >
+                          {badge.label}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="px-4 py-4">
+                      <div className="flex flex-wrap gap-2">
+                        <Link
+                          href={`/admin/productos/${product.id}`}
+                          className="rounded-lg border border-white/[0.12] px-3 py-1.5 text-xs font-medium text-white hover:bg-white/[0.05]"
+                        >
+                          Editar
+                        </Link>
+                        <AdminProductActions productId={product.id} />
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

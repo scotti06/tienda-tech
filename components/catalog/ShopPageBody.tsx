@@ -11,10 +11,10 @@ import { ShopCircularGallery } from "@/components/catalog/ShopCircularGallery";
 import {
   ShopCatalogFilters,
 } from "@/components/catalog/ShopCatalogFilters";
-import { products } from "@/lib/data";
+import type { Product } from "@/lib/data";
 import {
   filterShopProducts,
-  shopBestsellers,
+  getShopBestsellers,
   sortShopProducts,
   type ShopFilterGroup,
   type ShopFilterSubcategory,
@@ -29,7 +29,11 @@ function getResultsLabel(count: number): string {
   return `${count} productos`;
 }
 
-export function ShopPageBody() {
+type ShopPageBodyProps = {
+  products: Product[];
+};
+
+export function ShopPageBody({ products }: ShopPageBodyProps) {
   const [query, setQuery] = useState("");
   const [activeGroup, setActiveGroup] = useState<ShopFilterGroup>("all");
   const [activeSubcategory, setActiveSubcategory] =
@@ -48,16 +52,16 @@ export function ShopPageBody() {
       subcategoryId: activeSubcategory,
     });
     return sortShopProducts(filtered, sortBy);
-  }, [query, activeGroup, activeSubcategory, sortBy]);
+  }, [products, query, activeGroup, activeSubcategory, sortBy]);
 
   const filteredBestsellers = useMemo(
     () =>
-      filterShopProducts(shopBestsellers, {
+      filterShopProducts(getShopBestsellers(products), {
         query: "",
         groupId: activeGroup,
         subcategoryId: activeSubcategory,
       }),
-    [activeGroup, activeSubcategory],
+    [products, activeGroup, activeSubcategory],
   );
 
   const resultsLabel = getResultsLabel(sortedCatalogProducts.length);

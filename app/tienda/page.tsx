@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { StoreShell } from "@/components/layout/StoreShell";
-import { ShopPageView } from "@/components/catalog/ShopPageView";
+import { ShopPageBody } from "@/components/catalog/ShopPageBody";
+import { getProducts } from "@/lib/products";
 
 export const metadata: Metadata = {
   title: "Tienda — Techstylebv",
@@ -8,10 +9,12 @@ export const metadata: Metadata = {
     "Explorá accesorios, tecnología y productos para el hogar. Buscá por nombre, categoría o modelo.",
 };
 
-export default function TiendaPage() {
+export default async function TiendaPage() {
+  const products = await getProducts();
+
   return (
     <StoreShell>
-      <ShopPageView />
+      <ShopPageBody products={products} />
     </StoreShell>
   );
 }

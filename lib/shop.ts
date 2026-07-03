@@ -206,12 +206,18 @@ export function filterShopProducts(
   });
 }
 
-const byIds = (ids: string[]) =>
+const SHOP_BESTSELLER_IDS = ["1", "3", "5", "7", "9", "12"];
+
+const byIds = (catalog: Product[], ids: string[]) =>
   ids
-    .map((id) => products.find((p) => p.id === id))
+    .map((id) => catalog.find((p) => p.id === id))
     .filter((p): p is Product => Boolean(p));
 
-export const shopBestsellers = byIds(["1", "3", "5", "7", "9", "12"]);
+export function getShopBestsellers(catalog: Product[]): Product[] {
+  return byIds(catalog, SHOP_BESTSELLER_IDS);
+}
+
+export const shopBestsellers = byIds(products, SHOP_BESTSELLER_IDS);
 
 export type ShopSortOption =
   | "featured"

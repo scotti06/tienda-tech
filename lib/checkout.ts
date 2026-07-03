@@ -173,7 +173,14 @@ export function buildCheckoutPayload(
   const total = subtotal + shippingCost;
 
   return {
-    items,
+    items: items.map((item) => ({
+      id: item.id,
+      name: item.name,
+      image: item.image,
+      price: item.price,
+      quantity: item.quantity,
+      model: item.model?.trim() || undefined,
+    })),
     form,
     subtotal,
     shippingCost,

@@ -21,7 +21,7 @@ export async function StoreShell({
   return (
     <WhatsAppAssistantProvider>
       <CartProvider>
-        <Navbar isAdminAuthenticated={Boolean(adminSession)} />
+        <Navbar isAdmin={Boolean(adminSession)} />
         <div className={withTopPadding ? "pt-[4.75rem] sm:pt-[5.25rem]" : ""}>
           {children}
         </div>

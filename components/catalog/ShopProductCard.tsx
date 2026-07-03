@@ -6,10 +6,37 @@ import type { Product } from "@/lib/data";
 import { formatPrice, getImageFrame, siteConfig } from "@/lib/data";
 import { getProductHref } from "@/lib/catalog";
 import { Button, getButtonClassName } from "@/components/ui/Button";
+import { getStockLevel } from "@/lib/store/types";
 
 type ShopProductCardProps = {
   product: Product;
 };
+
+function CardStockBadge({ stock }: { stock: number }) {
+  const level = getStockLevel(stock);
+
+  if (level === "out") {
+    return (
+      <span className="pointer-events-none absolute top-2 right-2 z-10 rounded-md bg-red-500/90 px-2 py-0.5 text-[9px] font-bold tracking-wide text-white uppercase md:top-4 md:right-4 md:px-2.5 md:py-1 md:text-[10px]">
+        Sin stock
+      </span>
+    );
+  }
+
+  if (level === "low") {
+    return (
+      <span className="pointer-events-none absolute top-2 right-2 z-10 rounded-md bg-amber-500/90 px-2 py-0.5 text-[9px] font-bold tracking-wide text-white md:top-4 md:right-4 md:px-2.5 md:py-1 md:text-[10px]">
+        Quedan {stock}
+      </span>
+    );
+  }
+
+  return (
+    <span className="pointer-events-none absolute top-2 right-2 z-10 rounded-md bg-emerald-500/80 px-2 py-0.5 text-[9px] font-bold tracking-wide text-white md:top-4 md:right-4 md:px-2.5 md:py-1 md:text-[10px]">
+      En stock
+    </span>
+  );
+}
 
 export function ShopProductCard({ product }: ShopProductCardProps) {
   const productHref = getProductHref(product);
@@ -40,6 +67,8 @@ export function ShopProductCard({ product }: ShopProductCardProps) {
             {product.badge}
           </span>
         )}
+
+        {product.stock !== undefined && <CardStockBadge stock={product.stock} />}
 
         <div className="absolute inset-0 flex items-center justify-center p-4 md:p-8">
           <div

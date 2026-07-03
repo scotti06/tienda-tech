@@ -9,7 +9,7 @@ type MobileNavDrawerProps = {
   open: boolean;
   onClose: () => void;
   isLinkActive: (href: string) => boolean;
-  isAdminAuthenticated?: boolean;
+  isAdmin?: boolean;
 };
 
 const PREMIUM_EASE = [0.22, 1, 0.36, 1] as const;
@@ -61,7 +61,7 @@ export function MobileNavDrawer({
   open,
   onClose,
   isLinkActive,
-  isAdminAuthenticated = false,
+  isAdmin = false,
 }: MobileNavDrawerProps) {
   const reduceMotion = useReducedMotion();
   const duration = reduceMotion ? 0.01 : DRAWER_DURATION;
@@ -157,11 +157,11 @@ export function MobileNavDrawer({
                 />
               </div>
 
-              {isAdminAuthenticated && (
-                <div className="mt-4 border-t border-white/[0.08] pt-4">
+              {isAdmin && (
+                <div className="mt-auto border-t border-white/[0.08] pt-4">
                   <NavLink
                     href="/admin"
-                    label="Admin"
+                    label="Panel Anfitrión"
                     active={isLinkActive("/admin")}
                     onClose={onClose}
                   />

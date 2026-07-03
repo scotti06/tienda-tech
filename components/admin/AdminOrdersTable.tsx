@@ -8,6 +8,11 @@ type AdminOrdersTableProps = {
   orders: Order[];
 };
 
+function formatOrderItemLine(item: Order["items"][number]): string {
+  const label = item.model ? `${item.name} — ${item.model}` : item.name;
+  return `${label} x${item.quantity}`;
+}
+
 function formatDate(value: string) {
   return new Intl.DateTimeFormat("es-AR", {
     dateStyle: "medium",
@@ -53,14 +58,10 @@ export function AdminOrdersTable({ orders }: AdminOrdersTableProps) {
               <ul className="mt-4 space-y-2 text-sm text-white">
                 {order.items.map((item, index) => (
                   <li key={`${order.id}-${item.productId}-${index}`}>
-                    {item.quantity}x {item.name}
-                    {item.model ? (
-                      <span className="text-[var(--brand-cyan-soft)]">
-                        {" "}
-                        · {item.model}
-                      </span>
-                    ) : null}{" "}
-                    — {formatPrice(item.price)}
+                    {formatOrderItemLine(item)}{" "}
+                    <span className="text-[var(--muted)]">
+                      — {formatPrice(item.price * item.quantity)}
+                    </span>
                   </li>
                 ))}
               </ul>
@@ -75,7 +76,7 @@ export function AdminOrdersTable({ orders }: AdminOrdersTableProps) {
                 onChange={(event) =>
                   updateStatus(order.id, event.target.value as Order["status"])
                 }
-                className="admin-input min-w-48"
+                className="admin-input w-full min-w-0 md:min-w-48"
               >
                 {ORDER_STATUSES.map((status) => (
                   <option key={status.value} value={status.value}>

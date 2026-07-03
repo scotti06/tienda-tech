@@ -89,6 +89,8 @@ export type Product = {
   installments?: string;
   description?: string;
   tags?: string[];
+  /** Disponibilidad en tienda (solo catálogo /tienda). */
+  stock?: number;
 };
 
 export type Benefit = {

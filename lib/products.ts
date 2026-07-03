@@ -4,6 +4,7 @@ import type { Product } from "@/lib/data";
 import {
   getCatalogProducts,
   getCatalogProductBySlug,
+  getShopCatalogProducts,
   getStoreProductBySlug,
 } from "@/lib/store/repository";
 import type { StoreProduct } from "@/lib/store/types";
@@ -18,6 +19,18 @@ let catalogValidated = false;
 
 export async function getProducts(): Promise<Product[]> {
   const products = await getCatalogProducts();
+
+  if (!catalogValidated && process.env.NODE_ENV === "development") {
+    validateProductCatalog(products);
+    catalogValidated = true;
+  }
+
+  return products;
+}
+
+/** Catálogo de /tienda con stock para badges y filtrado de agotados. */
+export async function getShopProducts(): Promise<Product[]> {
+  const products = await getShopCatalogProducts();
 
   if (!catalogValidated && process.env.NODE_ENV === "development") {
     validateProductCatalog(products);

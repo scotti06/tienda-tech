@@ -10,7 +10,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import type { Product } from "@/lib/data";
-import { formatPrice, getImageFrame } from "@/lib/data";
+import { formatPrice } from "@/lib/data";
 import { getProductHref } from "@/lib/catalog";
 import { getButtonClassName } from "@/components/ui/Button";
 import { IconChevronLeft, IconChevronRight } from "@/components/ui/Icons";
@@ -25,9 +25,9 @@ type GalleryMetrics = {
 function useGalleryMetrics(): GalleryMetrics {
   const [metrics, setMetrics] = useState<GalleryMetrics>({
     radius: 240,
-    cardWidth: 168,
-    cardHeight: 220,
-    stageHeight: 300,
+    cardWidth: 180,
+    cardHeight: 260,
+    stageHeight: 340,
   });
 
   useEffect(() => {
@@ -57,17 +57,17 @@ function useGalleryMetrics(): GalleryMetrics {
         });
       } else if (width >= 640) {
         setMetrics({
-          radius: 280,
-          cardWidth: 184,
-          cardHeight: 248,
-          stageHeight: 320,
+          radius: 290,
+          cardWidth: 188,
+          cardHeight: 268,
+          stageHeight: 350,
         });
       } else {
         setMetrics({
-          radius: 210,
-          cardWidth: 156,
-          cardHeight: 212,
-          stageHeight: 280,
+          radius: 240,
+          cardWidth: 180,
+          cardHeight: 260,
+          stageHeight: 340,
         });
       }
     };
@@ -78,6 +78,39 @@ function useGalleryMetrics(): GalleryMetrics {
   }, []);
 
   return metrics;
+}
+
+function getCarouselCardLayout(cardWidth: number) {
+  if (cardWidth <= 180) {
+    return {
+      imageHeight: 100,
+      imagePadding: "px-2.5 pt-2",
+      footerPadding: "px-2.5 pb-2.5 pt-1",
+      category: "text-[8px] tracking-[0.12em] leading-none",
+      name: "text-[10px] leading-[1.3] font-semibold",
+      price: "text-[11px] mt-1 font-semibold leading-none",
+    };
+  }
+
+  if (cardWidth <= 220) {
+    return {
+      imageHeight: 118,
+      imagePadding: "px-3 pt-2.5",
+      footerPadding: "px-3 pb-3 pt-1",
+      category: "text-[9px] tracking-[0.13em] leading-none",
+      name: "text-[11px] leading-[1.35] font-semibold",
+      price: "text-xs mt-1 font-semibold leading-none",
+    };
+  }
+
+  return {
+    imageHeight: 148,
+    imagePadding: "px-4 pt-4 sm:px-5 sm:pt-5",
+    footerPadding: "px-3 pb-3 pt-1 sm:px-4 sm:pb-4",
+    category: "text-[10px] tracking-[0.15em] leading-none",
+    name: "text-sm leading-snug font-semibold sm:text-base",
+    price: "text-sm mt-1.5 font-semibold leading-none",
+  };
 }
 
 const AUTOPLAY_INTERVAL_MS = 4000;
@@ -364,9 +397,10 @@ export function ShopCircularGallery({
             >
               {products.map((product, index) => {
                 const productHref = getProductHref(product);
-                const imageFrame = getImageFrame(product.imageFrame);
                 const opacity = itemOpacity(index);
                 const isActive = index === activeIndex;
+                const layout = getCarouselCardLayout(metrics.cardWidth);
+                const billboardRotation = -((index - activeIndex) * anglePerItem);
 
                 return (
                   <div
@@ -387,50 +421,58 @@ export function ShopCircularGallery({
                       pointerEvents: isActive ? "auto" : "none",
                     }}
                   >
-                    <Link
-                      href={productHref}
-                      tabIndex={isActive ? 0 : -1}
-                      onClick={handleProductLinkClick}
-                      className={`card-hover card-tap group relative flex h-full w-full flex-col overflow-hidden rounded-2xl border bg-[var(--surface)] ${
-                        isActive
-                          ? "border-[var(--brand-purple)]/30 shadow-[0_0_24px_rgba(157,78,221,0.15)]"
-                          : "border-white/[0.08]"
-                      } ${product.accent}`}
+                    <div
+                      className={`h-full w-full ${transitionClass}`}
+                      style={{
+                        transformStyle: "preserve-3d",
+                        transform: `rotateY(${billboardRotation}deg)`,
+                      }}
                     >
-                      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_100%,rgba(157,78,221,0.12),transparent_60%)]" />
+                      <Link
+                        href={productHref}
+                        tabIndex={isActive ? 0 : -1}
+                        onClick={handleProductLinkClick}
+                        className={`card-hover card-tap group relative flex h-full min-h-0 w-full flex-col overflow-hidden rounded-2xl border bg-[var(--surface)] ${
+                          isActive
+                            ? "border-[var(--brand-purple)]/30 shadow-[0_0_24px_rgba(157,78,221,0.15)]"
+                            : "border-white/[0.08]"
+                        } ${product.accent}`}
+                      >
+                        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_100%,rgba(157,78,221,0.12),transparent_60%)]" />
 
-                      <div className="relative flex flex-1 items-center justify-center p-4 sm:p-5">
                         <div
-                          className="relative card-hover-image"
-                          style={{
-                            width: `min(100%, ${Math.round(imageFrame.width * 0.72)}px)`,
-                            aspectRatio: `${imageFrame.width} / ${imageFrame.height}`,
-                            maxHeight: "72%",
-                          }}
+                          className={`relative flex shrink-0 items-center justify-center ${layout.imagePadding}`}
+                          style={{ height: layout.imageHeight }}
                         >
-                          <Image
-                            src={product.image}
-                            alt={product.name}
-                            fill
-                            className="object-contain object-center drop-shadow-[0_12px_20px_rgba(0,0,0,0.22)]"
-                            sizes={`(max-width: 640px) 156px, ${metrics.cardWidth}px`}
-                            priority={index === 0}
-                          />
+                          <div className="relative mx-auto h-full w-full max-w-[88%]">
+                            <Image
+                              src={product.image}
+                              alt={product.name}
+                              fill
+                              className="object-contain object-center drop-shadow-[0_12px_20px_rgba(0,0,0,0.22)]"
+                              sizes={`(max-width: 640px) 180px, ${metrics.cardWidth}px`}
+                              priority={index === 0}
+                            />
+                          </div>
                         </div>
-                      </div>
 
-                      <div className="relative bg-gradient-to-t from-black/85 via-black/50 to-transparent p-3 sm:p-4">
-                        <p className="text-[10px] font-medium tracking-[0.15em] text-[var(--brand-cyan)] uppercase">
-                          {product.category}
-                        </p>
-                        <h3 className="mt-1 text-sm font-semibold leading-snug text-white line-clamp-2 sm:text-base">
-                          {product.name}
-                        </h3>
-                        <p className="mt-1.5 text-sm font-semibold text-white">
-                          {formatPrice(product.price)}
-                        </p>
-                      </div>
-                    </Link>
+                        <div
+                          className={`relative flex min-h-0 flex-1 flex-col justify-end bg-gradient-to-t from-black/90 via-black/70 to-transparent ${layout.footerPadding}`}
+                        >
+                          <p
+                            className={`shrink-0 font-medium text-[var(--brand-cyan)] uppercase ${layout.category}`}
+                          >
+                            {product.category}
+                          </p>
+                          <h3 className={`mt-1 text-white ${layout.name}`}>
+                            {product.name}
+                          </h3>
+                          <p className={`shrink-0 text-white ${layout.price}`}>
+                            {formatPrice(product.price)}
+                          </p>
+                        </div>
+                      </Link>
+                    </div>
                   </div>
                 );
               })}

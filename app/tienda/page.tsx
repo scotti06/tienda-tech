@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { StoreShell } from "@/components/layout/StoreShell";
 import { ShopPageBody } from "@/components/catalog/ShopPageBody";
-import { getProducts } from "@/lib/products";
+import { ShopTiendaPageSkeleton } from "@/components/catalog/ShopTiendaPageSkeleton";
+import { getShopProducts } from "@/lib/products";
 
 export const metadata: Metadata = {
   title: "Tienda — Techstylebv",
@@ -10,11 +12,13 @@ export const metadata: Metadata = {
 };
 
 export default async function TiendaPage() {
-  const products = await getProducts();
+  const products = await getShopProducts();
 
   return (
     <StoreShell>
-      <ShopPageBody products={products} />
+      <Suspense fallback={<ShopTiendaPageSkeleton />}>
+        <ShopPageBody products={products} />
+      </Suspense>
     </StoreShell>
   );
 }

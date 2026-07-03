@@ -430,6 +430,21 @@ export async function getCatalogProducts(): Promise<Product[]> {
   return ((data ?? []) as ProductRow[]).map(mapProductRow).map(toCatalogProduct);
 }
 
+export async function getShopCatalogProducts(): Promise<Product[]> {
+  const supabase = getServerClient();
+  const { data, error } = await supabase
+    .from("products")
+    .select("*")
+    .eq("active", true)
+    .order("updated_at", { ascending: false });
+
+  throwOnError(error, "getShopCatalogProducts");
+  return ((data ?? []) as ProductRow[]).map((row) => ({
+    ...toCatalogProduct(mapProductRow(row)),
+    stock: row.stock,
+  }));
+}
+
 export async function getCatalogProductBySlug(
   slug: string,
 ): Promise<StoreProduct | undefined> {

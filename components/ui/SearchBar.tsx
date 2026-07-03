@@ -7,6 +7,7 @@ type SearchBarProps = {
   value?: string;
   onChange?: (value: string) => void;
   placeholder?: string;
+  ariaLabel?: string;
 };
 
 export function SearchBar({
@@ -14,6 +15,7 @@ export function SearchBar({
   value,
   onChange,
   placeholder = "¿Qué estás buscando?",
+  ariaLabel = "Buscar productos",
 }: SearchBarProps) {
   return (
     <label
@@ -22,6 +24,7 @@ export function SearchBar({
       <IconSearch className="h-4 w-4 shrink-0 text-[var(--muted)]" />
       <input
         type="search"
+        aria-label={ariaLabel}
         {...(value !== undefined ? { value } : {})}
         onChange={(e) => onChange?.(e.target.value)}
         placeholder={placeholder}

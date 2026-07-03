@@ -242,19 +242,7 @@ export function WhatsAppAssistant() {
         )}
       </AnimatePresence>
 
-      <div className="fixed bottom-6 right-6 z-[80] flex flex-col items-end gap-2">
-        {!open && (
-          <button
-            type="button"
-            aria-label="Abrir opciones de consulta"
-            aria-expanded={false}
-            onClick={() => setOpen(true)}
-            className="rounded-full border border-white/[0.12] bg-[var(--void)]/90 px-3 py-1.5 text-xs font-medium text-white shadow-md backdrop-blur-sm"
-          >
-            Opciones
-          </button>
-        )}
-
+      <div className="fixed bottom-6 right-6 z-[80]">
         {open ? (
           <button
             type="button"

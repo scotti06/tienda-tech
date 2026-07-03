@@ -3,19 +3,13 @@ import { siteConfig } from "@/lib/data";
 import { categoryCatalog } from "@/lib/catalog";
 import { Logo } from "@/components/ui/Logo";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
-import { CartFooterLink } from "@/components/cart/CartFooterLink";
 
 const footerLinks = {
   Tienda: categoryCatalog.map((c) => ({
     label: c.name,
     href: c.path,
   })),
-  Soporte: [
-    { label: "Tienda", href: "/tienda" },
-    { label: "Contacto", href: "/contacto" },
-    { label: "Carrito", action: "cart" as const },
-    { label: "Inicio", href: "/" },
-  ],
+  Soporte: [{ label: "Contacto", href: "/contacto" }],
   Legal: [
     { label: "Términos", href: "/contacto" },
     { label: "Privacidad", href: "/contacto" },
@@ -43,18 +37,12 @@ export function Footer() {
                 <ul className="mt-5 space-y-3">
                   {links.map((link) => (
                     <li key={link.label}>
-                      {"action" in link && link.action === "cart" ? (
-                        <CartFooterLink className="text-sm text-[var(--muted)] transition-colors hover:text-white">
-                          {link.label}
-                        </CartFooterLink>
-                      ) : (
-                        <Link
-                          href={link.href}
-                          className="text-sm text-[var(--muted)] transition-colors hover:text-white"
-                        >
-                          {link.label}
-                        </Link>
-                      )}
+                      <Link
+                        href={link.href}
+                        className="text-sm text-[var(--muted)] transition-colors hover:text-white"
+                      >
+                        {link.label}
+                      </Link>
                     </li>
                   ))}
                 </ul>

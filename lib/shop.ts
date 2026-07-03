@@ -175,6 +175,10 @@ function productSearchText(product: Product): string {
   return parts.join(" ").toLowerCase();
 }
 
+export function filterInStockProducts(list: Product[]): Product[] {
+  return list.filter((product) => (product.stock ?? 0) > 0);
+}
+
 export function filterShopProducts(
   list: Product[],
   { query, groupId, subcategoryId }: ShopFilterState,
@@ -215,6 +219,69 @@ const byIds = (catalog: Product[], ids: string[]) =>
 
 export function getShopBestsellers(catalog: Product[]): Product[] {
   return byIds(catalog, SHOP_BESTSELLER_IDS);
+}
+
+export function getShopBestsellersWithFallback(
+  catalog: Product[],
+  limit = 6,
+): Product[] {
+  const bestsellers = getShopBestsellers(catalog);
+  if (bestsellers.length > 0) return bestsellers;
+
+  const withBadge = catalog.filter((product) => product.badge);
+  if (withBadge.length > 0) return withBadge.slice(0, limit);
+
+  return catalog.slice(0, limit);
+}
+
+export type ShopFilterCounts = {
+  groups: Partial<Record<ShopFilterGroup, number>>;
+  subcategories: Record<string, number>;
+};
+
+export function getShopFilterCounts(
+  catalog: Product[],
+  query: string,
+  activeGroup: ShopFilterGroup,
+): ShopFilterCounts {
+  const inStock = filterInStockProducts(catalog);
+  const groups: Partial<Record<ShopFilterGroup, number>> = {
+    all: inStock.length,
+  };
+
+  for (const group of shopGroups) {
+    groups[group.id] = filterShopProducts(inStock, {
+      query,
+      groupId: group.id,
+      subcategoryId: "all",
+    }).length;
+  }
+
+  const subcategories: Record<string, number> = {
+    all:
+      activeGroup === "all"
+        ? inStock.length
+        : filterShopProducts(inStock, {
+            query,
+            groupId: activeGroup,
+            subcategoryId: "all",
+          }).length,
+  };
+
+  const subs =
+    activeGroup === "all"
+      ? shopSubcategories
+      : shopSubcategories.filter((sub) => sub.groupId === activeGroup);
+
+  for (const sub of subs) {
+    subcategories[sub.id] = filterShopProducts(inStock, {
+      query,
+      groupId: activeGroup === "all" ? sub.groupId : activeGroup,
+      subcategoryId: sub.id,
+    }).length;
+  }
+
+  return { groups, subcategories };
 }
 
 export const shopBestsellers = byIds(products, SHOP_BESTSELLER_IDS);

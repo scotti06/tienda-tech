@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import {
   getSubcategoriesForGroup,
   shopGroups,
+  type ShopFilterCounts,
   type ShopFilterGroup,
   type ShopFilterSubcategory,
 } from "@/lib/shop";
@@ -14,6 +15,7 @@ type ShopCatalogFiltersProps = {
   onGroupChange: (groupId: ShopFilterGroup) => void;
   onSubcategoryChange: (subcategoryId: ShopFilterSubcategory) => void;
   layout?: "inline" | "sticky-mobile";
+  filterCounts?: ShopFilterCounts;
 };
 
 const groupPills: { id: ShopFilterGroup; label: string }[] = [
@@ -24,12 +26,30 @@ const groupPills: { id: ShopFilterGroup; label: string }[] = [
 const filterRowClassName =
   "scroll-snap-x hide-scrollbar flex gap-2 overflow-x-auto md:flex-wrap md:overflow-visible";
 
+function formatPillLabel(label: string, count?: number): string {
+  if (count === undefined) return label;
+  return `${label} · ${count}`;
+}
+
+function getFilterAriaLabel(
+  label: string,
+  count: number | undefined,
+  isActive: boolean,
+): string {
+  const countText =
+    count === undefined ? "" : `, ${count} producto${count === 1 ? "" : "s"}`;
+  const activeText = isActive ? ", activo" : "";
+  return `Filtrar por ${label}${countText}${activeText}`;
+}
+
 function FilterPill({
   label,
+  count,
   isActive,
   onClick,
 }: {
   label: string;
+  count?: number;
   isActive: boolean;
   onClick: () => void;
 }) {
@@ -38,13 +58,14 @@ function FilterPill({
       type="button"
       onClick={onClick}
       aria-pressed={isActive}
-      className={`card-tap scroll-snap-start shrink-0 rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-all duration-300 md:px-4 md:py-2 md:text-sm ${
+      aria-label={getFilterAriaLabel(label, count, isActive)}
+      className={`card-tap scroll-snap-start shrink-0 rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-all duration-300 min-h-11 md:min-h-0 md:px-4 md:py-2 md:text-sm ${
         isActive
           ? "border-white/[0.15] bg-gradient-to-b from-white/[0.12] via-[rgba(157,78,221,0.16)] to-[rgba(0,180,216,0.1)] text-white shadow-[inset_0_1px_0_0_rgba(255,255,255,0.14),0_8px_24px_-8px_rgba(0,0,0,0.35)]"
           : "border-white/[0.08] bg-white/[0.04] text-[var(--muted)] hover:border-white/[0.12] hover:text-white"
       }`}
     >
-      {label}
+      {formatPillLabel(label, count)}
     </button>
   );
 }
@@ -58,6 +79,7 @@ function StickyFilterBars({
   activeSubcategory,
   onGroupChange,
   onSubcategoryChange,
+  filterCounts,
 }: Omit<ShopCatalogFiltersProps, "layout">) {
   const subcategories =
     activeGroup === "all" ? [] : getSubcategoriesForGroup(activeGroup);
@@ -68,12 +90,13 @@ function StickyFilterBars({
       className="sticky top-[4.75rem] z-40 border-b border-white/[0.06] glass sm:top-[5.25rem]"
     >
       <div className="mx-auto max-w-7xl px-4 py-2.5 sm:px-6 lg:px-8">
-        <div className="flex flex-col">
+        <div className="flex flex-col gap-2">
           <FilterPillRow>
             {groupPills.map((pill) => (
               <FilterPill
                 key={pill.id}
                 label={pill.label}
+                count={filterCounts?.groups[pill.id]}
                 isActive={activeGroup === pill.id}
                 onClick={() => onGroupChange(pill.id)}
               />
@@ -84,6 +107,7 @@ function StickyFilterBars({
             <FilterPillRow>
               <FilterPill
                 label="Todas"
+                count={filterCounts?.subcategories.all}
                 isActive={activeSubcategory === "all"}
                 onClick={() => onSubcategoryChange("all")}
               />
@@ -91,6 +115,7 @@ function StickyFilterBars({
                 <FilterPill
                   key={sub.id}
                   label={sub.name}
+                  count={filterCounts?.subcategories[sub.id]}
                   isActive={activeSubcategory === sub.id}
                   onClick={() => onSubcategoryChange(sub.id)}
                 />
@@ -108,6 +133,7 @@ function FilterContent({
   activeSubcategory,
   onGroupChange,
   onSubcategoryChange,
+  filterCounts,
 }: Omit<ShopCatalogFiltersProps, "layout">) {
   const subcategories =
     activeGroup === "all"
@@ -125,6 +151,7 @@ function FilterContent({
             <FilterPill
               key={pill.id}
               label={pill.label}
+              count={filterCounts?.groups[pill.id]}
               isActive={activeGroup === pill.id}
               onClick={() => onGroupChange(pill.id)}
             />
@@ -139,6 +166,7 @@ function FilterContent({
         <FilterPillRow>
           <FilterPill
             label="Todas"
+            count={filterCounts?.subcategories.all}
             isActive={activeSubcategory === "all"}
             onClick={() => onSubcategoryChange("all")}
           />
@@ -146,6 +174,7 @@ function FilterContent({
             <FilterPill
               key={sub.id}
               label={sub.name}
+              count={filterCounts?.subcategories[sub.id]}
               isActive={activeSubcategory === sub.id}
               onClick={() => onSubcategoryChange(sub.id)}
             />
@@ -162,6 +191,7 @@ export function ShopCatalogFilters({
   onGroupChange,
   onSubcategoryChange,
   layout = "inline",
+  filterCounts,
 }: ShopCatalogFiltersProps) {
   if (layout === "sticky-mobile") {
     return (
@@ -170,6 +200,7 @@ export function ShopCatalogFilters({
         activeSubcategory={activeSubcategory}
         onGroupChange={onGroupChange}
         onSubcategoryChange={onSubcategoryChange}
+        filterCounts={filterCounts}
       />
     );
   }
@@ -181,6 +212,7 @@ export function ShopCatalogFilters({
         activeSubcategory={activeSubcategory}
         onGroupChange={onGroupChange}
         onSubcategoryChange={onSubcategoryChange}
+        filterCounts={filterCounts}
       />
     </div>
   );

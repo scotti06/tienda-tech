@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import {
   getImageFrame,
   getProductImageBoxStyle,
 } from "@/lib/data";
+import { useVariantImageOverride } from "@/components/catalog/product-page/VariantImageContext";
 
 type ProductGalleryProps = {
   name: string;
@@ -22,12 +23,36 @@ export function ProductGallery({
   imageFrame,
   imageFrameFill = 0.85,
 }: ProductGalleryProps) {
+  const variantImage = useVariantImageOverride();
   const [activeIndex, setActiveIndex] = useState(0);
+  const [displayedImage, setDisplayedImage] = useState(images[0] ?? "");
+  const [isFading, setIsFading] = useState(false);
   const frame = getImageFrame(imageFrame);
-  const activeImage = images[activeIndex] ?? images[0];
+  const baseImage = images[activeIndex] ?? images[0];
+  const targetImage = variantImage?.overrideImage ?? baseImage;
   const detailImageSizing = { imageFrameFill };
 
-  if (!activeImage) return null;
+  useEffect(() => {
+    if (!targetImage || targetImage === displayedImage) return;
+
+    setIsFading(true);
+    const timer = window.setTimeout(() => {
+      setDisplayedImage(targetImage);
+      setIsFading(false);
+    }, 180);
+
+    return () => window.clearTimeout(timer);
+  }, [displayedImage, targetImage]);
+
+  useEffect(() => {
+    if (!variantImage?.overrideImage) {
+      setDisplayedImage(baseImage);
+    }
+  }, [baseImage, variantImage?.overrideImage]);
+
+  if (!displayedImage) return null;
+
+  const showThumbnails = images.length > 1 && !variantImage?.overrideImage;
 
   return (
     <div className="w-full">
@@ -41,19 +66,21 @@ export function ProductGallery({
             style={getProductImageBoxStyle(detailImageSizing, frame, "detail")}
           >
             <Image
-              key={activeImage}
-              src={activeImage}
-              alt={`${name} — imagen ${activeIndex + 1}`}
+              key={displayedImage}
+              src={displayedImage}
+              alt={`${name} — imagen principal`}
               fill
-              priority={activeIndex === 0}
-              className="object-contain object-center drop-shadow-[0_18px_28px_rgba(0,0,0,0.24)]"
+              priority={activeIndex === 0 && !variantImage?.overrideImage}
+              className={`object-contain object-center drop-shadow-[0_18px_28px_rgba(0,0,0,0.24)] transition-opacity duration-300 ${
+                isFading ? "opacity-0" : "opacity-100"
+              }`}
               sizes="(max-width: 1024px) 100vw, 560px"
             />
           </div>
         </div>
       </div>
 
-      {images.length > 1 && (
+      {showThumbnails && (
         <div className="mt-4 flex gap-3 overflow-x-auto pb-1">
           {images.map((image, index) => {
             const isActive = index === activeIndex;

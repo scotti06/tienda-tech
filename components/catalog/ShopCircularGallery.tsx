@@ -426,9 +426,17 @@ export function ShopCircularGallery({
                         <h3 className="mt-1 text-sm font-semibold leading-snug text-white line-clamp-2 sm:text-base">
                           {product.name}
                         </h3>
-                        <p className="mt-1.5 text-sm font-semibold text-white">
-                          {formatPrice(product.price)}
-                        </p>
+                        <div className="mt-1.5 flex flex-wrap items-baseline gap-2">
+                          <p className="text-sm font-semibold text-white">
+                            {formatPrice(product.price)}
+                          </p>
+                          {product.originalPrice &&
+                            product.originalPrice > product.price && (
+                              <p className="text-xs text-[var(--muted)] line-through">
+                                {formatPrice(product.originalPrice)}
+                              </p>
+                            )}
+                        </div>
                       </div>
                     </Link>
                   </div>

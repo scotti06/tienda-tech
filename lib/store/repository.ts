@@ -70,6 +70,8 @@ type OrderItemRow = {
   price: number;
   quantity: number;
   model: string | null;
+  color_name: string | null;
+  color_hex: string | null;
 };
 
 type NotificationRow = {
@@ -153,6 +155,8 @@ function mapOrderItemRow(row: OrderItemRow): OrderItem {
     price: row.price,
     quantity: row.quantity,
     model: row.model?.trim() || undefined,
+    colorName: row.color_name?.trim() || undefined,
+    colorHex: row.color_hex?.trim() || undefined,
   };
 }
 

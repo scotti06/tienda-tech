@@ -77,6 +77,9 @@ export async function registerCartOrder(input: RegisterOrderInput) {
         price: item.price,
         quantity: item.quantity,
         model: item.model?.trim() || undefined,
+        colorName: item.colorName?.trim() || undefined,
+        colorHex: item.colorHex?.trim() || undefined,
+        variantId: item.variantId || undefined,
       })),
       total: input.total,
       status: "pendiente",
@@ -119,6 +122,8 @@ export async function registerCartOrder(input: RegisterOrderInput) {
       price: item.price,
       quantity: item.quantity,
       model: item.model?.trim() || null,
+      color_name: item.colorName?.trim() || null,
+      color_hex: item.colorHex?.trim() || null,
     }));
 
     const { error: orderItemsError } = await supabase

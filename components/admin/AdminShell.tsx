@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 
@@ -26,6 +27,11 @@ export function AdminShell({
 }: AdminShellProps) {
   const pathname = usePathname();
   const router = useRouter();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   async function handleLogout() {
     await fetch("/api/admin/auth/logout", { method: "POST" });
@@ -63,9 +69,11 @@ export function AdminShell({
         <aside className="rounded-2xl border border-white/[0.08] bg-white/[0.03] p-3">
           <nav className="flex flex-row gap-2 overflow-x-auto lg:flex-col lg:overflow-visible">
             {navItems.map((item) => {
-              const active = item.exact
-                ? pathname === item.href
-                : pathname.startsWith(item.href);
+              const active =
+                mounted &&
+                (item.exact
+                  ? pathname === item.href
+                  : pathname.startsWith(item.href));
 
               return (
                 <Link

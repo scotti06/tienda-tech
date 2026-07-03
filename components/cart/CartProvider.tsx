@@ -32,8 +32,8 @@ type CartContextValue = {
   closeCart: () => void;
   toggleCart: () => void;
   addItem: (product: CartProductInput, quantity?: number) => void;
-  removeItem: (id: string) => void;
-  updateQuantity: (id: string, quantity: number) => void;
+  removeItem: (cartKey: string) => void;
+  updateQuantity: (cartKey: string, quantity: number) => void;
   clearCart: () => void;
 };
 
@@ -62,12 +62,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setItems((current) => addCartItem(current, product, quantity));
   }, []);
 
-  const removeItem = useCallback((id: string) => {
-    setItems((current) => removeCartItem(current, id));
+  const removeItem = useCallback((cartKey: string) => {
+    setItems((current) => removeCartItem(current, cartKey));
   }, []);
 
-  const updateQuantity = useCallback((id: string, quantity: number) => {
-    setItems((current) => setCartItemQuantity(current, id, quantity));
+  const updateQuantity = useCallback((cartKey: string, quantity: number) => {
+    setItems((current) => setCartItemQuantity(current, cartKey, quantity));
   }, []);
 
   const clearCart = useCallback(() => {

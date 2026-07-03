@@ -189,7 +189,7 @@ function CartLineItem({ item, index, onDecrease, onIncrease }: CartLineItemProps
             {item.name}
           </h3>
           <p className="truncate text-[13px] leading-tight text-zinc-500">
-            {item.model ?? ""}
+            {[item.model, item.colorName].filter(Boolean).join(" · ")}
           </p>
         </div>
 
@@ -332,14 +332,14 @@ export function CartDrawer() {
                       <AnimatePresence initial={false}>
                         {items.map((item, index) => (
                           <CartLineItem
-                            key={item.id}
+                            key={item.cartKey}
                             item={item}
                             index={index}
                             onDecrease={() =>
-                              updateQuantity(item.id, item.quantity - 1)
+                              updateQuantity(item.cartKey, item.quantity - 1)
                             }
                             onIncrease={() =>
-                              updateQuantity(item.id, item.quantity + 1)
+                              updateQuantity(item.cartKey, item.quantity + 1)
                             }
                           />
                         ))}

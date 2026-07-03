@@ -202,7 +202,7 @@ export const products: Product[] = [
   {
     id: "1",
     slug: "funda-iphone",
-    name: "Funda para iPhone",
+    name: "Funda de silicona para iPhone",
     category: "Fundas",
     categoryId: "fundas",
     price: 14900,

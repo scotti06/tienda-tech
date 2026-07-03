@@ -28,6 +28,11 @@ const nextConfig: NextConfig = {
         hostname: "*.ngrok-free.dev",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "*.supabase.co",
+        pathname: "/storage/v1/object/public/**",
+      },
     ],
   },
 };

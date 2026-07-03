@@ -78,9 +78,16 @@ export function ShopProductCard({ product }: ShopProductCardProps) {
           </p>
         )}
 
-        <p className="mt-0.5 text-base font-semibold tracking-tight text-white md:mt-1 md:text-xl">
-          {formatPrice(product.price)}
-        </p>
+        <div className="mt-0.5 flex flex-wrap items-baseline gap-2 md:mt-1">
+          <p className="text-base font-semibold tracking-tight text-white md:text-xl">
+            {formatPrice(product.price)}
+          </p>
+          {product.originalPrice && product.originalPrice > product.price && (
+            <p className="text-sm text-[var(--muted)] line-through">
+              {formatPrice(product.originalPrice)}
+            </p>
+          )}
+        </div>
 
         <div className="mt-auto flex flex-col gap-2 pt-2 md:pt-3">
           <Button href={productHref} variant="primary" size="compact" className="w-full">

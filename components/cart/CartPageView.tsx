@@ -74,7 +74,7 @@ export function CartPageView() {
         <ul className="mt-12 space-y-4">
           {items.map((item) => (
             <li
-              key={item.id}
+              key={item.cartKey}
               className="rounded-2xl border border-white/[0.08] glass-card p-4 md:p-5"
             >
               <div className="flex gap-4">
@@ -92,6 +92,11 @@ export function CartPageView() {
                   <h2 className="text-base font-semibold tracking-tight text-white line-clamp-2">
                     {item.name}
                   </h2>
+                  {(item.model || item.colorName) && (
+                    <p className="mt-1 text-sm text-[var(--muted)]">
+                      {[item.model, item.colorName].filter(Boolean).join(" · ")}
+                    </p>
+                  )}
                   <p className="mt-1 text-sm text-[var(--muted)]">
                     <TextScramble
                       variant="price"
@@ -107,7 +112,7 @@ export function CartPageView() {
                         variant="ghost"
                         size="compact"
                         aria-label={`Disminuir cantidad de ${item.name}`}
-                        onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                        onClick={() => updateQuantity(item.cartKey, item.quantity - 1)}
                       >
                         −
                       </Button>
@@ -119,7 +124,7 @@ export function CartPageView() {
                         variant="ghost"
                         size="compact"
                         aria-label={`Aumentar cantidad de ${item.name}`}
-                        onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                        onClick={() => updateQuantity(item.cartKey, item.quantity + 1)}
                       >
                         +
                       </Button>
@@ -129,7 +134,7 @@ export function CartPageView() {
                       type="button"
                       variant="inline-link"
                       className="text-sm"
-                      onClick={() => removeItem(item.id)}
+                      onClick={() => removeItem(item.cartKey)}
                     >
                       Eliminar
                     </Button>

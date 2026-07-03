@@ -2,17 +2,29 @@ import { formatPrice, type Product } from "@/lib/data";
 
 export type CartItem = {
   id: string;
+  cartKey: string;
   name: string;
   image: string;
   price: number;
   quantity: number;
   model?: string;
+  colorName?: string;
+  colorHex?: string;
+  variantId?: string;
 };
 
 export type CartProductInput = Pick<
   CartItem,
-  "id" | "name" | "image" | "price" | "model"
+  "id" | "name" | "image" | "price" | "model" | "colorName" | "colorHex" | "variantId"
 >;
+
+export function getCartItemKey(
+  product: Pick<CartProductInput, "id" | "model" | "colorHex">,
+): string {
+  const model = product.model?.trim() || "";
+  const colorHex = product.colorHex?.trim().toLowerCase() || "";
+  return `${product.id}::${colorHex}::${model}`;
+}
 
 export const CART_STORAGE_KEY = "techstylebv-cart";
 
@@ -26,7 +38,7 @@ export function readCartFromStorage(): CartItem[] {
     const parsed = JSON.parse(raw) as unknown;
     if (!Array.isArray(parsed)) return [];
 
-    return parsed.filter(isValidCartItem);
+    return parsed.filter(isValidCartItem).map(normalizeCartItem);
   } catch {
     return [];
   }
@@ -45,6 +57,17 @@ function isValidCartItem(value: unknown): value is CartItem {
 
   const item = value as Partial<CartItem>;
 
+  const cartKey =
+    typeof item.cartKey === "string" && item.cartKey.length > 0
+      ? item.cartKey
+      : typeof item.id === "string"
+        ? getCartItemKey({
+            id: item.id,
+            model: item.model,
+            colorHex: item.colorHex,
+          })
+        : "";
+
   return (
     typeof item.id === "string" &&
     typeof item.name === "string" &&
@@ -52,10 +75,25 @@ function isValidCartItem(value: unknown): value is CartItem {
     typeof item.price === "number" &&
     typeof item.quantity === "number" &&
     item.quantity > 0 &&
+    cartKey.length > 0 &&
     (item.model === undefined ||
       item.model === null ||
-      typeof item.model === "string")
+      typeof item.model === "string") &&
+    (item.colorName === undefined ||
+      item.colorName === null ||
+      typeof item.colorName === "string") &&
+    (item.colorHex === undefined ||
+      item.colorHex === null ||
+      typeof item.colorHex === "string") &&
+    (item.variantId === undefined ||
+      item.variantId === null ||
+      typeof item.variantId === "string")
   );
+}
+
+function normalizeCartItem(item: CartItem): CartItem {
+  const cartKey = item.cartKey || getCartItemKey(item);
+  return { ...item, cartKey };
 }
 
 export function addCartItem(
@@ -63,15 +101,19 @@ export function addCartItem(
   product: CartProductInput,
   quantity = 1,
 ): CartItem[] {
-  const existing = items.find((item) => item.id === product.id);
+  const cartKey = getCartItemKey(product);
+  const existing = items.find((item) => item.cartKey === cartKey);
 
   if (existing) {
     return items.map((item) =>
-      item.id === product.id
+      item.cartKey === cartKey
         ? {
             ...item,
             quantity: item.quantity + quantity,
             model: product.model?.trim() || item.model,
+            colorName: product.colorName?.trim() || item.colorName,
+            colorHex: product.colorHex?.trim() || item.colorHex,
+            variantId: product.variantId || item.variantId,
           }
         : item,
     );
@@ -79,27 +121,31 @@ export function addCartItem(
 
   return [
     ...items,
-    {
+    normalizeCartItem({
       ...product,
+      cartKey,
       quantity,
       model: product.model?.trim() || undefined,
-    },
+      colorName: product.colorName?.trim() || undefined,
+      colorHex: product.colorHex?.trim() || undefined,
+      variantId: product.variantId || undefined,
+    }),
   ];
 }
 
-export function removeCartItem(items: CartItem[], id: string): CartItem[] {
-  return items.filter((item) => item.id !== id);
+export function removeCartItem(items: CartItem[], cartKey: string): CartItem[] {
+  return items.filter((item) => item.cartKey !== cartKey);
 }
 
 export function setCartItemQuantity(
   items: CartItem[],
-  id: string,
+  cartKey: string,
   quantity: number,
 ): CartItem[] {
-  if (quantity <= 0) return removeCartItem(items, id);
+  if (quantity <= 0) return removeCartItem(items, cartKey);
 
   return items.map((item) =>
-    item.id === id ? { ...item, quantity } : item,
+    item.cartKey === cartKey ? { ...item, quantity } : item,
   );
 }
 
@@ -134,21 +180,27 @@ export function formatCartSubtotal(items: CartItem[]): string {
 }
 
 export function productToCartItem(product: Product): Omit<CartItem, "quantity"> {
-  return {
+  const base = {
     id: product.id,
     name: product.name,
     image: product.image,
     price: product.price,
     model: product.category,
   };
+
+  return {
+    ...base,
+    cartKey: getCartItemKey(base),
+  };
 }
 
 export function buildCartWhatsAppMessage(items: CartItem[]): string {
   const lines = items.map((item) => {
     const modelPart = item.model ? ` (${item.model})` : "";
+    const colorPart = item.colorName ? ` · Color: ${item.colorName}` : "";
     const lineTotal = item.price * item.quantity;
     const pricePart = lineTotal > 0 ? ` — ${formatPrice(lineTotal)}` : "";
-    return `• ${item.name}${modelPart} x${item.quantity}${pricePart}`;
+    return `• ${item.name}${modelPart}${colorPart} x${item.quantity}${pricePart}`;
   });
 
   const subtotal = getCartSubtotal(items);

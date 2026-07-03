@@ -85,15 +85,15 @@ export function TextScramble({
     <span
       className={`group relative inline-block ${
         isPrice ? "cursor-pointer select-none" : "inline-flex cursor-pointer flex-col select-none"
-      } ${className}`}
+      }`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
       <span
         className={
           isPrice
-            ? "relative"
-            : "relative font-mono text-lg tracking-widest uppercase"
+            ? `relative ${className}`
+            : `relative font-mono text-lg tracking-widest uppercase ${className}`
         }
       >
         {displayText.split("").map((char, i) => (

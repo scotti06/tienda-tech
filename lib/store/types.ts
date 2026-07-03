@@ -13,6 +13,9 @@ export type OrderItem = {
   price: number;
   quantity: number;
   model?: string;
+  colorName?: string;
+  colorHex?: string;
+  variantId?: string;
 };
 
 export type PaymentMethod = "mercadopago" | "card" | "transfer";

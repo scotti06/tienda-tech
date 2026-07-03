@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
-import fs from "node:fs";
-import path from "node:path";
 import { requireAdminSession } from "@/lib/admin/session";
+import { uploadProductImageToStorage } from "@/lib/supabase/product-storage";
 
 export async function POST(request: Request) {
   try {
@@ -16,22 +15,14 @@ export async function POST(request: Request) {
       );
     }
 
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-    const extension = path.extname(file.name) || ".webp";
-    const safeExtension = extension.replace(/[^a-zA-Z0-9.]/g, "") || ".webp";
-    const filename = `upload-${Date.now()}${safeExtension}`;
-    const uploadDir = path.join(process.cwd(), "public", "products", "uploads");
-
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
+    const url = await uploadProductImageToStorage(file);
+    return NextResponse.json({ url });
+  } catch (error) {
+    if (error instanceof Error && error.message === "UNAUTHORIZED") {
+      return NextResponse.json({ error: "No autorizado." }, { status: 401 });
     }
-
-    const filePath = path.join(uploadDir, filename);
-    fs.writeFileSync(filePath, buffer);
-
-    return NextResponse.json({ url: `/products/uploads/${filename}` });
-  } catch {
-    return NextResponse.json({ error: "No autorizado." }, { status: 401 });
+    const message =
+      error instanceof Error ? error.message : "No se pudo subir la imagen.";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

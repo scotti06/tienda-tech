@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/Button";
 import { SimilarProductsCarousel } from "@/components/catalog/SimilarProductsCarousel";
 import { ProductDetailContent } from "@/components/catalog/product-page/ProductDetailContent";
 import { ProductGallery } from "@/components/catalog/product-page/ProductGallery";
+import { VariantImageProvider } from "@/components/catalog/product-page/VariantImageContext";
 import {
   ProductPaymentNote,
 } from "@/components/catalog/product-page/ProductTrustBar";
@@ -18,8 +19,15 @@ import { formatPrice } from "@/lib/data";
 import { TextScramble } from "@/components/ui/text-scramble";
 import { getCategoryById } from "@/lib/catalog";
 import type { StoreProduct } from "@/lib/store/types";
-import { getProducts, getPriceWithoutTax, getProductImages } from "@/lib/products";
+import { getProducts, getProductImages } from "@/lib/products";
 import { getSimilarProducts } from "@/lib/home";
+import { isSiliconeCaseProduct } from "@/lib/store/silicone-case-product";
+import { isFundasProduct } from "@/lib/store/fundas-product";
+import {
+  getActiveProductModels,
+  getActiveProductModelsWithVariants,
+} from "@/lib/store/product-models";
+import { getActiveProductVariants } from "@/lib/store/product-variants";
 
 type ProductPageViewProps = {
   product: StoreProduct;
@@ -27,12 +35,28 @@ type ProductPageViewProps = {
 
 export async function ProductPageView({ product }: ProductPageViewProps) {
   const category = getCategoryById(product.categoryId);
-  const priceWithoutTax = getPriceWithoutTax(product.price);
   const similarProducts = getSimilarProducts(product, await getProducts());
   const images = getProductImages(product);
+  const siliconeCase = isSiliconeCaseProduct(product);
+  const fundasProduct = isFundasProduct(product);
+
+  const iphoneModels = fundasProduct
+    ? siliconeCase
+      ? await getActiveProductModelsWithVariants(product.id).catch(() => [])
+      : await getActiveProductModels(product.id).catch(() => [])
+    : [];
+
+  const colorVariants =
+    siliconeCase && !fundasProduct
+      ? await getActiveProductVariants(product.id).catch(() => [])
+      : [];
+
+  const hasPerModelColors = siliconeCase && fundasProduct;
+  const hasColorVariants = hasPerModelColors
+    ? iphoneModels.some((model) => (model.variants?.length ?? 0) > 0)
+    : colorVariants.length > 0;
   const hasDiscount =
     product.originalPrice && product.originalPrice > product.price;
-  const showInstallments = Boolean(product.installments);
 
   return (
     <main className="pb-28 md:pb-20">
@@ -47,16 +71,17 @@ export async function ProductPageView({ product }: ProductPageViewProps) {
           ]}
         />
 
-        <div className="grid gap-10 lg:grid-cols-2 lg:gap-12 xl:gap-16">
-          <ProductGallery
-            name={product.name}
-            images={images}
-            accent={product.accent}
-            imageFrame={product.imageFrame}
-            imageFrameFill={product.imageFrameFill ?? 0.85}
-          />
+        <VariantImageProvider>
+          <div className="grid gap-10 lg:grid-cols-2 lg:gap-12 xl:gap-16">
+            <ProductGallery
+              name={product.name}
+              images={images}
+              accent={product.accent}
+              imageFrame={product.imageFrame}
+              imageFrameFill={product.imageFrameFill ?? 0.85}
+            />
 
-          <div className="flex flex-col lg:pt-2">
+            <div className="flex flex-col lg:pt-2">
             <div className="flex flex-wrap items-center gap-2">
               <p className="text-[11px] font-semibold tracking-[0.24em] text-[var(--brand-cyan)] uppercase">
                 {product.category}
@@ -99,51 +124,32 @@ export async function ProductPageView({ product }: ProductPageViewProps) {
                   />
                 </p>
                 {hasDiscount && (
-                  <p className="text-lg text-[var(--muted)] line-through">
+                  <p className="text-lg text-[var(--muted)]">
                     <TextScramble
                       variant="price"
                       text={formatPrice(product.originalPrice!)}
+                      className="line-through decoration-[var(--muted)]"
                     />
                   </p>
                 )}
               </div>
-
-              {product.price > 0 && (
-                <>
-                  <p className="text-sm text-[var(--muted)]">
-                    Precio sin impuestos nacionales:{" "}
-                    <TextScramble
-                      variant="price"
-                      text={formatPrice(priceWithoutTax)}
-                    />
-                  </p>
-                  {showInstallments ? (
-                    <p className="text-sm font-medium text-[var(--brand-cyan)]">
-                      {product.installments}
-                    </p>
-                  ) : (
-                    <p className="text-sm font-medium text-[var(--brand-cyan)]">
-                      3 cuotas de{" "}
-                      <TextScramble
-                        variant="price"
-                        text={formatPrice(Math.ceil(product.price / 3))}
-                      />{" "}
-                      sin interés
-                    </p>
-                  )}
-                </>
-              )}
             </div>
 
-            <div className="mt-8">
-              <ProductPurchasePanel product={product} />
+            <div className="mt-6">
+              <ProductPurchasePanel
+                product={product}
+                colorVariants={colorVariants}
+                iphoneModels={iphoneModels}
+                colorsPerModel={hasPerModelColors}
+              />
             </div>
 
             <div className="mt-4">
               <ProductPaymentNote price={product.price} />
             </div>
+            </div>
           </div>
-        </div>
+        </VariantImageProvider>
 
         <ProductDetailContent product={product} />
 
@@ -163,7 +169,10 @@ export async function ProductPageView({ product }: ProductPageViewProps) {
         />
       </div>
 
-      <ProductStickyBar product={product} />
+      <ProductStickyBar
+        product={product}
+        hasColorVariants={hasColorVariants}
+      />
     </main>
   );
 }

@@ -496,7 +496,7 @@ export function CheckoutPageView() {
               <div className="space-y-3">
                 {items.map((item) => (
                   <div
-                    key={item.id}
+                    key={item.cartKey}
                     className="flex items-center gap-4 rounded-xl border border-white/[0.08] bg-white/[0.03] p-3"
                   >
                     <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border border-white/[0.08] bg-white/[0.04]">
@@ -512,6 +512,8 @@ export function CheckoutPageView() {
                       <p className="font-medium text-white">{item.name}</p>
                       <p className="text-sm text-[var(--muted)]">
                         Cantidad: {item.quantity}
+                        {item.colorName ? ` · Color: ${item.colorName}` : ""}
+                        {item.model ? ` · ${item.model}` : ""}
                       </p>
                     </div>
                     <p className="text-sm font-semibold text-white">

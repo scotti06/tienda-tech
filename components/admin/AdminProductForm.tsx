@@ -7,10 +7,18 @@ import { Button } from "@/components/ui/Button";
 import { categoryCatalog } from "@/lib/catalog";
 import type { StoreProduct } from "@/lib/store/types";
 import { AdminStockControls } from "@/components/admin/AdminStockControls";
+import { AdminColorVariantsSection } from "@/components/admin/AdminColorVariantsSection";
+import { AdminProductModelsSection } from "@/components/admin/AdminProductModelsSection";
+import type { ProductVariantInput } from "@/lib/store/product-variant-types";
+import type { ProductModelInput } from "@/lib/store/product-model-types";
+import { isFundasProduct } from "@/lib/store/fundas-product";
+import { isSiliconeCaseProduct } from "@/lib/store/silicone-case-product";
 
 type AdminProductFormProps = {
   mode: "create" | "edit";
   product?: StoreProduct;
+  initialColorVariants?: ProductVariantInput[];
+  initialProductModels?: ProductModelInput[];
 };
 
 type ProductFormState = {
@@ -55,7 +63,12 @@ function getInitialState(product?: StoreProduct): ProductFormState {
   };
 }
 
-export function AdminProductForm({ mode, product }: AdminProductFormProps) {
+export function AdminProductForm({
+  mode,
+  product,
+  initialColorVariants = [],
+  initialProductModels = [],
+}: AdminProductFormProps) {
   const router = useRouter();
   const [form, setForm] = useState<ProductFormState>(() =>
     getInitialState(product),
@@ -63,6 +76,15 @@ export function AdminProductForm({ mode, product }: AdminProductFormProps) {
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [colorVariants, setColorVariants] =
+    useState<ProductVariantInput[]>(initialColorVariants);
+  const [productModels, setProductModels] =
+    useState<ProductModelInput[]>(initialProductModels);
+  const usesModelStock = isFundasProduct({ categoryId: form.categoryId });
+  const isSiliconeCase = isSiliconeCaseProduct({
+    name: form.name,
+    slug: form.slug,
+  });
 
   const endpoint = useMemo(
     () =>
@@ -133,14 +155,56 @@ export function AdminProductForm({ mode, product }: AdminProductFormProps) {
       body: JSON.stringify(payload),
     });
 
-    setSaving(false);
-
     if (!response.ok) {
+      setSaving(false);
       const data = (await response.json()) as { error?: string };
       setError(data.error ?? "No se pudo guardar el producto.");
       return;
     }
 
+    const savedProduct = (await response.json()) as StoreProduct;
+
+    if (isSiliconeCaseProduct(savedProduct)) {
+      const modelsResponse = await fetch(
+        `/api/admin/products/${savedProduct.id}/models`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            models: productModels,
+            syncVariantsPerModel: true,
+          }),
+        },
+      );
+
+      if (!modelsResponse.ok) {
+        setSaving(false);
+        const data = (await modelsResponse.json()) as { error?: string };
+        setError(
+          data.error ??
+            "El producto se guardó, pero no los modelos y colores de iPhone.",
+        );
+        return;
+      }
+    } else if (isFundasProduct(savedProduct)) {
+      const modelsResponse = await fetch(
+        `/api/admin/products/${savedProduct.id}/models`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ models: productModels }),
+        },
+      );
+
+      if (!modelsResponse.ok) {
+        setSaving(false);
+        const data = (await modelsResponse.json()) as { error?: string };
+        setError(data.error ?? "El producto se guardó, pero no los modelos de iPhone.");
+        return;
+      }
+    }
+
+    setSaving(false);
     router.push("/admin/productos");
     router.refresh();
   }
@@ -261,11 +325,22 @@ export function AdminProductForm({ mode, product }: AdminProductFormProps) {
                 value={form.stock}
                 onChange={(event) => updateField("stock", event.target.value)}
                 className="admin-input"
+                readOnly={usesModelStock}
+                title={
+                  usesModelStock
+                    ? "El stock se calcula automáticamente desde los modelos de iPhone."
+                    : undefined
+                }
               />
+              {usesModelStock && (
+                <p className="text-xs text-[var(--muted)]">
+                  Calculado automáticamente como la suma del stock de los modelos activos.
+                </p>
+              )}
             </label>
           </div>
 
-          {mode === "edit" && product && (
+          {mode === "edit" && product && !usesModelStock && (
             <AdminStockControls productId={product.id} stock={product.stock ?? 0} />
           )}
 
@@ -301,6 +376,20 @@ export function AdminProductForm({ mode, product }: AdminProductFormProps) {
           </label>
         </section>
       </div>
+
+      <AdminProductModelsSection
+        mode={mode}
+        productId={product?.id}
+        categoryId={form.categoryId}
+        productName={form.name}
+        productSlug={form.slug}
+        isSiliconeCase={isSiliconeCase}
+        initialModels={initialProductModels}
+        onChange={setProductModels}
+        onTotalStockChange={(totalStock) =>
+          updateField("stock", String(totalStock))
+        }
+      />
 
       <section className="space-y-4 rounded-2xl border border-white/[0.08] bg-white/[0.03] p-5">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -359,6 +448,15 @@ export function AdminProductForm({ mode, product }: AdminProductFormProps) {
           </p>
         )}
       </section>
+
+      {!isSiliconeCase && (
+        <AdminColorVariantsSection
+          productName={form.name}
+          productSlug={form.slug}
+          initialVariants={initialColorVariants}
+          onChange={setColorVariants}
+        />
+      )}
 
       {error && (
         <p className="rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-200">

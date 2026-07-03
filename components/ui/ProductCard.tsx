@@ -52,12 +52,19 @@ export function ProductCard({ product, layout = "default" }: ProductCardProps) {
             {product.name}
           </h3>
 
-          <p className="text-sm font-semibold tracking-tight text-white">
-            <TextScramble
-              variant="price"
-              text={formatPrice(product.price)}
-            />
-          </p>
+          <div className="flex flex-wrap items-baseline gap-2">
+            <p className="text-sm font-semibold tracking-tight text-white">
+              <TextScramble
+                variant="price"
+                text={formatPrice(product.price)}
+              />
+            </p>
+            {product.originalPrice && product.originalPrice > product.price && (
+              <p className="text-xs text-[var(--muted)] line-through">
+                {formatPrice(product.originalPrice)}
+              </p>
+            )}
+          </div>
 
           <span
             className={getButtonClassName({
@@ -138,17 +145,19 @@ export function ProductCard({ product, layout = "default" }: ProductCardProps) {
         </h3>
 
         <div className="mt-1 space-y-1">
-          <p className="text-xl font-semibold tracking-tight text-white">
-            <TextScramble
-              variant="price"
-              text={formatPrice(product.price)}
-            />
-          </p>
-          {product.installments && (
-            <p className="text-xs leading-relaxed text-[var(--brand-cyan)]">
-              {product.installments}
+          <div className="flex flex-wrap items-baseline gap-2">
+            <p className="text-xl font-semibold tracking-tight text-white">
+              <TextScramble
+                variant="price"
+                text={formatPrice(product.price)}
+              />
             </p>
-          )}
+            {product.originalPrice && product.originalPrice > product.price && (
+              <p className="text-sm text-[var(--muted)] line-through">
+                {formatPrice(product.originalPrice)}
+              </p>
+            )}
+          </div>
           {product.cashPrice && (
             <p className="text-xs text-[var(--brand-purple-soft)]">
               Transferencia:{" "}

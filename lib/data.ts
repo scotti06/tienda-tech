@@ -27,8 +27,16 @@ export function getProductImagePaddingClass(
   defaultClass: string,
 ): string {
   if (!product.imageFrameFill) return defaultClass;
+  // Padding is applied via getProductImagePaddingStyle (dynamic Tailwind classes are unreliable).
+  return "";
+}
+
+export function getProductImagePaddingStyle(
+  product: ProductImageSizing,
+): { padding?: string } | undefined {
+  if (!product.imageFrameFill) return undefined;
   const inset = ((1 - product.imageFrameFill) / 2) * 100;
-  return `p-[${inset}%]`;
+  return { padding: `${inset}%` };
 }
 
 export function getProductImageBoxStyle(
@@ -139,7 +147,6 @@ export const homeSectionLinks = [
   { label: "Categorías", href: "#categorias" },
   { label: "Productos", href: "#productos" },
   { label: "Beneficios", href: "#beneficios" },
-  { label: "Opiniones", href: "#opiniones" },
 ];
 
 export const heroSlides: HeroSlide[] = [
@@ -154,6 +161,18 @@ export const heroSlides: HeroSlide[] = [
     ctaHref: "/fundas",
     accent: "from-[#9D4EDD]/25 via-[#00B4D8]/10 to-transparent",
     productLabel: "Funda iPhone",
+  },
+  {
+    id: "fundas-magsafe",
+    eyebrow: "Fundas MagSafe",
+    title: "Carga magnética",
+    highlight: "para tu iPhone",
+    description:
+      "Fundas MagSafe compatibles con distintos modelos de iPhone. Consultá disponibilidad en tienda.",
+    cta: "Ver Fundas MagSafe",
+    ctaHref: "/fundas-magsafe",
+    accent: "from-[#00B4D8]/22 via-[#9D4EDD]/12 to-transparent",
+    productLabel: "Funda MagSafe",
   },
   {
     id: "vidrios",
@@ -209,7 +228,7 @@ export const products: Product[] = [
     categoryId: "fundas",
     price: 14900,
     accent: "bg-[radial-gradient(ellipse_at_50%_0%,#1a2e28_0%,#0a0c10_70%)]",
-    image: "/products/funda-iphone.webp",
+    image: "/products/funda-iphone.png",
     imageFrame: { width: 204, height: 224 },
     rating: 0,
     description: "Protección diaria para tu iPhone. Consultá modelos disponibles.",
@@ -219,12 +238,13 @@ export const products: Product[] = [
     id: "2",
     slug: "funda-magsafe-iphone",
     name: "Funda con MagSafe para iPhone",
-    category: "Fundas",
-    categoryId: "fundas",
+    category: "Fundas MagSafe",
+    categoryId: "fundas-magsafe",
     price: 21900,
     accent: "bg-[radial-gradient(ellipse_at_50%_0%,#1a2430_0%,#0a0c10_70%)]",
     image: "/products/funda-magsafe-iphone.webp",
     imageFrame: { width: 210, height: 230 },
+    imageFrameFill: 0.95,
     rating: 0,
     description: "Compatible con carga MagSafe. Ideal para iPhone recientes.",
     tags: ["MagSafe", "iPhone 15", "iPhone 14 Pro"],

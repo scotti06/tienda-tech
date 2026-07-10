@@ -16,9 +16,9 @@
       "sku": "TS-0009",
       "brand": "Techstylebv",
       "accent": "bg-[radial-gradient(ellipse_at_50%_0%,#1a2e28_0%,#0a0c10_70%)]",
-      "image": "/products/funda-iphone.webp",
+      "image": "/products/funda-iphone.png",
       "images": [
-        "/products/funda-iphone.webp"
+        "/products/funda-iphone.png"
       ],
       "imageFrame": {
         "width": 204,
@@ -36,7 +36,7 @@
       "categoryId": "fundas",
       "price": 14899,
       "accent": "bg-[radial-gradient(ellipse_at_50%_0%,#1a2e28_0%,#0a0c10_70%)]",
-      "image": "/products/funda-iphone.webp",
+      "image": "/products/funda-iphone.png",
       "imageFrame": {
         "width": 204,
         "height": 224
@@ -48,7 +48,7 @@
       "sku": "TS-0001",
       "brand": "Techstylebv",
       "images": [
-        "/products/funda-iphone.webp"
+        "/products/funda-iphone.png"
       ],
       "updatedAt": "2026-06-19T22:58:03.229Z",
       "badge": "",
@@ -59,8 +59,8 @@
       "id": "2",
       "slug": "funda-magsafe-iphone",
       "name": "Funda con MagSafe para iPhone",
-      "category": "Fundas",
-      "categoryId": "fundas",
+      "category": "Fundas MagSafe",
+      "categoryId": "fundas-magsafe",
       "price": 21900,
       "accent": "bg-[radial-gradient(ellipse_at_50%_0%,#1a2430_0%,#0a0c10_70%)]",
       "image": "/products/funda-magsafe-iphone.webp",
@@ -68,6 +68,7 @@
         "width": 210,
         "height": 230
       },
+      "imageFrameFill": 0.95,
       "rating": 0,
       "description": "Funda con MagSafe para iPhone. Consultá modelos compatibles y disponibilidad en el local.",
       "subcategory": "Fundas",

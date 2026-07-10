@@ -20,6 +20,7 @@ function revalidateProductPaths() {
   revalidatePath("/producto/[slug]", "page");
   revalidatePath("/tienda");
   revalidatePath("/fundas");
+  revalidatePath("/fundas-magsafe");
 }
 
 export async function GET(_request: Request, context: RouteContext) {

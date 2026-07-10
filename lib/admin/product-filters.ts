@@ -103,7 +103,11 @@ function matchesSpecificCategory(
 
   switch (filter) {
     case "fundas":
-      return product.categoryId === "fundas" || haystack.includes("funda");
+      return (
+        product.categoryId === "fundas" ||
+        product.categoryId === "fundas-magsafe" ||
+        haystack.includes("funda")
+      );
     case "cargadores":
       return product.categoryId === "carga" || haystack.includes("cargador");
     case "auriculares":

@@ -80,7 +80,12 @@ export function AdminProductForm({
     useState<ProductVariantInput[]>(initialColorVariants);
   const [productModels, setProductModels] =
     useState<ProductModelInput[]>(initialProductModels);
-  const usesModelStock = isFundasProduct({ categoryId: form.categoryId });
+  const usesModelStock = isFundasProduct({
+    categoryId: form.categoryId,
+    name: form.name,
+    slug: form.slug,
+    subcategory: form.subcategory,
+  });
   const isSiliconeCase = isSiliconeCaseProduct({
     name: form.name,
     slug: form.slug,
@@ -119,7 +124,10 @@ export function AdminProductForm({
     setUploading(false);
 
     if (!response.ok) {
-      setError("No se pudo subir la imagen.");
+      const data = (await response.json().catch(() => ({}))) as {
+        error?: string;
+      };
+      setError(data.error ?? "No se pudo subir la imagen.");
       return;
     }
 
@@ -383,6 +391,7 @@ export function AdminProductForm({
         categoryId={form.categoryId}
         productName={form.name}
         productSlug={form.slug}
+        productSubcategory={form.subcategory}
         isSiliconeCase={isSiliconeCase}
         initialModels={initialProductModels}
         onChange={setProductModels}

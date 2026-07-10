@@ -10,15 +10,9 @@ import type { HomeCategoryFilter } from "@/lib/home";
 
 type HomePageBodyProps = {
   featured: Product[];
-  newest: Product[];
-  bestsellers: Product[];
 };
 
-export function HomePageBody({
-  featured,
-  newest,
-  bestsellers,
-}: HomePageBodyProps) {
+export function HomePageBody({ featured }: HomePageBodyProps) {
   const [activeCategory, setActiveCategory] =
     useState<HomeCategoryFilter>("all");
 
@@ -32,8 +26,6 @@ export function HomePageBody({
       <HomeProductSections
         activeCategory={activeCategory}
         featured={featured}
-        newest={newest}
-        bestsellers={bestsellers}
       />
       <TrustBar />
     </>

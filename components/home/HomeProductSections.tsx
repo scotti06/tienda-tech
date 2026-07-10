@@ -58,15 +58,11 @@ function ProductSection({
 type HomeProductSectionsProps = {
   activeCategory: HomeCategoryFilter;
   featured: Product[];
-  newest: Product[];
-  bestsellers: Product[];
 };
 
 export function HomeProductSections({
   activeCategory,
   featured,
-  newest,
-  bestsellers,
 }: HomeProductSectionsProps) {
   return (
     <>
@@ -78,22 +74,6 @@ export function HomeProductSections({
         products={featured}
         activeCategory={activeCategory}
         className="home-section-tight max-md:pt-4 max-md:pb-6 md:pt-14"
-      />
-
-      <ProductSection
-        id="productos-novedades"
-        eyebrow="Novedades"
-        title="Recién llegados"
-        products={newest}
-        activeCategory={activeCategory}
-      />
-
-      <ProductSection
-        id="productos-mas-vendidos"
-        eyebrow="Más vendidos"
-        title="Favoritos del local"
-        products={bestsellers}
-        activeCategory={activeCategory}
       />
 
       <section className="home-section pt-8 pb-12 md:pt-0 md:pb-24">

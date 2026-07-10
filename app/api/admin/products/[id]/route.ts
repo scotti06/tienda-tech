@@ -21,6 +21,7 @@ function revalidateCatalogPaths() {
   revalidatePath("/tienda");
   revalidatePath("/carrito");
   revalidatePath("/fundas");
+  revalidatePath("/fundas-magsafe");
   revalidatePath("/templados");
   revalidatePath("/cargadores");
   revalidatePath("/airpods");

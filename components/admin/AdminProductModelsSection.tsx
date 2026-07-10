@@ -20,6 +20,7 @@ type AdminProductModelsSectionProps = {
   categoryId: string;
   productName?: string;
   productSlug?: string;
+  productSubcategory?: string;
   isSiliconeCase?: boolean;
   initialModels?: ProductModelInput[];
   onChange: (models: ProductModelInput[]) => void;
@@ -96,6 +97,7 @@ export function AdminProductModelsSection({
   categoryId,
   productName = "",
   productSlug = "",
+  productSubcategory = "",
   isSiliconeCase = false,
   initialModels = [],
   onChange,
@@ -118,7 +120,13 @@ export function AdminProductModelsSection({
   const stockRef = useRef<HTMLInputElement>(null);
 
   const isVisible =
-    mode === "edit" && isFundasProduct({ categoryId });
+    mode === "edit" &&
+    isFundasProduct({
+      categoryId,
+      name: productName,
+      slug: productSlug,
+      subcategory: productSubcategory,
+    });
 
   const presetOptions = useMemo(() => {
     const existing = new Set(

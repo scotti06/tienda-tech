@@ -40,7 +40,10 @@ export function VariantImageUpload({
     event.target.value = "";
 
     if (!response.ok) {
-      setError("No se pudo subir la imagen.");
+      const data = (await response.json().catch(() => ({}))) as {
+        error?: string;
+      };
+      setError(data.error ?? "No se pudo subir la imagen.");
       return;
     }
 

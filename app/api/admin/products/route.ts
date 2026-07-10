@@ -16,6 +16,7 @@ function revalidateCatalogPaths() {
   revalidatePath("/tienda");
   revalidatePath("/carrito");
   revalidatePath("/fundas");
+  revalidatePath("/fundas-magsafe");
   revalidatePath("/templados");
   revalidatePath("/cargadores");
   revalidatePath("/airpods");
@@ -65,7 +66,7 @@ export async function POST(request: Request) {
 
     const images =
       body.images?.filter(Boolean) ??
-      (body.image ? [body.image] : ["/products/funda-iphone.webp"]);
+      (body.image ? [body.image] : ["/products/funda-iphone.png"]);
     const baseSlug = slugify(body.slug?.trim() || name);
     const id = generateProductId(store);
     const now = new Date().toISOString();

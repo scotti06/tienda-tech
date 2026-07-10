@@ -2,14 +2,8 @@ import { StoreShell } from "@/components/layout/StoreShell";
 import { Hero } from "@/components/sections/Hero";
 import { HomePageBody } from "@/components/home/HomePageBody";
 import { Benefits } from "@/components/sections/Benefits";
-import { Testimonials } from "@/components/sections/Testimonials";
-import { Newsletter } from "@/components/sections/Newsletter";
 import { getProducts } from "@/lib/products";
-import {
-  getHomeBestsellers,
-  getHomeFeatured,
-  getHomeNew,
-} from "@/lib/home";
+import { getHomeFeatured } from "@/lib/home";
 
 export default async function Home() {
   const products = await getProducts();
@@ -18,14 +12,8 @@ export default async function Home() {
     <StoreShell withTopPadding={false}>
       <main>
         <Hero />
-        <HomePageBody
-          featured={getHomeFeatured(products)}
-          newest={getHomeNew(products)}
-          bestsellers={getHomeBestsellers(products)}
-        />
+        <HomePageBody featured={getHomeFeatured(products)} />
         <Benefits />
-        <Testimonials />
-        <Newsletter />
       </main>
     </StoreShell>
   );

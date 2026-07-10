@@ -63,7 +63,9 @@ export function Hero() {
     touchStartX.current = null;
   };
 
-  const slide = heroSlides[active];
+  const activeCategory = navigableCategories[active];
+  const slide =
+    heroSlides.find((item) => item.id === activeCategory?.id) ?? heroSlides[0];
 
   return (
     <section

@@ -1,0 +1,169 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+import { useMemo } from "react";
+import { useCart } from "@/components/cart/CartProvider";
+import { getProductHref } from "@/lib/catalog";
+import { getCartItemKey, type CartProductInput } from "@/lib/cart";
+import type { Product } from "@/lib/data";
+import { getButtonClassName } from "@/components/ui/Button";
+import { isSiliconeCaseProduct } from "@/lib/store/silicone-case-product";
+
+export type ProductCardQuickAddVariant = "home" | "compact" | "overlay";
+
+type ProductCardQuickAddProps = {
+  product: Product;
+  className?: string;
+  variant?: ProductCardQuickAddVariant;
+};
+
+function getCartProduct(product: Product): CartProductInput {
+  return {
+    id: product.id,
+    name: product.name,
+    image: product.image,
+    price: product.price,
+  };
+}
+
+function getShellClass(variant: ProductCardQuickAddVariant) {
+  const flexMatch = "min-w-0 flex-1 justify-center gap-1.5";
+
+  switch (variant) {
+    case "home":
+      return getButtonClassName({
+        variant: "surface-primary",
+        size: "surface",
+        className: `${flexMatch} py-2 text-[10px] font-semibold tracking-wide uppercase sm:text-[11px]`,
+      });
+    case "overlay":
+      return getButtonClassName({
+        variant: "surface-primary",
+        size: "surface",
+        className: `${flexMatch} py-3.5 text-sm font-semibold tracking-wide uppercase`,
+      });
+    case "compact":
+    default:
+      return getButtonClassName({
+        variant: "primary",
+        size: "compact",
+        className: flexMatch,
+      });
+  }
+}
+
+export function ProductCardQuickAdd({
+  product,
+  className = "",
+  variant = "compact",
+}: ProductCardQuickAddProps) {
+  const router = useRouter();
+  const { items, addItem, updateQuantity } = useCart();
+
+  const cartProduct = useMemo(() => getCartProduct(product), [product]);
+  const cartKey = getCartItemKey(cartProduct);
+  const quantity =
+    items.find((item) => item.cartKey === cartKey)?.quantity ?? 0;
+  const stock = product.stock;
+  const hasStockLimit = stock !== undefined;
+  const isOutOfStock = hasStockLimit && stock <= 0;
+  const maxQuantity = hasStockLimit ? stock : Number.POSITIVE_INFINITY;
+  const requiresProductPage = isSiliconeCaseProduct(product);
+  const shellClass = getShellClass(variant);
+
+  function stopNavigation(event: React.MouseEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
+  function handleAdd(event: React.MouseEvent) {
+    stopNavigation(event);
+    if (isOutOfStock) return;
+
+    if (requiresProductPage) {
+      router.push(getProductHref(product));
+      return;
+    }
+
+    addItem(cartProduct, 1);
+  }
+
+  function handleDecrease(event: React.MouseEvent) {
+    stopNavigation(event);
+    updateQuantity(cartKey, quantity - 1);
+  }
+
+  function handleIncrease(event: React.MouseEvent) {
+    stopNavigation(event);
+    if (isOutOfStock) return;
+    if (quantity >= maxQuantity) return;
+
+    if (quantity === 0) {
+      addItem(cartProduct, 1);
+      return;
+    }
+
+    updateQuantity(cartKey, quantity + 1);
+  }
+
+  if (isOutOfStock) return null;
+
+  if (quantity === 0) {
+    return (
+      <button
+        type="button"
+        aria-label={`Agregar ${product.name} al carrito`}
+        onClick={handleAdd}
+        className={`${shellClass} ${className}`.trim()}
+      >
+        <svg
+          aria-hidden
+          viewBox="0 0 20 20"
+          className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.75"
+        >
+          <path d="M4.5 4.5h1.2l1.1 6.2h8.4l1.3-4.7H6.1" />
+          <circle cx="9" cy="15.5" r="1" />
+          <circle cx="14.5" cy="15.5" r="1" />
+        </svg>
+        <span>Agregar</span>
+      </button>
+    );
+  }
+
+  return (
+    <div
+      role="group"
+      aria-label={`Cantidad de ${product.name} en el carrito`}
+      onClick={stopNavigation}
+      className={`${shellClass} ${className} inline-flex items-center justify-between gap-1 px-2 sm:gap-1.5 sm:px-2.5`.trim()}
+    >
+      <button
+        type="button"
+        aria-label={`Quitar uno de ${product.name}`}
+        onClick={handleDecrease}
+        className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-sm font-semibold text-white transition-colors hover:bg-white/10 active:scale-95"
+      >
+        −
+      </button>
+      <span
+        aria-live="polite"
+        aria-atomic="true"
+        className="min-w-5 text-center text-xs font-semibold tabular-nums text-white sm:min-w-6 sm:text-sm"
+      >
+        {quantity}
+      </span>
+      <button
+        type="button"
+        aria-label={`Agregar uno de ${product.name}`}
+        disabled={quantity >= maxQuantity}
+        onClick={handleIncrease}
+        className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-sm font-semibold text-white transition-colors hover:bg-white/10 active:scale-95 disabled:cursor-not-allowed disabled:opacity-40"
+      >
+        +
+      </button>
+    </div>
+  );
+}

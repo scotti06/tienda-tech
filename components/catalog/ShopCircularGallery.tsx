@@ -456,28 +456,6 @@ export function ShopCircularGallery({
                           </div>
                         </div>
 
-<<<<<<< HEAD
-                      <div className="relative bg-gradient-to-t from-black/85 via-black/50 to-transparent p-3 sm:p-4">
-                        <p className="text-[10px] font-medium tracking-[0.15em] text-[var(--brand-cyan)] uppercase">
-                          {product.category}
-                        </p>
-                        <h3 className="mt-1 text-sm font-semibold leading-snug text-white line-clamp-2 sm:text-base">
-                          {product.name}
-                        </h3>
-                        <div className="mt-1.5 flex flex-wrap items-baseline gap-2">
-                          <p className="text-sm font-semibold text-white">
-                            {formatPrice(product.price)}
-                          </p>
-                          {product.originalPrice &&
-                            product.originalPrice > product.price && (
-                              <p className="text-xs text-[var(--muted)] line-through">
-                                {formatPrice(product.originalPrice)}
-                              </p>
-                            )}
-                        </div>
-                      </div>
-                    </Link>
-=======
                         <div
                           className={`relative flex min-h-0 flex-1 flex-col justify-end bg-gradient-to-t from-black/90 via-black/70 to-transparent ${layout.footerPadding}`}
                         >
@@ -486,16 +464,23 @@ export function ShopCircularGallery({
                           >
                             {product.category}
                           </p>
-                          <h3 className={`mt-1 text-white ${layout.name}`}>
+                          <h3 className={`mt-1 text-white line-clamp-2 ${layout.name}`}>
                             {product.name}
                           </h3>
-                          <p className={`shrink-0 text-white ${layout.price}`}>
-                            {formatPrice(product.price)}
-                          </p>
+                          <div className="mt-1 flex flex-wrap items-baseline gap-2">
+                            <p className={`shrink-0 text-white ${layout.price}`}>
+                              {formatPrice(product.price)}
+                            </p>
+                            {product.originalPrice &&
+                              product.originalPrice > product.price && (
+                                <p className="text-[10px] text-[var(--muted)] line-through sm:text-xs">
+                                  {formatPrice(product.originalPrice)}
+                                </p>
+                              )}
+                          </div>
                         </div>
                       </Link>
                     </div>
->>>>>>> origin/main
                   </div>
                 );
               })}

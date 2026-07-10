@@ -67,6 +67,13 @@ export const shopSubcategories: ShopSubcategory[] = [
     productCategoryIds: ["fundas"],
   },
   {
+    id: "fundas-magsafe",
+    groupId: "accesorios",
+    name: "Fundas MagSafe",
+    productCategory: "Fundas MagSafe",
+    productCategoryIds: ["fundas-magsafe"],
+  },
+  {
     id: "vidrios",
     groupId: "accesorios",
     name: "Vidrios templados",

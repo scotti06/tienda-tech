@@ -38,6 +38,25 @@ export const categoryCatalog: CategoryMeta[] = [
     },
   },
   {
+    id: "fundas-magsafe",
+    slug: "fundas-magsafe",
+    path: "/fundas-magsafe",
+    name: "Fundas MagSafe",
+    description: "MagSafe para iPhone · consultar modelos",
+    href: "/fundas-magsafe",
+    accent: "group-hover:shadow-[#00B4D8]/15",
+    image: "/products/funda-magsafe-iphone.webp",
+    imageFrame: { width: 300, height: 320 },
+    productCategory: "Fundas MagSafe",
+    hero: {
+      eyebrow: "Fundas MagSafe",
+      title: "Carga magnética",
+      highlight: "para tu iPhone",
+      description:
+        "Fundas compatibles con MagSafe para distintos modelos de iPhone. Consultá stock y precios en tienda.",
+    },
+  },
+  {
     id: "vidrios",
     slug: "templados",
     path: "/templados",

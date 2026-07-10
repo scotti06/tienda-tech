@@ -13,6 +13,18 @@ const FAQ_BY_CATEGORY: Record<string, { question: string; answer: string }[]> = 
         "Depende del modelo. Revisá la descripción del producto o consultanos para confirmar el diseño disponible.",
     },
   ],
+  "fundas-magsafe": [
+    {
+      question: "¿Es compatible con cargadores MagSafe?",
+      answer:
+        "Sí, las fundas MagSafe mantienen la alineación magnética. Seleccioná tu modelo de iPhone en la ficha del producto para confirmar compatibilidad.",
+    },
+    {
+      question: "¿Cómo sé si la funda es compatible con mi iPhone?",
+      answer:
+        "Seleccioná tu modelo en el selector de compatibilidad. Si tenés dudas, consultanos por WhatsApp con el modelo exacto de tu equipo.",
+    },
+  ],
   vidrios: [
     {
       question: "¿El vidrio templado incluye instalación?",

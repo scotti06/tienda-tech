@@ -26,48 +26,50 @@ function useGalleryMetrics(): GalleryMetrics {
   const [metrics, setMetrics] = useState<GalleryMetrics>({
     radius: 240,
     cardWidth: 180,
-    cardHeight: 260,
-    stageHeight: 340,
+    cardHeight: 268,
+    stageHeight: 348,
   });
 
   useEffect(() => {
     const update = () => {
       const width = window.innerWidth;
 
+      // Mantener cards compactas (estilo mobile) en todos los breakpoints
+      // para que categoría, nombre y precio se lean completos sin recortes.
       if (width >= 1280) {
         setMetrics({
-          radius: 560,
-          cardWidth: 252,
-          cardHeight: 320,
-          stageHeight: 440,
+          radius: 300,
+          cardWidth: 200,
+          cardHeight: 288,
+          stageHeight: 380,
         });
       } else if (width >= 1024) {
         setMetrics({
-          radius: 480,
-          cardWidth: 228,
-          cardHeight: 300,
-          stageHeight: 400,
+          radius: 280,
+          cardWidth: 192,
+          cardHeight: 280,
+          stageHeight: 368,
         });
       } else if (width >= 768) {
         setMetrics({
-          radius: 360,
-          cardWidth: 204,
-          cardHeight: 272,
+          radius: 260,
+          cardWidth: 188,
+          cardHeight: 276,
           stageHeight: 360,
         });
       } else if (width >= 640) {
         setMetrics({
-          radius: 290,
-          cardWidth: 188,
-          cardHeight: 268,
-          stageHeight: 350,
+          radius: 250,
+          cardWidth: 184,
+          cardHeight: 272,
+          stageHeight: 354,
         });
       } else {
         setMetrics({
           radius: 240,
           cardWidth: 180,
-          cardHeight: 260,
-          stageHeight: 340,
+          cardHeight: 268,
+          stageHeight: 348,
         });
       }
     };
@@ -81,35 +83,26 @@ function useGalleryMetrics(): GalleryMetrics {
 }
 
 function getCarouselCardLayout(cardWidth: number) {
-  if (cardWidth <= 180) {
+  // Layout único compacto: imagen acotada + footer con espacio para
+  // categoría, nombre completo y precio (misma jerarquía que mobile).
+  if (cardWidth <= 184) {
     return {
-      imageHeight: 100,
-      imagePadding: "px-2.5 pt-2",
-      footerPadding: "px-2.5 pb-2.5 pt-1",
+      imageHeight: 112,
+      imagePadding: "px-2.5 pt-2.5",
+      footerPadding: "px-2.5 pb-2.5 pt-1.5",
       category: "text-[8px] tracking-[0.12em] leading-none",
       name: "text-[10px] leading-[1.3] font-semibold",
       price: "text-[11px] mt-1 font-semibold leading-none",
     };
   }
 
-  if (cardWidth <= 220) {
-    return {
-      imageHeight: 118,
-      imagePadding: "px-3 pt-2.5",
-      footerPadding: "px-3 pb-3 pt-1",
-      category: "text-[9px] tracking-[0.13em] leading-none",
-      name: "text-[11px] leading-[1.35] font-semibold",
-      price: "text-xs mt-1 font-semibold leading-none",
-    };
-  }
-
   return {
-    imageHeight: 148,
-    imagePadding: "px-4 pt-4 sm:px-5 sm:pt-5",
-    footerPadding: "px-3 pb-3 pt-1 sm:px-4 sm:pb-4",
-    category: "text-[10px] tracking-[0.15em] leading-none",
-    name: "text-sm leading-snug font-semibold sm:text-base",
-    price: "text-sm mt-1.5 font-semibold leading-none",
+    imageHeight: 124,
+    imagePadding: "px-3 pt-3",
+    footerPadding: "px-3 pb-3 pt-1.5",
+    category: "text-[9px] tracking-[0.13em] leading-none",
+    name: "text-[11px] leading-[1.35] font-semibold",
+    price: "text-xs mt-1 font-semibold leading-none",
   };
 }
 
@@ -450,7 +443,7 @@ export function ShopCircularGallery({
                               alt={product.name}
                               fill
                               className="object-contain object-center drop-shadow-[0_12px_20px_rgba(0,0,0,0.22)]"
-                              sizes={`(max-width: 640px) 180px, ${metrics.cardWidth}px`}
+                              sizes={`(max-width: 640px) 180px, (max-width: 1024px) 188px, 200px`}
                               priority={index === 0}
                             />
                           </div>

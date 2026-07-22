@@ -303,7 +303,7 @@ export function ShopPageBody({ products }: ShopPageBodyProps) {
         {filteredBestsellers.length > 0 && (
           <section
             id="mas-vendidos"
-            className="order-1 border-t border-white/[0.06] py-6 md:order-2 md:py-20"
+            className="border-t border-white/[0.06] py-6 md:py-12"
           >
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
               <ScrollReveal>
@@ -326,7 +326,7 @@ export function ShopPageBody({ products }: ShopPageBodyProps) {
 
         <section
           id="catalogo-productos"
-          className="order-2 scroll-mt-[8.5rem] border-t border-white/[0.06] py-8 md:order-1 md:scroll-mt-[5.5rem] md:py-24"
+          className="scroll-mt-[8.5rem] border-t border-white/[0.06] py-8 md:scroll-mt-[5.5rem] md:py-16"
         >
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <ScrollReveal>

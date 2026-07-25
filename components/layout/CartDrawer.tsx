@@ -9,6 +9,7 @@ import { useEffect } from "react";
 import { useCart } from "@/components/cart/CartProvider";
 import { IconClose, IconWhatsApp } from "@/components/ui/Icons";
 import { getButtonClassName } from "@/components/ui/Button";
+import { useInstantTap } from "@/lib/instantTap";
 import {
   buildCartWhatsAppUrl,
   formatCartSubtotal,
@@ -255,6 +256,7 @@ export function CartDrawer() {
   const { items, isOpen, closeCart, updateQuantity } = useCart();
   const duration = reduceMotion ? 0.01 : DRAWER_DURATION;
   const hasItems = items.length > 0;
+  const backdropTap = useInstantTap(closeCart);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -287,16 +289,18 @@ export function CartDrawer() {
             role="button"
             tabIndex={-1}
             aria-label="Cerrar carrito"
-            className="fixed inset-0 z-[55] bg-black/45"
+            className="fixed inset-0 z-[55] cursor-pointer bg-black/45"
             style={{
               backdropFilter: "blur(8px)",
               WebkitBackdropFilter: "blur(8px)",
+              touchAction: "manipulation",
+              WebkitTapHighlightColor: "transparent",
             }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration, ease: PREMIUM_EASE }}
-            onClick={closeCart}
+            {...backdropTap}
             onKeyDown={(event) => {
               if (event.key === "Enter" || event.key === " ") closeCart();
             }}
@@ -304,7 +308,12 @@ export function CartDrawer() {
 
           <motion.aside
             aria-label="Carrito de compras"
-            className="fixed inset-y-0 right-0 z-[58] flex h-[100dvh] w-[90vw] max-w-[420px] flex-col overflow-hidden border-l border-white/[0.06] shadow-[-24px_0_80px_rgba(0,0,0,0.55)] lg:rounded-bl-[24px] lg:rounded-tl-[24px]"
+            className="drawer-surface fixed inset-y-0 right-0 z-[58] flex h-[100dvh] w-[90vw] max-w-[420px] flex-col overflow-hidden border-l border-white/[0.06] shadow-[-24px_0_80px_rgba(0,0,0,0.55)] lg:rounded-bl-[24px] lg:rounded-tl-[24px]"
+            style={{
+              touchAction: "pan-y",
+              WebkitOverflowScrolling: "touch",
+              willChange: "transform",
+            }}
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
@@ -327,7 +336,10 @@ export function CartDrawer() {
 
               {hasItems ? (
                 <>
-                  <div className="min-h-0 flex-1 overflow-y-auto px-5 pb-4 pt-4 sm:px-6">
+                  <div
+                    className="min-h-0 flex-1 overflow-y-auto px-5 pb-4 pt-4 sm:px-6"
+                    style={{ WebkitOverflowScrolling: "touch" }}
+                  >
                     <div className="flex flex-col gap-4">
                       <AnimatePresence initial={false}>
                         {items.map((item, index) => (

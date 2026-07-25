@@ -10,6 +10,7 @@ import { getProductBySlugFromSeed } from "@/lib/catalog";
 import { getButtonClassName } from "@/components/ui/Button";
 import { IconClose } from "@/components/ui/Icons";
 import { useWhatsAppAssistant } from "@/components/layout/WhatsAppAssistantContext";
+import { useInstantTap } from "@/lib/instantTap";
 
 type QuickReply = {
   id: string;
@@ -104,6 +105,8 @@ export function WhatsAppAssistant() {
   );
 
   const close = useCallback(() => setOpen(false), [setOpen]);
+  const backdropTap = useInstantTap(close);
+  const fabCloseTap = useInstantTap(close);
 
   const buildReplyHref = useCallback(
     (baseMessage: string) =>
@@ -140,19 +143,24 @@ export function WhatsAppAssistant() {
             <motion.button
               type="button"
               aria-label="Cerrar asistente"
-              className="fixed inset-0 z-[60] bg-[var(--void)]/55 backdrop-blur-[2px]"
+              className="fixed inset-0 z-[60] cursor-pointer bg-[var(--void)]/55 backdrop-blur-[2px]"
+              style={{
+                touchAction: "manipulation",
+                WebkitTapHighlightColor: "transparent",
+              }}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={backdropTransition}
-              onClick={close}
+              {...backdropTap}
             />
 
             <motion.div
               role="dialog"
               aria-modal="true"
               aria-labelledby="whatsapp-assistant-title"
-              className="fixed bottom-[5.5rem] right-4 z-[70] w-[min(calc(100vw-2rem),22rem)] sm:bottom-24 sm:right-6 sm:w-[24rem]"
+              className="modal-surface fixed bottom-[5.5rem] right-4 z-[70] w-[min(calc(100vw-2rem),22rem)] sm:bottom-24 sm:right-6 sm:w-[24rem]"
+              style={{ willChange: "transform" }}
               initial={{ opacity: 0, y: 28, scale: 0.94 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 20, scale: 0.96 }}
@@ -248,7 +256,7 @@ export function WhatsAppAssistant() {
             type="button"
             aria-label="Cerrar asistente de WhatsApp"
             aria-expanded
-            onClick={close}
+            {...fabCloseTap}
             className="flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg shadow-black/30 transition-all duration-300 scale-95 ring-2 ring-white/25"
           >
             <WhatsAppGlyph />

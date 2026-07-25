@@ -80,6 +80,9 @@ type ButtonProps = {
   className?: string;
   type?: ButtonHTMLAttributes<HTMLButtonElement>["type"];
   onClick?: ButtonHTMLAttributes<HTMLButtonElement>["onClick"];
+  onTouchStart?: ButtonHTMLAttributes<HTMLButtonElement>["onTouchStart"];
+  onTouchMove?: ButtonHTMLAttributes<HTMLButtonElement>["onTouchMove"];
+  onTouchEnd?: ButtonHTMLAttributes<HTMLButtonElement>["onTouchEnd"];
   "aria-label"?: string;
   "aria-expanded"?: boolean;
   "aria-selected"?: boolean;
@@ -96,6 +99,9 @@ export function Button({
   className = "",
   type = "button",
   onClick,
+  onTouchStart,
+  onTouchMove,
+  onTouchEnd,
   "aria-label": ariaLabel,
   "aria-expanded": ariaExpanded,
   "aria-selected": ariaSelected,
@@ -141,6 +147,9 @@ export function Button({
       type={type}
       className={classes}
       onClick={onClick}
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
+      onTouchEnd={onTouchEnd}
       aria-label={ariaLabel}
       aria-expanded={ariaExpanded}
       aria-selected={ariaSelected}

@@ -26,7 +26,7 @@ const triggerOpenClass =
   "border-white/[0.15] bg-gradient-to-b from-white/[0.1] via-[rgba(157,78,221,0.12)] to-[rgba(0,180,216,0.06)] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1),0_12px_32px_-12px_rgba(157,78,221,0.2)]";
 
 const panelClass =
-  "absolute left-0 right-0 z-50 mt-2 overflow-hidden rounded-2xl border border-white/[0.1] bg-[rgba(8,8,12,0.82)] p-1.5 shadow-[0_18px_48px_-12px_rgba(0,0,0,0.65),0_0_32px_-8px_rgba(157,78,221,0.14)] backdrop-blur-2xl sm:left-auto sm:right-0 sm:min-w-full";
+  "dropdown-surface absolute left-0 right-0 z-50 mt-2 overflow-hidden rounded-2xl border border-white/[0.1] bg-[rgba(8,8,12,0.82)] p-1.5 shadow-[0_18px_48px_-12px_rgba(0,0,0,0.65),0_0_32px_-8px_rgba(157,78,221,0.14)] backdrop-blur-2xl sm:left-auto sm:right-0 sm:min-w-full";
 
 function ChevronIcon({ open }: { open: boolean }) {
   return (
@@ -215,6 +215,7 @@ export function ShopSortSelect({
                 tabIndex={-1}
                 onKeyDown={handleListKeyDown}
                 className="max-h-[min(18rem,60dvh)] space-y-1 overflow-y-auto"
+                style={{ WebkitOverflowScrolling: "touch" }}
               >
                 {shopSortOptions.map((option, index) => {
                   const isSelected = option.value === value;

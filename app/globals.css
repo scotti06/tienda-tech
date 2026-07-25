@@ -34,8 +34,83 @@
   --font-sans: var(--font-geist-sans);
 }
 
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
 html {
   scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Global iOS / touch: kill 300ms delay and tap-stealing selection */
+button,
+a,
+[role="button"] {
+  touch-action: manipulation;
+}
+
+button,
+a,
+[role="button"],
+[role="option"],
+[role="menuitem"],
+[role="tab"],
+[role="switch"],
+[role="link"],
+label,
+summary,
+.card-tap,
+.card-hover,
+input,
+select,
+textarea {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+button,
+a,
+[role="button"],
+[role="option"],
+[role="menuitem"],
+[role="tab"],
+[role="switch"],
+summary,
+.card-tap,
+.card-hover,
+label {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+input,
+textarea,
+[contenteditable="true"] {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+/* Momentum scrolling on iOS for common scroll containers */
+.overflow-auto,
+.overflow-y-auto,
+.overflow-x-auto,
+.overflow-y-scroll,
+.overflow-x-scroll,
+.hide-scrollbar,
+.scroll-snap-x {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* GPU layer for drawers, modals, dropdowns, animated surfaces */
+.drawer-surface,
+.modal-surface,
+.dropdown-surface,
+.animated-surface {
+  will-change: transform;
+  -webkit-overflow-scrolling: touch;
 }
 
 @media (max-width: 767px) {
@@ -45,14 +120,6 @@ html {
 
   .hero-mobile-carousel {
     scroll-behavior: auto;
-  }
-
-  button,
-  a,
-  [role="button"],
-  .card-tap,
-  .card-hover {
-    touch-action: manipulation;
   }
 
   .scroll-reveal {
@@ -67,6 +134,7 @@ body {
   background: var(--void);
   color: var(--foreground);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
+  -webkit-tap-highlight-color: transparent;
 }
 
 ::selection {
@@ -144,6 +212,7 @@ body {
     transform 350ms ease-out,
     box-shadow 350ms ease-out,
     border-color 350ms ease-out;
+  will-change: transform;
 }
 
 .card-hover-image {
@@ -331,6 +400,7 @@ body {
 
 .card-tap {
   transition: transform 180ms ease-out;
+  will-change: transform;
 }
 
 .card-tap:active {

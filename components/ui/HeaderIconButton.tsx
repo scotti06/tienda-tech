@@ -26,7 +26,7 @@ const headerIconClassName = "h-[21px] w-[21px] text-white/90";
 const headerIconStroke = 1.8;
 
 const sharedClassName =
-  "group relative inline-flex h-11 w-11 shrink-0 items-center justify-center text-white/90 transition-transform duration-200 hover:scale-[1.04] active:scale-[1.04]";
+  "group relative inline-flex h-11 w-11 shrink-0 items-center justify-center touch-manipulation text-white/90 transition-transform duration-200 hover:scale-[1.04] active:scale-[1.04]";
 
 function HeaderIconButtonContent({
   active = false,

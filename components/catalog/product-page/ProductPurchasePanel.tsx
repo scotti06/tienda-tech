@@ -354,7 +354,7 @@ export function ProductStickyBar({
   }
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-50 border-t border-white/[0.08] bg-[#0b0b10]/95 px-4 py-3 backdrop-blur-xl md:hidden">
+    <div className="fixed inset-x-0 bottom-0 z-50 border-t border-white/[0.08] bg-[#0b0b10]/95 px-4 py-3 backdrop-blur-xl md:hidden animated-surface">
       <div className="mx-auto flex max-w-lg items-center gap-3">
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-semibold text-white">

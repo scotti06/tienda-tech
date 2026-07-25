@@ -175,6 +175,7 @@ export function buildCheckoutPayload(
   return {
     items: items.map((item) => ({
       id: item.id,
+      cartKey: item.cartKey,
       name: item.name,
       image: item.image,
       price: item.price,

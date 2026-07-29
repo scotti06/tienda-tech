@@ -75,18 +75,18 @@ export function ProductCard({ product, layout = "default" }: ProductCardProps) {
             )}
           </div>
 
-          <div className="mt-0.5 flex items-stretch gap-2">
-            <ProductCardQuickAdd product={product} variant="home" className="flex-1" />
+          <div className="mt-0.5 flex min-w-0 items-stretch gap-2">
+            <ProductCardQuickAdd product={product} variant="home" className="min-w-0 flex-1" />
             <Link
               href={productHref}
               className={getButtonClassName({
                 variant: "surface-primary",
                 size: "surface",
                 className:
-                  "min-w-0 flex-1 py-2 text-center text-[10px] font-semibold tracking-wide uppercase sm:text-[11px]",
+                  "min-w-0 flex-1 items-center justify-center overflow-hidden px-2 py-2 text-center text-[10px] font-semibold tracking-wide uppercase sm:px-3 sm:text-[11px]",
               })}
             >
-              Ver producto
+              <span className="min-w-0 truncate">Ver producto</span>
             </Link>
           </div>
         </div>
@@ -119,18 +119,18 @@ export function ProductCard({ product, layout = "default" }: ProductCardProps) {
           </div>
         </Link>
 
-        <div className="pointer-events-none absolute inset-x-4 bottom-4 z-20 flex translate-y-2 items-stretch gap-2 opacity-0 transition-all duration-350 ease-out [@media(hover:hover)_and_(pointer:fine)]:group-hover:translate-y-0 [@media(hover:hover)_and_(pointer:fine)]:group-hover:opacity-100 max-md:pointer-events-auto max-md:translate-y-0 max-md:opacity-100">
-          <ProductCardQuickAdd product={product} variant="overlay" className="pointer-events-auto flex-1" />
+        <div className="pointer-events-none absolute inset-x-4 bottom-4 z-20 flex min-w-0 translate-y-2 items-stretch gap-2 opacity-0 transition-all duration-350 ease-out [@media(hover:hover)_and_(pointer:fine)]:group-hover:translate-y-0 [@media(hover:hover)_and_(pointer:fine)]:group-hover:opacity-100 max-md:pointer-events-auto max-md:translate-y-0 max-md:opacity-100">
+          <ProductCardQuickAdd product={product} variant="overlay" className="pointer-events-auto min-w-0 flex-1" />
           <Link
             href={productHref}
             className={getButtonClassName({
               variant: "surface-primary",
               size: "surface",
               className:
-                "pointer-events-auto min-w-0 flex-1 py-3.5 text-center text-sm font-semibold tracking-wide uppercase",
+                "pointer-events-auto min-w-0 flex-1 items-center justify-center overflow-hidden px-2 py-3 text-center text-[11px] font-semibold tracking-wide uppercase sm:px-3 sm:py-3.5 sm:text-sm",
             })}
           >
-            Ver producto
+            <span className="min-w-0 truncate">Ver producto</span>
           </Link>
         </div>
 

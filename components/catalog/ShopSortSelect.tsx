@@ -5,10 +5,13 @@ import {
   useCallback,
   useEffect,
   useId,
+  useLayoutEffect,
   useRef,
   useState,
+  type CSSProperties,
   type KeyboardEvent,
 } from "react";
+import { createPortal } from "react-dom";
 import { shopSortOptions, type ShopSortOption } from "@/lib/shop";
 
 type ShopSortSelectProps = {
@@ -26,7 +29,7 @@ const triggerOpenClass =
   "border-white/[0.15] bg-gradient-to-b from-white/[0.1] via-[rgba(157,78,221,0.12)] to-[rgba(0,180,216,0.06)] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1),0_12px_32px_-12px_rgba(157,78,221,0.2)]";
 
 const panelClass =
-  "dropdown-surface absolute left-0 right-0 z-50 mt-2 overflow-hidden rounded-2xl border border-white/[0.1] bg-[rgba(8,8,12,0.82)] p-1.5 shadow-[0_18px_48px_-12px_rgba(0,0,0,0.65),0_0_32px_-8px_rgba(157,78,221,0.14)] backdrop-blur-2xl sm:left-auto sm:right-0 sm:min-w-full";
+  "dropdown-surface overflow-hidden rounded-2xl border border-white/[0.1] bg-[rgba(8,8,12,0.95)] p-1.5 shadow-[0_18px_48px_-12px_rgba(0,0,0,0.65),0_0_32px_-8px_rgba(157,78,221,0.14)] backdrop-blur-2xl";
 
 function ChevronIcon({ open }: { open: boolean }) {
   return (
@@ -59,7 +62,11 @@ export function ShopSortSelect({
   const listboxId = `${baseId}-listbox`;
   const labelId = `${baseId}-label`;
   const rootRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const [panelStyle, setPanelStyle] = useState<CSSProperties>({});
   const [highlightIndex, setHighlightIndex] = useState(() =>
     shopSortOptions.findIndex((option) => option.value === value),
   );
@@ -78,26 +85,63 @@ export function ShopSortSelect({
     [close, onChange],
   );
 
+  const updatePanelPosition = useCallback(() => {
+    const trigger = triggerRef.current;
+    if (!trigger) return;
+
+    const rect = trigger.getBoundingClientRect();
+    const width = Math.max(rect.width, 220);
+    const left = Math.min(
+      Math.max(8, rect.right - width),
+      window.innerWidth - width - 8,
+    );
+
+    setPanelStyle({
+      position: "fixed",
+      top: rect.bottom + 8,
+      left,
+      width,
+      zIndex: 9999,
+    });
+  }, []);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useLayoutEffect(() => {
+    if (!open) return;
+    updatePanelPosition();
+  }, [open, updatePanelPosition]);
+
   useEffect(() => {
     if (!open) return;
 
     const onPointerDown = (event: MouseEvent) => {
-      if (!rootRef.current?.contains(event.target as Node)) {
-        close();
-      }
+      const target = event.target as Node;
+      if (rootRef.current?.contains(target)) return;
+      if (panelRef.current?.contains(target)) return;
+      close();
     };
 
     const onKeyDown = (event: globalThis.KeyboardEvent) => {
       if (event.key === "Escape") close();
     };
 
+    const onReposition = () => updatePanelPosition();
+
     document.addEventListener("mousedown", onPointerDown);
     document.addEventListener("keydown", onKeyDown);
+    window.addEventListener("resize", onReposition);
+    window.addEventListener("scroll", onReposition, true);
+
     return () => {
       document.removeEventListener("mousedown", onPointerDown);
       document.removeEventListener("keydown", onKeyDown);
+      window.removeEventListener("resize", onReposition);
+      window.removeEventListener("scroll", onReposition, true);
     };
-  }, [close, open]);
+  }, [close, open, updatePanelPosition]);
 
   useEffect(() => {
     const index = shopSortOptions.findIndex((option) => option.value === value);
@@ -161,6 +205,68 @@ export function ShopSortSelect({
     }
   };
 
+  const panel = (
+    <AnimatePresence>
+      {open && (
+        <motion.div
+          ref={panelRef}
+          initial={
+            reduceMotion ? { opacity: 1 } : { opacity: 0, y: -6, scale: 0.98 }
+          }
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={
+            reduceMotion ? { opacity: 0 } : { opacity: 0, y: -4, scale: 0.99 }
+          }
+          transition={{
+            duration: reduceMotion ? 0.01 : 0.22,
+            ease: PREMIUM_EASE,
+          }}
+          className={panelClass}
+          style={panelStyle}
+        >
+          <ul
+            id={listboxId}
+            role="listbox"
+            aria-labelledby={labelId}
+            tabIndex={-1}
+            onKeyDown={handleListKeyDown}
+            className="max-h-[min(18rem,60dvh)] space-y-1 overflow-y-auto"
+            style={{ WebkitOverflowScrolling: "touch" }}
+          >
+            {shopSortOptions.map((option, index) => {
+              const isSelected = option.value === value;
+              const isHighlighted = index === highlightIndex;
+
+              return (
+                <li key={option.value} role="presentation">
+                  <button
+                    type="button"
+                    role="option"
+                    aria-selected={isSelected}
+                    onMouseEnter={() => setHighlightIndex(index)}
+                    onClick={() => selectOption(option.value)}
+                    className={`card-tap flex min-h-[44px] w-full items-center rounded-xl px-4 py-3 text-left text-sm font-medium transition-all duration-300 ${
+                      isSelected
+                        ? "border border-white/[0.12] bg-gradient-to-b from-white/[0.12] via-[rgba(157,78,221,0.16)] to-[rgba(0,180,216,0.1)] text-white shadow-[inset_0_1px_0_0_rgba(255,255,255,0.12)]"
+                        : isHighlighted
+                          ? "bg-white/[0.07] text-white"
+                          : "text-zinc-300 hover:bg-white/[0.06] hover:text-white"
+                    }`}
+                    style={{
+                      transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)",
+                    }}
+                  >
+                    <span className="truncate">{option.label}</span>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+
   return (
     <div
       ref={rootRef}
@@ -175,6 +281,7 @@ export function ShopSortSelect({
 
       <div className="relative w-full sm:w-auto sm:min-w-[220px]">
         <button
+          ref={triggerRef}
           type="button"
           id={`${baseId}-trigger`}
           aria-labelledby={labelId}
@@ -191,65 +298,9 @@ export function ShopSortSelect({
             <ChevronIcon open={open} />
           </span>
         </button>
-
-        <AnimatePresence>
-          {open && (
-            <motion.div
-              initial={
-                reduceMotion ? { opacity: 1 } : { opacity: 0, y: -6, scale: 0.98 }
-              }
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={
-                reduceMotion ? { opacity: 0 } : { opacity: 0, y: -4, scale: 0.99 }
-              }
-              transition={{
-                duration: reduceMotion ? 0.01 : 0.22,
-                ease: PREMIUM_EASE,
-              }}
-              className={panelClass}
-            >
-              <ul
-                id={listboxId}
-                role="listbox"
-                aria-labelledby={labelId}
-                tabIndex={-1}
-                onKeyDown={handleListKeyDown}
-                className="max-h-[min(18rem,60dvh)] space-y-1 overflow-y-auto"
-                style={{ WebkitOverflowScrolling: "touch" }}
-              >
-                {shopSortOptions.map((option, index) => {
-                  const isSelected = option.value === value;
-                  const isHighlighted = index === highlightIndex;
-
-                  return (
-                    <li key={option.value} role="presentation">
-                      <button
-                        type="button"
-                        role="option"
-                        aria-selected={isSelected}
-                        onMouseEnter={() => setHighlightIndex(index)}
-                        onClick={() => selectOption(option.value)}
-                        className={`card-tap flex min-h-[44px] w-full items-center rounded-xl px-4 py-3 text-left text-sm font-medium transition-all duration-300 ${
-                          isSelected
-                            ? "border border-white/[0.12] bg-gradient-to-b from-white/[0.12] via-[rgba(157,78,221,0.16)] to-[rgba(0,180,216,0.1)] text-white shadow-[inset_0_1px_0_0_rgba(255,255,255,0.12)]"
-                            : isHighlighted
-                              ? "bg-white/[0.07] text-white"
-                              : "text-zinc-300 hover:bg-white/[0.06] hover:text-white"
-                        }`}
-                        style={{
-                          transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)",
-                        }}
-                      >
-                        <span className="truncate">{option.label}</span>
-                      </button>
-                    </li>
-                  );
-                })}
-              </ul>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </div>
+
+      {mounted ? createPortal(panel, document.body) : null}
     </div>
   );
 }

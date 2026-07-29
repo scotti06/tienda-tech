@@ -144,15 +144,15 @@ export function ShopTiendaProductCard({ product }: ShopTiendaProductCardProps) {
           )}
         </div>
 
-        <div className="mt-auto flex items-stretch gap-2 pt-2 md:pt-3">
-          <ProductCardQuickAdd product={product} variant="compact" className="flex-1" />
+        <div className="mt-auto flex min-w-0 items-stretch gap-2 pt-2 md:pt-3">
+          <ProductCardQuickAdd product={product} variant="compact" className="min-w-0 flex-1" />
           <Button
             href={productHref}
             variant="primary"
-            size="compact"
-            className="min-w-0 flex-1"
+            size="surface"
+            className="min-h-[36px] min-w-0 flex-1 items-center justify-center overflow-hidden px-2 py-2 text-center text-[10px] font-semibold sm:min-h-[40px] sm:px-3 sm:text-xs md:px-4"
           >
-            Ver producto
+            <span className="min-w-0 truncate">Ver producto</span>
           </Button>
         </div>
       </div>

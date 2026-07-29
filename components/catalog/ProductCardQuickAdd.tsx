@@ -27,27 +27,28 @@ function getCartProduct(product: Product): CartProductInput {
 }
 
 function getShellClass(variant: ProductCardQuickAddVariant) {
-  const flexMatch = "min-w-0 flex-1 justify-center gap-1.5";
+  const flexMatch =
+    "min-w-0 flex-1 items-center justify-center gap-1 overflow-hidden";
 
   switch (variant) {
     case "home":
       return getButtonClassName({
         variant: "surface-primary",
         size: "surface",
-        className: `${flexMatch} py-2 text-[10px] font-semibold tracking-wide uppercase sm:text-[11px]`,
+        className: `${flexMatch} px-2 py-2 text-[10px] font-semibold tracking-wide uppercase sm:gap-1.5 sm:px-3 sm:text-[11px]`,
       });
     case "overlay":
       return getButtonClassName({
         variant: "surface-primary",
         size: "surface",
-        className: `${flexMatch} py-3.5 text-sm font-semibold tracking-wide uppercase`,
+        className: `${flexMatch} px-3 py-3.5 text-sm font-semibold tracking-wide uppercase sm:gap-1.5`,
       });
     case "compact":
     default:
       return getButtonClassName({
         variant: "primary",
-        size: "compact",
-        className: flexMatch,
+        size: "surface",
+        className: `${flexMatch} min-h-[36px] px-2 py-2 text-[10px] font-semibold sm:min-h-[40px] sm:gap-1.5 sm:px-3 sm:text-xs md:px-4`,
       });
   }
 }
@@ -119,7 +120,7 @@ export function ProductCardQuickAdd({
         <svg
           aria-hidden
           viewBox="0 0 20 20"
-          className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4"
+          className="h-3 w-3 shrink-0 sm:h-3.5 sm:w-3.5 md:h-4 md:w-4"
           fill="none"
           stroke="currentColor"
           strokeWidth="1.75"
@@ -128,7 +129,7 @@ export function ProductCardQuickAdd({
           <circle cx="9" cy="15.5" r="1" />
           <circle cx="14.5" cy="15.5" r="1" />
         </svg>
-        <span>Agregar</span>
+        <span className="min-w-0 truncate">Agregar</span>
       </button>
     );
   }
@@ -138,7 +139,7 @@ export function ProductCardQuickAdd({
       role="group"
       aria-label={`Cantidad de ${product.name} en el carrito`}
       onClick={stopNavigation}
-      className={`${shellClass} ${className} inline-flex items-center justify-between gap-1 px-2 sm:gap-1.5 sm:px-2.5`.trim()}
+      className={`${shellClass} ${className} inline-flex min-w-0 items-center justify-between gap-1 overflow-hidden px-1.5 sm:gap-1.5 sm:px-2.5`.trim()}
     >
       <button
         type="button"

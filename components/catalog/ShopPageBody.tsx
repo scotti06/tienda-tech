@@ -330,7 +330,7 @@ export function ShopPageBody({ products }: ShopPageBodyProps) {
         >
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <ScrollReveal>
-              <div className="mb-5 flex flex-col gap-3 md:mb-14 md:flex-row md:items-end md:justify-between md:gap-6">
+              <div className="relative z-20 mb-5 flex flex-col gap-3 md:mb-14 md:flex-row md:items-end md:justify-between md:gap-6">
                 <div className="max-w-2xl text-left">
                   <p className="mb-1 hidden text-[11px] font-semibold tracking-[0.2em] text-[var(--brand-cyan)] uppercase sm:block md:mb-4">
                     Catálogo

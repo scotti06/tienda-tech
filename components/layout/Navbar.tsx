@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState, type TouchEvent } from "react";
 import { mainNavLinks } from "@/lib/catalog";
-import { categoryCatalog } from "@/lib/catalog";
+import { shopGroups } from "@/lib/shop";
 import { Button, getButtonClassName } from "@/components/ui/Button";
 import { Logo } from "@/components/ui/Logo";
 import { IconCart, IconClose, IconMenu } from "@/components/ui/Icons";
@@ -13,10 +13,10 @@ import { MobileNavDrawer } from "@/components/layout/MobileNavDrawer";
 import { useInstantTap } from "@/lib/instantTap";
 
 function isLinkActive(pathname: string, href: string): boolean {
-  const base = href.split("#")[0];
+  const base = href.split("#")[0].split("?")[0];
   if (base === "/") return pathname === "/";
   if (base === "/tienda") {
-    return pathname === "/tienda" || categoryCatalog.some((c) => c.path === pathname);
+    return pathname === "/tienda" || pathname.startsWith("/tienda/");
   }
   if (base === "/admin") {
     return pathname === "/admin" || pathname.startsWith("/admin/");
@@ -160,17 +160,13 @@ export function Navbar({ isAdmin = false }: NavbarProps) {
                   </Link>
                   {categoriesOpen && (
                     <div className="dropdown-surface absolute right-0 top-full z-50 mt-2 w-52 rounded-2xl border border-white/10 glass p-2 shadow-2xl animate-fade-in">
-                      {categoryCatalog.map((cat) => (
+                      {shopGroups.map((group) => (
                         <Link
-                          key={cat.id}
-                          href={cat.path}
-                          className={`block rounded-xl px-4 py-2.5 text-sm transition-colors ${
-                            pathname === cat.path
-                              ? "bg-white/10 text-white"
-                              : "text-zinc-300 hover:bg-white/5 hover:text-white"
-                          }`}
+                          key={group.id}
+                          href={`/tienda/${group.id}`}
+                          className="block rounded-xl px-4 py-2.5 text-sm text-zinc-300 transition-colors hover:bg-white/5 hover:text-white"
                         >
-                          {cat.name}
+                          {group.name}
                         </Link>
                       ))}
                     </div>

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRef, useState, type TouchEvent as ReactTouchEvent } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { categoryCatalog } from "@/lib/catalog";
+import { shopGroups } from "@/lib/shop";
 import { Logo } from "@/components/ui/Logo";
 
 type MobileNavDrawerProps = {
@@ -234,16 +234,19 @@ export function MobileNavDrawer({
                     Categorías
                   </p>
                   <ul className="flex flex-col gap-1">
-                    {categoryCatalog.map((category) => (
-                      <li key={category.id}>
-                        <NavLink
-                          href={category.path}
-                          label={category.name}
-                          active={isLinkActive(category.path)}
-                          onClose={onClose}
-                        />
-                      </li>
-                    ))}
+                    {shopGroups.map((group) => {
+                      const href = `/tienda/${group.id}`;
+                      return (
+                        <li key={group.id}>
+                          <NavLink
+                            href={href}
+                            label={group.name}
+                            active={isLinkActive(href)}
+                            onClose={onClose}
+                          />
+                        </li>
+                      );
+                    })}
                   </ul>
                 </div>
 

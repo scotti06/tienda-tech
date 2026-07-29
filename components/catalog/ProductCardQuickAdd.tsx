@@ -17,6 +17,18 @@ type ProductCardQuickAddProps = {
   variant?: ProductCardQuickAddVariant;
 };
 
+/** Estilo unificado de botones de acción en cards (Agregar / Ver producto). */
+export const productCardActionButtonClassName =
+  "min-h-[36px] min-w-0 flex-1 items-center justify-center gap-1 overflow-hidden px-2 py-2 text-center text-[10px] font-semibold sm:min-h-[40px] sm:gap-1.5 sm:px-3 sm:text-xs md:px-4";
+
+export function getProductCardViewButtonClassName(extraClassName = "") {
+  return getButtonClassName({
+    variant: "primary",
+    size: "surface",
+    className: `${productCardActionButtonClassName} ${extraClassName}`.trim(),
+  });
+}
+
 function getCartProduct(product: Product): CartProductInput {
   return {
     id: product.id,
@@ -26,37 +38,18 @@ function getCartProduct(product: Product): CartProductInput {
   };
 }
 
-function getShellClass(variant: ProductCardQuickAddVariant) {
-  const flexMatch =
-    "min-w-0 flex-1 items-center justify-center gap-1 overflow-hidden";
-
-  switch (variant) {
-    case "home":
-      return getButtonClassName({
-        variant: "surface-primary",
-        size: "surface",
-        className: `${flexMatch} px-2 py-2 text-[10px] font-semibold tracking-wide uppercase sm:gap-1.5 sm:px-3 sm:text-[11px]`,
-      });
-    case "overlay":
-      return getButtonClassName({
-        variant: "surface-primary",
-        size: "surface",
-        className: `${flexMatch} px-3 py-3.5 text-sm font-semibold tracking-wide uppercase sm:gap-1.5`,
-      });
-    case "compact":
-    default:
-      return getButtonClassName({
-        variant: "primary",
-        size: "surface",
-        className: `${flexMatch} min-h-[36px] px-2 py-2 text-[10px] font-semibold sm:min-h-[40px] sm:gap-1.5 sm:px-3 sm:text-xs md:px-4`,
-      });
-  }
+function getShellClass() {
+  return getButtonClassName({
+    variant: "primary",
+    size: "surface",
+    className: productCardActionButtonClassName,
+  });
 }
 
 export function ProductCardQuickAdd({
   product,
   className = "",
-  variant = "compact",
+  variant: _variant = "compact",
 }: ProductCardQuickAddProps) {
   const router = useRouter();
   const { items, addItem, updateQuantity } = useCart();
@@ -70,7 +63,7 @@ export function ProductCardQuickAdd({
   const isOutOfStock = hasStockLimit && stock <= 0;
   const maxQuantity = hasStockLimit ? stock : Number.POSITIVE_INFINITY;
   const requiresProductPage = isSiliconeCaseProduct(product);
-  const shellClass = getShellClass(variant);
+  const shellClass = getShellClass();
 
   function stopNavigation(event: React.MouseEvent) {
     event.preventDefault();
@@ -139,7 +132,7 @@ export function ProductCardQuickAdd({
       role="group"
       aria-label={`Cantidad de ${product.name} en el carrito`}
       onClick={stopNavigation}
-      className={`${shellClass} ${className} inline-flex min-w-0 items-center justify-between gap-1 overflow-hidden px-1.5 sm:gap-1.5 sm:px-2.5`.trim()}
+      className={`${shellClass} ${className} inline-flex justify-between px-1.5 sm:px-2.5`.trim()}
     >
       <button
         type="button"

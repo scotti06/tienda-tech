@@ -8,7 +8,7 @@ import { getShopProducts } from "@/lib/products";
 export const metadata: Metadata = {
   title: "Tienda — Techstylebv",
   description:
-    "Explorá accesorios, tecnología y productos para el hogar. Buscá por nombre, categoría o modelo.",
+    "Explorá accesorios, tecnología, termos, vasos y perfumes. Buscá por nombre, categoría o modelo.",
 };
 
 export default async function TiendaPage() {

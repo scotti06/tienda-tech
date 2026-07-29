@@ -113,6 +113,63 @@ export const categoryCatalog: CategoryMeta[] = [
         "AirPods y variantes. Consultá modelos y disponibilidad por WhatsApp.",
     },
   },
+  {
+    id: "termos",
+    slug: "termos",
+    path: "/tienda/termos-vasos?sub=termos",
+    name: "Termos",
+    description: "Termos térmicos · consultar modelos",
+    href: "/tienda/termos-vasos?sub=termos",
+    accent: "group-hover:shadow-[#00B4D8]/15",
+    image: "/products/cargador-apple-20w.webp",
+    imageFrame: { width: 200, height: 260 },
+    productCategory: "Termos",
+    hero: {
+      eyebrow: "Termos",
+      title: "Mantené la temperatura",
+      highlight: "todo el día",
+      description:
+        "Termos térmicos de acero. Consultá capacidades y stock en tienda.",
+    },
+  },
+  {
+    id: "vasos",
+    slug: "vasos",
+    path: "/tienda/termos-vasos?sub=vasos",
+    name: "Vasos",
+    description: "Vasos térmicos · consultar modelos",
+    href: "/tienda/termos-vasos?sub=vasos",
+    accent: "group-hover:shadow-[#9D4EDD]/15",
+    image: "/products/vidrio-templado-pack.webp",
+    imageFrame: { width: 200, height: 240 },
+    productCategory: "Vasos",
+    hero: {
+      eyebrow: "Vasos",
+      title: "Vasos térmicos",
+      highlight: "para cada momento",
+      description:
+        "Vasos térmicos para bebidas frías o calientes. Consultá modelos disponibles.",
+    },
+  },
+  {
+    id: "perfumes",
+    slug: "perfumes",
+    path: "/tienda/perfumes",
+    name: "Perfumes",
+    description: "Fragancias · consultar modelos",
+    href: "/tienda/perfumes",
+    accent: "group-hover:shadow-[#9D4EDD]/15",
+    image: "/categories/fundas.webp",
+    imageFrame: { width: 260, height: 280 },
+    productCategory: "Perfumes",
+    hero: {
+      eyebrow: "Perfumes",
+      title: "Fragancias",
+      highlight: "para vos",
+      description:
+        "Perfumes y fragancias. Consultá aromas y disponibilidad en tienda.",
+    },
+  },
 ];
 
 export const mainNavLinks = [

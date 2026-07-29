@@ -31,11 +31,22 @@ export const hamburgerCategoryMenus: MenuTreeItem[] = [
     ],
   },
   {
-    id: "hogar",
-    label: "Hogar",
+    id: "termos-vasos",
+    label: "Termos y Vasos",
     children: [
-      { id: "tv", label: "TV", href: "/tienda" },
-      { id: "termos", label: "Termos", href: "/tienda" },
+      { id: "termos", label: "Termos", href: "/tienda/termos-vasos?sub=termos" },
+      { id: "vasos", label: "Vasos", href: "/tienda/termos-vasos?sub=vasos" },
+    ],
+  },
+  {
+    id: "perfumes",
+    label: "Perfumes",
+    children: [
+      {
+        id: "perfumes-todos",
+        label: "Ver perfumes",
+        href: "/tienda/perfumes",
+      },
     ],
   },
 ];

@@ -1,6 +1,10 @@
 import { products, type Product } from "@/lib/data";
 
-export type ShopGroupId = "accesorios" | "tecnologia" | "hogar";
+export type ShopGroupId =
+  | "accesorios"
+  | "tecnologia"
+  | "termos-vasos"
+  | "perfumes";
 export type ShopFilterGroup = ShopGroupId | "all";
 export type ShopFilterSubcategory = string | "all";
 
@@ -36,10 +40,17 @@ export const shopGroups: ShopGroup[] = [
     accent: "group-hover:shadow-[#00B4D8]/15",
   },
   {
-    id: "hogar",
-    name: "Hogar",
-    description: "Streaming, termos y vasos",
-    image: "/categories/carga.webp",
+    id: "termos-vasos",
+    name: "Termos y Vasos",
+    description: "Termos y vasos térmicos",
+    image: "/products/cargador-apple-20w.webp",
+    accent: "group-hover:shadow-[#00B4D8]/15",
+  },
+  {
+    id: "perfumes",
+    name: "Perfumes",
+    description: "Fragancias para todos los días",
+    image: "/categories/fundas.webp",
     accent: "group-hover:shadow-[#9D4EDD]/15",
   },
 ];
@@ -102,18 +113,25 @@ export const shopSubcategories: ShopSubcategory[] = [
     productCategoryIds: ["apple-watch"],
   },
   {
-    id: "tv-stick-box",
-    groupId: "hogar",
-    name: "TV Stick / TV Box",
-    productCategory: "TV Stick",
-    productCategoryIds: ["tv-stick", "tv-box"],
+    id: "termos",
+    groupId: "termos-vasos",
+    name: "Termos",
+    productCategory: "Termos",
+    productCategoryIds: ["termos"],
   },
   {
-    id: "termos-vasos",
-    groupId: "hogar",
-    name: "Termos y Vasos",
-    productCategory: "Termos",
-    productCategoryIds: ["termos", "vasos"],
+    id: "vasos",
+    groupId: "termos-vasos",
+    name: "Vasos",
+    productCategory: "Vasos",
+    productCategoryIds: ["vasos"],
+  },
+  {
+    id: "perfumes",
+    groupId: "perfumes",
+    name: "Perfumes",
+    productCategory: "Perfumes",
+    productCategoryIds: ["perfumes"],
   },
 ];
 

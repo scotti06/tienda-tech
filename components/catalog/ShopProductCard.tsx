@@ -6,7 +6,10 @@ import type { Product } from "@/lib/data";
 import { formatPrice, getImageFrame, siteConfig } from "@/lib/data";
 import { getProductHref } from "@/lib/catalog";
 import { Button, getButtonClassName } from "@/components/ui/Button";
-import { ProductCardQuickAdd } from "@/components/catalog/ProductCardQuickAdd";
+import {
+  ProductCardQuickAdd,
+  getProductCardViewButtonClassName,
+} from "@/components/catalog/ProductCardQuickAdd";
 import { getStockLevel } from "@/lib/store/types";
 
 type ShopProductCardProps = {
@@ -127,7 +130,7 @@ export function ShopProductCard({ product }: ShopProductCardProps) {
               href={productHref}
               variant="primary"
               size="surface"
-              className="min-h-[36px] min-w-0 flex-1 items-center justify-center overflow-hidden px-2 py-2 text-center text-[10px] font-semibold sm:min-h-[40px] sm:px-3 sm:text-xs md:px-4"
+              className={getProductCardViewButtonClassName()}
             >
               <span className="min-w-0 truncate">Ver producto</span>
             </Button>

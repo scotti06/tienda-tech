@@ -70,18 +70,34 @@ function parseSort(value: string | null): ShopSortOption {
 
 type ShopPageBodyProps = {
   products: Product[];
+  initialGroup?: ShopFilterGroup;
 };
 
-export function ShopPageBody({ products }: ShopPageBodyProps) {
+function getGroupFromPathname(pathname: string): ShopFilterGroup | null {
+  const match = pathname.match(/^\/tienda\/([^/?#]+)/);
+  if (!match) return null;
+  return parseGroup(match[1]);
+}
+
+export function ShopPageBody({
+  products,
+  initialGroup = "all",
+}: ShopPageBodyProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const lastWrittenQueryRef = useRef<string | null>(null);
+  const lastWrittenUrlRef = useRef<string | null>(null);
+
+  const groupFromPath = getGroupFromPathname(pathname);
+  const resolvedInitialGroup =
+    groupFromPath && groupFromPath !== "all"
+      ? groupFromPath
+      : parseGroup(searchParams.get("grupo") ?? (initialGroup === "all" ? null : initialGroup));
 
   const [query, setQuery] = useState(() => searchParams.get("q") ?? "");
   const [debouncedQuery, setDebouncedQuery] = useState(query);
-  const [activeGroup, setActiveGroup] = useState<ShopFilterGroup>(() =>
-    parseGroup(searchParams.get("grupo")),
+  const [activeGroup, setActiveGroup] = useState<ShopFilterGroup>(
+    () => resolvedInitialGroup,
   );
   const [activeSubcategory, setActiveSubcategory] = useState<ShopFilterSubcategory>(
     () => searchParams.get("sub") ?? "all",
@@ -125,24 +141,48 @@ export function ShopPageBody({ products }: ShopPageBodyProps) {
   }, [debouncedQuery, activeGroup, activeSubcategory, sortBy]);
 
   useEffect(() => {
-    const params = new URLSearchParams();
+    const currentUrl = `${pathname}${
+      searchParams.toString() ? `?${searchParams.toString()}` : ""
+    }`;
 
-    if (debouncedQuery.trim()) params.set("q", debouncedQuery.trim());
-    if (activeGroup !== "all") params.set("grupo", activeGroup);
-    if (activeSubcategory !== "all") params.set("sub", activeSubcategory);
-    if (sortBy !== "featured") params.set("sort", sortBy);
-
-    const nextQuery = params.toString();
-
-    if (lastWrittenQueryRef.current === nextQuery) {
+    if (lastWrittenUrlRef.current === currentUrl) {
       return;
     }
 
-    lastWrittenQueryRef.current = nextQuery;
-    router.replace(nextQuery ? `${pathname}?${nextQuery}` : pathname, {
-      scroll: false,
-    });
-  }, [debouncedQuery, activeGroup, activeSubcategory, sortBy, pathname, router]);
+    const pathGroup = getGroupFromPathname(pathname);
+    const nextGroup =
+      pathGroup !== null ? pathGroup : parseGroup(searchParams.get("grupo"));
+    const nextQuery = searchParams.get("q") ?? "";
+    const nextSub = searchParams.get("sub") ?? "all";
+    const nextSort = parseSort(searchParams.get("sort"));
+
+    lastWrittenUrlRef.current = currentUrl;
+    setActiveGroup(nextGroup);
+    setQuery(nextQuery);
+    setDebouncedQuery(nextQuery);
+    setActiveSubcategory(nextSub);
+    setSortBy(nextSort);
+  }, [pathname, searchParams]);
+
+  useEffect(() => {
+    const params = new URLSearchParams();
+
+    if (debouncedQuery.trim()) params.set("q", debouncedQuery.trim());
+    if (activeSubcategory !== "all") params.set("sub", activeSubcategory);
+    if (sortBy !== "featured") params.set("sort", sortBy);
+
+    const nextPath =
+      activeGroup === "all" ? "/tienda" : `/tienda/${activeGroup}`;
+    const nextQuery = params.toString();
+    const nextUrl = nextQuery ? `${nextPath}?${nextQuery}` : nextPath;
+
+    if (lastWrittenUrlRef.current === nextUrl) {
+      return;
+    }
+
+    lastWrittenUrlRef.current = nextUrl;
+    router.replace(nextUrl, { scroll: false });
+  }, [debouncedQuery, activeGroup, activeSubcategory, sortBy, router]);
 
   const handleGroupChange = useCallback((groupId: ShopFilterGroup) => {
     setActiveGroup(groupId);
@@ -275,8 +315,7 @@ export function ShopPageBody({ products }: ShopPageBodyProps) {
             <span className="text-gradient-mint">productos</span>
           </h1>
           <p className="mt-3 hidden max-w-xl text-[var(--muted)] sm:block md:mt-5 md:text-lg">
-            Accesorios, tecnología y productos para el hogar seleccionados para
-            vos.
+            Accesorios, tecnología y más productos seleccionados para vos.
           </p>
           <div className="mt-4 max-w-xl md:mt-8">
             <SearchBar

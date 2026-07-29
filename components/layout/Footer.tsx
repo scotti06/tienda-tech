@@ -1,13 +1,13 @@
 import Link from "next/link";
 import { siteConfig } from "@/lib/data";
-import { categoryCatalog } from "@/lib/catalog";
+import { shopGroups } from "@/lib/shop";
 import { Logo } from "@/components/ui/Logo";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 
 const footerLinks = {
-  Tienda: categoryCatalog.map((c) => ({
-    label: c.name,
-    href: c.path,
+  Tienda: shopGroups.map((group) => ({
+    label: group.name,
+    href: `/tienda/${group.id}`,
   })),
   Soporte: [{ label: "Contacto", href: "/contacto" }],
   Legal: [

@@ -91,27 +91,29 @@ export function Hero() {
       </div>
 
       <div className="relative z-10 mx-auto flex max-w-7xl flex-col items-center px-4 text-center sm:px-6 lg:px-8 lg:pb-24">
-        <div
-          key={slide.id}
-          className="flex w-full max-w-4xl flex-col items-center animate-slide-up"
-        >
-          <p className="text-[11px] font-semibold tracking-[0.25em] text-[var(--muted)] uppercase max-md:leading-none">
-            {slide.eyebrow}
-          </p>
+        <div className="flex w-full max-w-4xl flex-col items-center md:min-h-[23.5rem] lg:min-h-[24.5rem]">
+          <div
+            key={slide.id}
+            className="flex w-full flex-col items-center animate-slide-up"
+          >
+            <p className="text-[11px] font-semibold tracking-[0.25em] text-[var(--muted)] uppercase max-md:leading-none">
+              {slide.eyebrow}
+            </p>
 
-          <h1 className="mt-1.5 text-[2rem] font-semibold leading-[1.06] tracking-[-0.04em] text-white sm:mt-6 sm:leading-[1.08] sm:text-5xl md:text-6xl lg:text-7xl">
-            {slide.title}{" "}
-            <span className="text-gradient-mint">{slide.highlight}</span>
-          </h1>
+            <h1 className="mt-1.5 min-h-[2.2em] text-[2rem] font-semibold leading-[1.06] tracking-[-0.04em] text-white sm:mt-6 sm:min-h-[2.3em] sm:leading-[1.08] sm:text-5xl md:min-h-[2.4em] md:text-6xl lg:text-7xl">
+              {slide.title}{" "}
+              <span className="text-gradient-mint">{slide.highlight}</span>
+            </h1>
 
-          <p className="mt-1.5 max-w-xl line-clamp-1 text-xs leading-snug text-[var(--muted)] sm:mt-6 sm:line-clamp-none sm:text-base sm:leading-relaxed md:text-lg">
-            {slide.description}
-          </p>
+            <p className="mt-1.5 max-w-xl line-clamp-1 text-xs leading-snug text-[var(--muted)] sm:mt-6 sm:line-clamp-2 sm:min-h-[3.25rem] sm:text-base sm:leading-relaxed md:text-lg">
+              {slide.description}
+            </p>
 
-          <div className="mt-3 sm:mt-10">
-            <Button href={slide.ctaHref} variant="primary" size="lg" className="min-w-[200px]">
-              {slide.cta}
-            </Button>
+            <div className="mt-3 sm:mt-10">
+              <Button href={slide.ctaHref} variant="primary" size="lg" className="min-w-[200px]">
+                {slide.cta}
+              </Button>
+            </div>
           </div>
         </div>
 
@@ -124,13 +126,13 @@ export function Hero() {
           />
         </div>
 
-        {/* Desktop: diseño actual sin cambios (≥ md) */}
+        {/* Desktop: tamaño de card fijo (≥ md) */}
         <div
           className="group/card relative mt-8 hidden w-full max-w-3xl sm:mt-12 md:block lg:mt-16"
           onTouchStart={onTouchStart}
           onTouchEnd={onTouchEnd}
         >
-          <article className="relative overflow-hidden rounded-3xl glass-card border border-white/[0.08] transition-[transform,box-shadow,border-color] duration-350 ease-[cubic-bezier(0.4,0,0.2,1)] hover:-translate-y-1 hover:border-[rgba(157,78,221,0.22)] hover:shadow-[0_0_0_1px_rgba(157,78,221,0.12),0_28px_56px_-16px_rgba(0,0,0,0.5)]">
+          <article className="relative flex h-[560px] w-full flex-col overflow-hidden rounded-3xl glass-card border border-white/[0.08] transition-[transform,box-shadow,border-color] duration-350 ease-[cubic-bezier(0.4,0,0.2,1)] hover:-translate-y-1 hover:border-[rgba(157,78,221,0.22)] hover:shadow-[0_0_0_1px_rgba(157,78,221,0.12),0_28px_56px_-16px_rgba(0,0,0,0.5)]">
             <Button
               type="button"
               variant="icon"
@@ -151,54 +153,45 @@ export function Hero() {
               <IconChevronRight className="h-5 w-5" />
             </Button>
 
-            <div className="relative min-h-[440px] sm:min-h-[480px] md:min-h-[520px]">
+            <div className="relative min-h-0 flex-1">
               {navigableCategories.map((category, index) => (
                 <div
                   key={category.id}
-                  className={`category-carousel-slide absolute inset-0 flex flex-col ${getSlideClass(index, active, count)}`}
+                  className={`category-carousel-slide absolute inset-0 grid grid-rows-[1fr_9.5rem] ${getSlideClass(index, active, count)}`}
                   aria-hidden={index !== active}
                 >
-                  <div className="relative min-h-0 w-full flex-[0.68]">
-                    <div className="absolute inset-0 flex items-center justify-center px-10 pt-10 pb-3 sm:px-12">
-                      <div
-                        className="pointer-events-none absolute inset-0 flex items-center justify-center"
-                        aria-hidden
-                      >
-                        <div className="absolute h-[52%] w-[52%] rounded-full bg-[var(--brand-purple)]/[0.11] blur-[80px] transition-all duration-350 ease-out group-hover/card:bg-[var(--brand-purple)]/[0.16] group-hover/card:scale-105" />
-                        <div className="absolute h-[38%] w-[38%] rounded-full bg-[var(--brand-cyan)]/[0.07] blur-[64px] transition-all duration-350 ease-out group-hover/card:bg-[var(--brand-cyan)]/[0.11]" />
-                      </div>
+                  <div className="relative flex min-h-0 items-center justify-center px-10 pt-8 pb-2 sm:px-12">
+                    <div
+                      className="pointer-events-none absolute inset-0 flex items-center justify-center"
+                      aria-hidden
+                    >
+                      <div className="absolute h-[52%] w-[52%] rounded-full bg-[var(--brand-purple)]/[0.11] blur-[80px] transition-all duration-350 ease-out group-hover/card:bg-[var(--brand-purple)]/[0.16] group-hover/card:scale-105" />
+                      <div className="absolute h-[38%] w-[38%] rounded-full bg-[var(--brand-cyan)]/[0.07] blur-[64px] transition-all duration-350 ease-out group-hover/card:bg-[var(--brand-cyan)]/[0.11]" />
+                    </div>
 
-                      <div
-                        className="relative z-10 transition-transform duration-350 ease-[cubic-bezier(0.4,0,0.2,1)] group-hover/card:scale-[1.04]"
-                        style={{
-                          width: `min(90%, ${category.imageFrame.width}px)`,
-                          aspectRatio: `${category.imageFrame.width} / ${category.imageFrame.height}`,
-                          maxHeight: "100%",
-                        }}
-                      >
-                        <Image
-                          src={category.image}
-                          alt={category.name}
-                          fill
-                          className="object-contain object-center drop-shadow-[0_18px_36px_rgba(0,0,0,0.24)]"
-                          sizes="(max-width: 768px) 90vw, 400px"
-                          priority={index === 0}
-                        />
-                      </div>
+                    <div className="relative z-10 size-[260px] shrink-0 transition-transform duration-350 ease-[cubic-bezier(0.4,0,0.2,1)] group-hover/card:scale-[1.04]">
+                      <Image
+                        src={category.image}
+                        alt={category.name}
+                        fill
+                        className="object-contain object-center drop-shadow-[0_18px_36px_rgba(0,0,0,0.24)]"
+                        sizes="260px"
+                        priority={index === 0}
+                      />
                     </div>
                   </div>
 
-                  <div className="flex flex-[0.32] flex-col items-center justify-start px-8 pb-8 pt-1 text-center sm:px-12 sm:pb-10">
-                    <h3 className="text-2xl font-semibold tracking-tight text-white md:text-[1.75rem]">
+                  <div className="flex flex-col items-center justify-start px-8 pb-2 text-center sm:px-12">
+                    <h3 className="line-clamp-1 text-2xl font-semibold tracking-tight text-white md:text-[1.75rem]">
                       {category.name}
                     </h3>
-                    <p className="mt-2 max-w-sm text-sm leading-relaxed text-[var(--muted)] md:text-base">
+                    <p className="mt-2 line-clamp-2 min-h-[2.75rem] max-w-sm text-sm leading-relaxed text-[var(--muted)] md:text-base">
                       {category.description}
                     </p>
                     <Button
                       href={category.href}
                       variant="inline-link"
-                      className="mt-5 gap-1.5 text-sm font-medium duration-350 ease-out group-hover/card:[&_svg]:translate-x-0.5"
+                      className="mt-4 gap-1.5 text-sm font-medium duration-350 ease-out group-hover/card:[&_svg]:translate-x-0.5"
                     >
                       Explorar
                       <IconArrowRight className="h-4 w-4 transition-transform duration-350 ease-out" />
@@ -209,7 +202,7 @@ export function Hero() {
             </div>
 
             <div
-              className="flex items-center justify-center gap-2 pb-7 pt-1"
+              className="flex shrink-0 items-center justify-center gap-2 pb-6 pt-1"
               role="tablist"
               aria-label="Categorías"
             >

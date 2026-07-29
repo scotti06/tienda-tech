@@ -18,6 +18,7 @@ import {
   getShopFilterCounts,
   shopGroups,
   shopSortOptions,
+  shopSubcategories,
   sortShopProducts,
   type ShopFilterGroup,
   type ShopFilterSubcategory,
@@ -226,6 +227,21 @@ export function ShopPageBody({
   }, [inStockProducts, activeGroup, activeSubcategory]);
 
   const resultsLabel = getResultsLabel(sortedCatalogProducts.length);
+  const catalogTitle = useMemo(() => {
+    if (activeSubcategory !== "all") {
+      const subcategory = shopSubcategories.find(
+        (item) => item.id === activeSubcategory,
+      );
+      if (subcategory) return subcategory.name;
+    }
+
+    if (activeGroup !== "all") {
+      const group = shopGroups.find((item) => item.id === activeGroup);
+      if (group) return group.name;
+    }
+
+    return "Catálogo completo";
+  }, [activeGroup, activeSubcategory]);
   const visibleProducts = sortedCatalogProducts.slice(0, visibleCount);
   const hasMoreProducts = visibleCount < sortedCatalogProducts.length;
   const visibleCountLabel = getVisibleCountLabel(
@@ -375,7 +391,7 @@ export function ShopPageBody({
                     Catálogo
                   </p>
                   <h2 className="text-lg font-semibold tracking-[-0.03em] text-white sm:text-2xl md:text-4xl lg:text-[2.75rem] lg:leading-[1.1]">
-                    Catálogo completo
+                    {catalogTitle}
                   </h2>
                   <p
                     aria-live="polite"

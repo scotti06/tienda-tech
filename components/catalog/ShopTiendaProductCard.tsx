@@ -5,15 +5,11 @@ import type { Product } from "@/lib/data";
 import { formatPrice, getImageFrame } from "@/lib/data";
 import { getProductHref } from "@/lib/catalog";
 import { getButtonClassName, Button } from "@/components/ui/Button";
-<<<<<<< HEAD
 import {
   ProductCardQuickAdd,
   getProductCardViewButtonClassName,
 } from "@/components/catalog/ProductCardQuickAdd";
-=======
-import { ProductCardQuickAdd } from "@/components/catalog/ProductCardQuickAdd";
 import { ProductImage } from "@/components/ui/ProductImage";
->>>>>>> Ramixxx
 
 type ShopTiendaProductCardProps = {
   product: Product;

@@ -12,15 +12,11 @@ import {
 import { getProductHref } from "@/lib/catalog";
 import { getButtonClassName } from "@/components/ui/Button";
 import { TextScramble } from "@/components/ui/text-scramble";
-<<<<<<< HEAD
 import {
   ProductCardQuickAdd,
   getProductCardViewButtonClassName,
 } from "@/components/catalog/ProductCardQuickAdd";
-=======
-import { ProductCardQuickAdd } from "@/components/catalog/ProductCardQuickAdd";
 import { ProductImage } from "@/components/ui/ProductImage";
->>>>>>> Ramixxx
 
 type ProductCardProps = {
   product: Product;

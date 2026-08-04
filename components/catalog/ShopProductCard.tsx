@@ -1,15 +1,19 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import type { Product } from "@/lib/data";
 import { formatPrice, getImageFrame, siteConfig } from "@/lib/data";
 import { getProductHref } from "@/lib/catalog";
 import { Button, getButtonClassName } from "@/components/ui/Button";
+<<<<<<< HEAD
 import {
   ProductCardQuickAdd,
   getProductCardViewButtonClassName,
 } from "@/components/catalog/ProductCardQuickAdd";
+=======
+import { ProductCardQuickAdd } from "@/components/catalog/ProductCardQuickAdd";
+import { ProductImage } from "@/components/ui/ProductImage";
+>>>>>>> Ramixxx
 import { getStockLevel } from "@/lib/store/types";
 
 type ShopProductCardProps = {
@@ -67,7 +71,7 @@ export function ShopProductCard({ product }: ShopProductCardProps) {
                 maxHeight: "100%",
               }}
             >
-              <Image
+              <ProductImage
                 src={product.image}
                 alt={product.name}
                 fill

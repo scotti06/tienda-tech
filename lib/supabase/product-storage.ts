@@ -87,6 +87,7 @@ export async function uploadProductImageToStorage(file: File): Promise<string> {
   try {
     return await uploadProductImageToSupabase(file);
   } catch (error) {
+    // In production never fall back to local disk — those files won't exist on Vercel.
     if (process.env.NODE_ENV === "development") {
       if (
         isSupabaseNetworkError(error) ||

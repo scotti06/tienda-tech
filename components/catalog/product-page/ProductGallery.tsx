@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import {
   getImageFrame,
   getProductImageBoxStyle,
 } from "@/lib/data";
 import { useVariantImageOverride } from "@/components/catalog/product-page/VariantImageContext";
+import { ProductImage } from "@/components/ui/ProductImage";
 
 type ProductGalleryProps = {
   name: string;
@@ -53,25 +53,32 @@ export function ProductGallery({
   if (!displayedImage) return null;
 
   const showThumbnails = images.length > 1 && !variantImage?.overrideImage;
+  const fallbackImage = baseImage && baseImage !== displayedImage ? baseImage : "";
 
   return (
     <div className="w-full">
       <div
-        className={`relative aspect-square w-full overflow-hidden rounded-[2rem] border border-white/[0.08] bg-[var(--surface)] ${accent}`}
+        className={`relative aspect-square w-full overflow-hidden rounded-[2rem] border border-white/[0.08] ${accent}`}
       >
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_50%,rgba(157,78,221,0.1),transparent_70%)]" />
+        {/* Plate clara: las fundas negras no se pierden sobre el fondo oscuro */}
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.14)_0%,rgba(255,255,255,0.06)_45%,rgba(10,12,16,0.55)_100%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_40%,rgba(255,255,255,0.1),transparent_65%)]" />
         <div className="absolute inset-0 flex items-center justify-center p-[7.5%]">
           <div
             className="relative h-full w-full"
             style={getProductImageBoxStyle(detailImageSizing, frame, "detail")}
           >
-            <Image
+            <ProductImage
               key={displayedImage}
               src={displayedImage}
               alt={`${name} — imagen principal`}
               fill
               priority={activeIndex === 0 && !variantImage?.overrideImage}
-              className={`object-contain object-center drop-shadow-[0_18px_28px_rgba(0,0,0,0.24)] transition-opacity duration-300 ${
+              onError={() => {
+                if (!fallbackImage) return;
+                setDisplayedImage(fallbackImage);
+              }}
+              className={`object-contain object-center drop-shadow-[0_18px_28px_rgba(0,0,0,0.35)] transition-opacity duration-300 ${
                 isFading ? "opacity-0" : "opacity-100"
               }`}
               sizes="(max-width: 1024px) 100vw, 560px"
@@ -97,7 +104,7 @@ export function ProductGallery({
                     : "border-white/[0.08] hover:border-white/20"
                 }`}
               >
-                <Image
+                <ProductImage
                   src={image}
                   alt=""
                   fill

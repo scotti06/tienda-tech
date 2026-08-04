@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import type { Product } from "@/lib/data";
 import {
@@ -13,10 +12,15 @@ import {
 import { getProductHref } from "@/lib/catalog";
 import { getButtonClassName } from "@/components/ui/Button";
 import { TextScramble } from "@/components/ui/text-scramble";
+<<<<<<< HEAD
 import {
   ProductCardQuickAdd,
   getProductCardViewButtonClassName,
 } from "@/components/catalog/ProductCardQuickAdd";
+=======
+import { ProductCardQuickAdd } from "@/components/catalog/ProductCardQuickAdd";
+import { ProductImage } from "@/components/ui/ProductImage";
+>>>>>>> Ramixxx
 
 type ProductCardProps = {
   product: Product;
@@ -45,7 +49,7 @@ export function ProductCard({ product, layout = "default" }: ProductCardProps) {
                 className="relative card-hover-image h-full w-full"
                 style={getProductImageBoxStyle(product, imageFrame, "home")}
               >
-                <Image
+                <ProductImage
                   src={product.image}
                   alt={product.name}
                   fill
@@ -106,7 +110,7 @@ export function ProductCard({ product, layout = "default" }: ProductCardProps) {
               className="relative card-hover-image"
               style={getProductImageBoxStyle(product, imageFrame, "default")}
             >
-              <Image
+              <ProductImage
                 src={product.image}
                 alt={product.name}
                 fill

@@ -6,13 +6,18 @@ const NGROK_HOST = "kebab-elite-fidgety.ngrok-free.dev";
 const nextConfig: NextConfig = {
   reactCompiler: true,
 
-  // Allow the ngrok origin to reach the dev server (HMR, _next assets, etc.).
-  allowedDevOrigins: [NGROK_HOST, "*.ngrok-free.dev"],
+  // Allow ngrok + LAN access during local development (phone / other devices).
+  allowedDevOrigins: [
+    NGROK_HOST,
+    "*.ngrok-free.dev",
+    "127.0.0.1",
+    "192.168.1.95",
+  ],
 
   experimental: {
-    // Checkout uses server actions; allow invocation from the ngrok origin.
+    // Checkout uses server actions; allow invocation from the ngrok / LAN origin.
     serverActions: {
-      allowedOrigins: [NGROK_HOST, "*.ngrok-free.dev"],
+      allowedOrigins: [NGROK_HOST, "*.ngrok-free.dev", "192.168.1.95"],
     },
   },
 

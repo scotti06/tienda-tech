@@ -36,28 +36,15 @@ export function verifyAdminCredentials(
   username: string,
   password: string,
 ): boolean {
-  console.log("[admin/auth] env at login time:", {
-    ADMIN_USERNAME: process.env.ADMIN_USERNAME,
-    ADMIN_PASSWORD: process.env.ADMIN_PASSWORD,
-    ADMIN_USERNAME_loaded: Boolean(process.env.ADMIN_USERNAME),
-    ADMIN_PASSWORD_loaded: Boolean(process.env.ADMIN_PASSWORD),
-    NODE_ENV: process.env.NODE_ENV,
-  });
-
   const expected = getAdminCredentials();
-
-  console.log("[admin/auth] resolved credentials:", {
-    expectedUsername: expected.username,
-    expectedPassword: expected.password,
-    submittedUsername: username,
-    submittedPassword: password,
-    usernameLengthMatch: username.length === expected.username.length,
-    passwordLengthMatch: password.length === expected.password.length,
-  });
+  const submittedUsername = username.trim().toLowerCase();
+  const submittedPassword = password.trim();
+  const expectedUsername = expected.username.trim().toLowerCase();
+  const expectedPassword = expected.password.trim();
 
   return (
-    safeCompare(username, expected.username) &&
-    safeCompare(password, expected.password)
+    safeCompare(submittedUsername, expectedUsername) &&
+    safeCompare(submittedPassword, expectedPassword)
   );
 }
 

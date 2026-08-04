@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image, { type ImageProps } from "next/image";
 
 const FALLBACK_IMAGE = "/products/funda-iphone.webp";
@@ -23,6 +23,10 @@ export function ProductImage({
   ...props
 }: ProductImageProps) {
   const [currentSrc, setCurrentSrc] = useState(src || fallbackSrc);
+
+  useEffect(() => {
+    setCurrentSrc(src || fallbackSrc);
+  }, [src, fallbackSrc]);
 
   return (
     <Image

@@ -1,12 +1,12 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import type { Product } from "@/lib/data";
 import { formatPrice, getImageFrame } from "@/lib/data";
 import { getProductHref } from "@/lib/catalog";
 import { getButtonClassName, Button } from "@/components/ui/Button";
 import { ProductCardQuickAdd } from "@/components/catalog/ProductCardQuickAdd";
+import { ProductImage } from "@/components/ui/ProductImage";
 
 type ShopTiendaProductCardProps = {
   product: Product;
@@ -87,9 +87,9 @@ export function ShopTiendaProductCard({ product }: ShopTiendaProductCardProps) {
                 maxHeight: "100%",
               }}
             >
-              <Image
+              <ProductImage
                 src={product.image}
-                alt=""
+                alt={product.name}
                 fill
                 className="object-contain object-center drop-shadow-[0_14px_22px_rgba(0,0,0,0.22)]"
                 sizes={`(max-width: 768px) 50vw, ${Math.max(imageFrame.width, imageFrame.height)}px`}

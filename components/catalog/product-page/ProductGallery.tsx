@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import {
   getImageFrame,
   getProductImageBoxStyle,
 } from "@/lib/data";
 import { useVariantImageOverride } from "@/components/catalog/product-page/VariantImageContext";
+import { ProductImage } from "@/components/ui/ProductImage";
 
 type ProductGalleryProps = {
   name: string;
@@ -68,7 +68,7 @@ export function ProductGallery({
             className="relative h-full w-full"
             style={getProductImageBoxStyle(detailImageSizing, frame, "detail")}
           >
-            <Image
+            <ProductImage
               key={displayedImage}
               src={displayedImage}
               alt={`${name} — imagen principal`}
@@ -104,7 +104,7 @@ export function ProductGallery({
                     : "border-white/[0.08] hover:border-white/20"
                 }`}
               >
-                <Image
+                <ProductImage
                   src={image}
                   alt=""
                   fill

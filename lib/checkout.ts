@@ -175,11 +175,15 @@ export function buildCheckoutPayload(
   return {
     items: items.map((item) => ({
       id: item.id,
+      cartKey: item.cartKey,
       name: item.name,
       image: item.image,
       price: item.price,
       quantity: item.quantity,
       model: item.model?.trim() || undefined,
+      colorName: item.colorName?.trim() || undefined,
+      colorHex: item.colorHex?.trim() || undefined,
+      variantId: item.variantId?.trim() || undefined,
     })),
     form,
     subtotal,
